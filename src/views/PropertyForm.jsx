@@ -143,10 +143,10 @@ export default function PropertyForm(){
 
     const uploadImage = (id,file) =>{
         const data = new FormData();
-        data.append('image', file);
+        data.append('file', file);
         data.append('id_property', id);
 
-        axiosClient.post(`/upload`, data,{
+        axiosClient.post(`/upload/${id}`, data,{
             headers: {
               'Content-Type': 'multipart/form-data',
             },

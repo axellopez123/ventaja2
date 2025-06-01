@@ -7,7 +7,7 @@ import {
   } from "react-icons/ri";
 
 import Card from "../components/shared/Card";
-
+import Grid from "../components/shared/Grid";
 
 export default function Properties() {
     const [properties, setProperties] = useState([]);
@@ -35,7 +35,7 @@ export default function Properties() {
         axiosClient.get('/properties')
         .then(({data})=>{
             setLoading(false)
-            setProperties(data.data)
+            setProperties(data)
             console.log(data);
         })
         .catch(() => {
@@ -43,9 +43,33 @@ export default function Properties() {
         })
     }
 
+    const items = [
+  {
+    image: "https://i.pravatar.cc/300?img=1",
+    title: "Sarah Johnson",
+    subtitle: "Frontend Developer",
+    handle: "@sarahjohnson",
+    borderColor: "#3B82F6",
+    gradient: "linear-gradient(145deg, #3B82F6, #000)",
+    url: "https://github.com/sarahjohnson"
+  },
+  {
+    image: "https://i.pravatar.cc/300?img=2",
+    title: "Mike Chen",
+    subtitle: "Backend Engineer",
+    handle: "@mikechen",
+    borderColor: "#10B981",
+    gradient: "linear-gradient(180deg, #10B981, #000)",
+    url: "https://linkedin.com/in/mikechen"
+  }
+];
+
     return (
         <div>
-             {/* Title content */}
+            <button className="border border-green-600 text-green-600 py-2 px-4 hover:bg-green-600 hover:text-white transition-colors">
+                <Link to="/properties/new" className="btn-add">New</Link>
+              </button>
+             {/* Title content
             <div className="flex items-center justify-between mb-16">
               <h2 className="text-xl text-gray-300">Choose your sweet home</h2>
               <button className="border border-green-600 text-green-600 py-2 px-4 hover:bg-green-600 hover:text-white transition-colors">
@@ -66,7 +90,16 @@ export default function Properties() {
                     />
                 ))}
 
-            </div>
+            </div> */}
+            <div style={{ height: '600px', position: 'relative' }}>
+  {/* <Grid 
+    items={properties}
+    radius={300}
+    damping={0.45}
+    fadeOut={0.6}
+    ease="power3.out"
+  /> */}
+</div>
         </div>
     )
 }
