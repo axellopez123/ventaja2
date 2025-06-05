@@ -1,12 +1,13 @@
 // src/components/ToolpadLayout.jsx
 import * as React from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, Navigate } from "react-router-dom";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import TimelineIcon from "@mui/icons-material/Timeline";
 import { createTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
+import { useStateContext } from "../contexts/ContextProvider";
 
 const NAVIGATION = [
   { kind: "header", title: "Main" },
@@ -32,6 +33,12 @@ const theme = createTheme({
 
 export default function ToolpadLayout() {
   const location = useLocation();
+  const {user,token, notification, setUser, setToken} = useStateContext()
+  
+  if(!token)
+  {
+      return <Navigate to="/login"/>
+  }
 
   return (
     <AppProvider navigation={NAVIGATION} theme={theme}>

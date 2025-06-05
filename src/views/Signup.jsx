@@ -16,12 +16,12 @@ export default function Signup(){
     const onSubmit = (ev) => {
         ev.preventDefault()
         const payload = {
-            name: nameRef.current.value,
-            email: emailRef.current.value,
+            username: nameRef.current.value,
+            // email: emailRef.current.value,
             password: passwordRef.current.value,
-            password_confirmation: passwrodConfirmationRef.current.value,
+            // password_confirmation: passwrodConfirmationRef.current.value,
         }
-        axiosClient.post('/signup', payload)
+        axiosClient.post('/register', payload)
         .then(({data}) => {
             setUser(data.user)
             setToken(data.token)
@@ -88,14 +88,14 @@ export default function Signup(){
                     </label>
                     <input ref={nameRef}
                         type="text"
-                        id="name"
+                        id="username"
                         autoComplete="off"
                         className="w-full py-2 px-4 bg-transparent border rounded-full mt-2 outline-none focus:border-indigo-400"
                         placeholder="Ingresa tu nombre completo"
                     />
                 </div>
 
-                <div>
+                {/* <div>
                     <label htmlFor="email" className="text-gray-200">
                         Correo electrónico *
                     </label>
@@ -106,7 +106,7 @@ export default function Signup(){
                         className="w-full py-2 px-4 bg-transparent border rounded-full mt-2 outline-none focus:border-indigo-400"
                         placeholder="Ingresa tu correo electrónico"
                     />
-                </div>
+                </div> */}
                 <div>
                     <label htmlFor="password" className="text-gray-200">
                         Contraseña *
@@ -119,7 +119,7 @@ export default function Signup(){
                         placeholder="Ingresa tu contraseña"
                     />
                 </div>
-                <div>
+                {/* <div>
                     <label htmlFor="password" className="text-gray-200">
                          Confirma Contraseña *
                     </label>
@@ -130,7 +130,7 @@ export default function Signup(){
                         className="w-full py-2 px-4 bg-transparent border rounded-full mt-2 outline-none focus:border-indigo-400"
                         placeholder="Ingresa tu contraseña"
                     />
-                </div>
+                </div> */}
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4 order-2 md:order-1">
                     <span className="text-gray-400">
                         ¿Ya tienes cuenta?{" "}
