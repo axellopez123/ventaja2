@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useRef, useState } from "react";
 import axios from "axios";
 import axiosClient from "../axios-client";
@@ -12,7 +12,7 @@ export default function Signup(){
     const passwrodConfirmationRef = useRef();
     const [errors, setErrors] = useState(null)
     const {setUser, setToken} = useStateContext()
-
+    const navigate = useNavigate();
     const onSubmit = (ev) => {
         ev.preventDefault()
         const payload = {
@@ -24,7 +24,8 @@ export default function Signup(){
         axiosClient.post('/register', payload)
         .then(({data}) => {
             setUser(data.user)
-            setToken(data.token)
+            setToken(data.access_token)
+            navigate("/dashboard")
         })
         .catch(err => {
             const response = err.response;
