@@ -4,6 +4,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import axiosClient from "../axios-client";
 import { useStateContext } from "../contexts/ContextProvider";
 import { useDropzone } from "react-dropzone";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { v4 as uuidv4 } from "uuid";
+
 import {
   RiCloseCircleLine,
   RiHotelBedFill,
@@ -13,8 +16,9 @@ import { LiaToiletSolid } from "react-icons/lia";
 import { FaCarSide, FaWhatsapp, FaPhoneAlt } from "react-icons/fa";
 import { BiSolidWasher } from "react-icons/bi";
 import { SiGooglemaps } from "react-icons/si";
-import { IoCameraOutline } from "react-icons/io5";
+import { IoCameraOutline, IoClose } from "react-icons/io5";
 import TextField from "@mui/material/TextField";
+import { NumericFormat } from 'react-number-format';
 
 const baseStyle = {
   flex: 1,
@@ -53,7 +57,9 @@ export default function PropertyForm() {
   const { setNotification } = useStateContext();
   const [image, setImage] = useState(null);
   const [showShinner, setShowShinner] = useState(false);
-  const [images, setImages] = useState(null);
+  const [images, setImages] = useState([]);
+  const [coverIndex, setCoverIndex] = useState(0);
+
   const [files, setFiles] = useState([]);
   const [filesSelected, setFilesSelected] = useState([]);
   const [imagePreview, setImagePreview] = useState(
@@ -80,16 +86,88 @@ export default function PropertyForm() {
     status: undefined,
   });
 
+  const normalizeImage = (file) => ({
+    id: uuidv4(),
+    name: file.name,
+    preview: URL.createObjectURL(file),
+    file,
+  });
+
   const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles?.length) {
-      setFilesSelected((previusFiles) => [
-        ...previusFiles,
-        ...acceptedFiles.map((file) =>
-          Object.assign(file, { preview: URL.createObjectURL(file) })
-        ),
-      ]);
+      const normalized = acceptedFiles.map(normalizeImage);
+      setImages((prev) => [...prev, ...normalized]);
     }
   }, []);
+
+  const removeImage = (index) => {
+    setImages(prev => prev.filter((_, i) => i !== index));
+    // Ajustar el índice de la portada si es necesario
+    if (coverIndex === index) {
+      setCoverIndex(0);
+    } else if (coverIndex > index) {
+      setCoverIndex(prev => prev - 1);
+    }
+  };
+  // const onDrop = useCallback((acceptedFiles) => {
+  //   if (acceptedFiles?.length) {
+  //     setImages((previusFiles) => [
+  //       ...previusFiles,
+  //       ...acceptedFiles.map((image) =>
+  //         Object.assign(image, {id: uuidv4(),preview: URL.createObjectURL(image) })
+  //       ),
+  //     ]);      
+  //   }
+  // }, []);
+
+  const handleFileChange = (e) => {
+    setFiles(Array.from(e.target.files));
+  };
+
+  const handleTextChange = (e) => {
+    const { name, value } = e.target;
+    setProperty((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleNumericChange = (name) => (values) => {
+    setProperty((prev) => ({
+      ...prev,
+      [name]: values.floatValue ?? '',
+    }));
+  };
+
+  const handleKeyDown = (e, nextRef) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      nextRef?.current?.focus();
+    }
+  };
+
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    const reordered = Array.from(images);
+    const [moved] = reordered.splice(result.source.index, 1);
+    reordered.splice(result.destination.index, 0, moved);
+    setImages(reordered);
+
+    // actualizar portada si se movió
+    if (result.source.index === coverIndex) {
+      setCoverIndex(result.destination.index);
+    } else if (
+      result.source.index < coverIndex &&
+      result.destination.index >= coverIndex
+    ) {
+      setCoverIndex((prev) => prev - 1);
+    } else if (
+      result.source.index > coverIndex &&
+      result.destination.index <= coverIndex
+    ) {
+      setCoverIndex((prev) => prev + 1);
+    }
+    console.log(images);
+    
+  };
+
 
   const {
     getRootProps,
@@ -98,7 +176,11 @@ export default function PropertyForm() {
     isDragAccept,
     isDragReject,
     isDragActive,
-  } = useDropzone({ onDrop });
+  } = useDropzone({
+    onDrop,
+    accept: { "image/*": [] },
+    multiple: true,
+  });
 
   const removeFile = (name) => {
     setFiles((files) => files.filter((file) => file.name !== name));
@@ -171,7 +253,7 @@ export default function PropertyForm() {
       });
   };
 
-  const onSubmit = (ev) => {
+  const onSubmit = async (ev) => {
     ev.preventDefault();
 
     if (property.id) {
@@ -206,15 +288,20 @@ export default function PropertyForm() {
         });
     } else {
       axiosClient
-        .post(`/properties`, property)
+        .post(`/products`, property)
         .then((prop) => {
-          /////////////////
-          // upload image
-          ////////////////
-
-          filesSelected.map((file, index) => {
-            uploadImage(prop.data.id, file);
+          const formData = new FormData();
+          images.forEach((img, index) => {
+            formData.append("files", img);
           });
+          formData.append("cover_index", coverIndex);
+          formData.append("order", JSON.stringify(images.map((img) => img.id)));
+
+          axiosClient.post(`/api/products/${prop.id}/images`, formData);
+
+          // filesSelected.map((file, index) => {
+          //   uploadImage(prop.data.id, file);
+          // });
 
           //NOTIFICATION
           setNotification("Property was successfully created");
@@ -352,222 +439,253 @@ export default function PropertyForm() {
                   </div>
                 </div>
 
+                <div>
+
+                  <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId="images" direction="horizontal">
+                      {(provided) => (
+                        <div
+                          className="flex overflow-auto gap-4 mt-4 pb-2"
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                        >
+                          {images.map((img, index) => (
+                            <Draggable key={img.id} draggableId={String(img.id)} index={index}>
+                              {(provided) => {
+                                return (
+
+                                  <div
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                    className={`relative w-24 h-24 rounded overflow-hidden border-4 ${index === coverIndex ? 'border-blue-500' : 'border-gray-300'
+                                      }`}
+                                  >
+                                    <img
+                                      src={img.preview}
+                                      // onMouseDown={(e) => e.stopPropagation()} // evita conflicto con drag
+                                      alt="preview"
+                                      className="w-full h-full object-cover"
+                                      onClick={() => setCoverIndex(index)}
+                                    />
+                                    <button
+                                      onClick={() => {
+                                        // e.stopPropagation();
+                                        removeImage(index);
+                                      }
+                                      }
+                                      className="absolute top-0 right-0 p-1 bg-white rounded-bl-lg hover:bg-red-200"
+                                      title="Eliminar"
+                                    >
+                                      <IoClose className="text-red-500" />
+                                    </button>
+                                    {index === coverIndex && (
+                                      <div className="absolute bottom-0 left-0 bg-blue-600 text-white text-xs px-1 rounded-tr">
+                                        Portada
+                                      </div>
+                                    )}
+                                  </div>
+                                )
+                              }}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                  </DragDropContext>
+
+                </div>
+
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8">
+                  <input type="file" multiple accept="image/*" onChange={handleFileChange} />
+
                   <div className="col-span-2 md:col-span-4 lg:col-span-4">
-                    <span className="text-pink-700">Name</span>
-                    {/* <input
-                      type="text"
-                      class="mt-0 block w-full px-0.5 border-0 border-b-2 border-pink-600 focus:ring-0 focus:border-black"
-                      value={property.name}
-                      onChange={(ev) =>
-                        setProperty({ ...property, name: ev.target.value })
-                      }
-                      placeholder="Name"
-                    /> */}
+
+
                     <TextField
                       id="name"
                       name="name"
                       label="Aliás"
                       variant="standard"
                       value={property.name}
-                      onChange={handleChange}
+                      onChange={handleTextChange}
+
                     />
                   </div>
                   <div className="col-span-1 md:col-span-1 lg:col-span-1">
-                    <span class="text-pink-700">Bedrooms</span>
-                    {/* <input
-                      type="number"
-                      class="mt-0 block w-full px-0.5 border-0 border-b-2 border-pink-600 focus:ring-0 focus:border-black"
-                      value={property.bedrooms}
-                      onChange={(ev) =>
-                        setProperty({ ...property, bedrooms: ev.target.value })
-                      }
-                      placeholder="Bedrooms"
-                    /> */}
-                    <TextField
-                      id="bedrooms"
+
+                    <NumericFormat
+                      value={property.bedrooms || ''}
+                      onValueChange={handleNumericChange("bedrooms")}
                       name="bedrooms"
+                      allowNegative={false}
+                      customInput={TextField}
                       label="Habitaciones"
                       variant="standard"
-                      value={property.bedrooms}
-                      onChange={handleChange}
-                      type="number"
                     />
                   </div>
                   <div className="col-span-1 md:col-span-1 lg:col-span-1">
-                    <span class="text-pink-700">Bathrooms</span>
-                    {/* <input
-                      type="number"
-                      class="mt-0 block w-full px-0.5 border-0 border-b-2 border-pink-600 focus:ring-0 focus:border-black"
-                      value={property.bathrooms}
-                      onChange={(ev) =>
-                        setProperty({ ...property, bathrooms: ev.target.value })
-                      }
-                      placeholder="Bathrooms"
-                    /> */}
-                    <TextField
-                      id="bathrooms"
+                    <NumericFormat
+                      value={property.bathrooms || ''}
+                      onValueChange={handleNumericChange("bathrooms")}
                       name="bathrooms"
+                      allowNegative={false}
+                      decimalScale={1}
+                      fixedDecimalScale={true}
+                      customInput={TextField}
                       label="Baños"
                       variant="standard"
-                      value={property.bathrooms}
-                      onChange={handleChange}
-                      type="number"
                     />
                   </div>
                   <div className="col-span-1 md:col-span-1 lg:col-span-1">
-                    <span class="text-pink-700">Cleanrooms</span>
-                    {/* <input
-                      type="number"
-                      class="mt-0 block w-full px-0.5 border-0 border-b-2 border-pink-600 focus:ring-0 focus:border-black"
-                      value={property.cleanrooms}
-                      onChange={(ev) =>
-                        setProperty({
-                          ...property,
-                          cleanrooms: ev.target.value,
-                        })
-                      }
-                      placeholder="cleanrooms"
-                    /> */}
-                    <TextField
-                      id="cleanrooms"
+
+                    <NumericFormat
+                      value={property.cleanrooms || ''}
+                      onValueChange={handleNumericChange("cleanrooms")}
                       name="cleanrooms"
+                      allowNegative={false}
+                      customInput={TextField}
                       label="Cuarto de servicio"
                       variant="standard"
-                      value={property.cleanrooms}
-                      onChange={handleChange}
-                      type="number"
                     />
                   </div>
                   <div className="col-span-1 md:col-span-1 lg:col-span-1">
-                    <span class="text-pink-700">Parkings</span>
-                    {/* <input
-                      type="number"
-                      class="mt-0 block w-full px-0.5 border-0 border-b-2 border-pink-600 focus:ring-0 focus:border-black"
-                      value={property.parkings}
-                      onChange={(ev) =>
-                        setProperty({ ...property, parkings: ev.target.value })
-                      }
-                      placeholder="parkings"
-                    /> */}
-                    <TextField
-                      id="parkings"
+
+                    <NumericFormat
+                      value={property.parkings || ''}
+                      onValueChange={handleNumericChange("parkings")}
                       name="parkings"
-                      label="Estacionamientos"
+                      allowNegative={false}
+                      customInput={TextField}
+                      label="Estacionamiento"
                       variant="standard"
-                      value={property.parkings}
-                      onChange={handleChange}
-                      type="number"
                     />
                   </div>
                   <div className="col-span-2 md:col-span-3 lg:col-span-3">
-                    <span class="text-pink-700">Address</span>
-                    {/* <input
-                      type="text"
-                      class="mt-0 block w-full px-0.5 border-0 border-b-2 border-pink-600 focus:ring-0 focus:border-black"
-                      alue={property.address}
-                      onChange={(ev) =>
-                        setProperty({ ...property, address: ev.target.value })
-                      }
-                      placeholder="address"
-                    /> */}
+
                     <TextField
                       id="address"
                       name="address"
                       label="Dirección"
                       variant="standard"
                       value={property.address}
-                      onChange={handleChange}
+                      onChange={handleTextChange}
+                    />
+                  </div>
+                  <div className="col-span-2 md:col-span-3 lg:col-span-3">
+
+                    <TextField
+                      id="moodsBuy"
+                      name="moodsBuy"
+                      label="MoodsBuy"
+                      variant="standard"
+                      value={property.moodsBuy}
+                      onChange={handleTextChange}
+                    />
+                  </div>
+                  <div className="col-span-2 md:col-span-3 lg:col-span-3">
+
+                    <TextField
+                      id="typeMode"
+                      name="typeMode"
+                      label="typeMode"
+                      variant="standard"
+                      value={property.typeMode}
+                      onChange={handleTextChange}
+                    />
+                  </div>
+                  <div className="col-span-2 md:col-span-3 lg:col-span-3">
+
+                    <TextField
+                      id="type"
+                      name="type"
+                      label="type"
+                      variant="standard"
+                      value={property.type}
+                      onChange={handleTextChange}
                     />
                   </div>
                   <div className="col-span-1 md:col-span-2 lg:col-span-2">
-                    <span class="text-pink-700">Price</span>
-                    <input
-                      type="number"
-                      class="mt-0 block w-full px-0.5 border-0 border-b-2 border-pink-600 focus:ring-0 focus:border-black"
-                      value={property.price}
-                      onChange={(ev) =>
-                        setProperty({ ...property, price: ev.target.value })
-                      }
-                      placeholder="price"
-                    />
+
                     <NumericFormat
-                      value={values.numberformat}
-                      onChange={handleChange}
+                      value={property.price}
+                      onValueChange={handleNumericChange("price")}
                       customInput={TextField}
                       thousandSeparator
                       valueIsNumericString
                       prefix="$"
+                      name="price"
                       variant="standard"
-                      label="react-number-format"
+                      label="Precio"
                     />
                   </div>
                   <div className="col-span-1 md:col-span-2 lg:col-span-2">
-                    <span class="text-pink-700">Disccount</span>
-                    <input
-                      type="number"
-                      class="mt-0 block w-full px-0.5 border-0 border-b-2 border-pink-600 focus:ring-0 focus:border-black"
+                    <NumericFormat
                       value={property.discount}
-                      onChange={(ev) =>
-                        setProperty({ ...property, discount: ev.target.value })
-                      }
-                      placeholder="discount"
+                      onValueChange={handleNumericChange("discount")}
+                      customInput={TextField}
+                      thousandSeparator
+                      valueIsNumericString
+                      name="discount"
+                      prefix="$"
+                      variant="standard"
+                      label="Descuento"
                     />
                   </div>
                   <div className="col-span-1 md:col-span-1 lg:col-span-1">
-                    <span class="text-pink-700">Length</span>
-                    <input
-                      type="number"
-                      class="mt-0 block w-full px-0.5 border-0 border-b-2 border-pink-600 focus:ring-0 focus:border-black"
+
+                    <NumericFormat
                       value={property.sizeLength}
-                      onChange={(ev) =>
-                        setProperty({
-                          ...property,
-                          sizeLength: ev.target.value,
-                        })
-                      }
-                      placeholder="sizeLength"
+                      onValueChange={handleNumericChange("sizeLength")}
+                      customInput={TextField}
+                      thousandSeparator
+                      name="sizeLength"
+                      suffix=" m²"
+                      label="Largo (m²)"
+                      variant="standard"
                     />
                   </div>
                   <div className="col-span-1 md:col-span-1 lg:col-span-1">
-                    <span class="text-pink-700">Width</span>
-                    <input
-                      type="number"
-                      class="mt-0 block w-full px-0.5 border-0 border-b-2 border-pink-600 focus:ring-0 focus:border-black"
+
+                    <NumericFormat
                       value={property.sizeWidth}
-                      onChange={(ev) =>
-                        setProperty({ ...property, sizeWidth: ev.target.value })
-                      }
-                      placeholder="sizeWidth"
+                      onValueChange={handleNumericChange("sizeWidth")}
+                      customInput={TextField}
+                      thousandSeparator
+                      suffix=" m²"
+                      label="Ancho (m²)"
+                      name="sizeWidth"
+                      variant="standard"
                     />
                   </div>
                   <div className="col-span-1 md:col-span-1 lg:col-span-1">
-                    <span class="text-pink-700">Level</span>
-                    <input
-                      type="number"
-                      class="mt-0 block w-full px-0.5 border-0 border-b-2 border-pink-600 focus:ring-0 focus:border-black"
-                      value={property.level}
-                      onChange={(ev) =>
-                        setProperty({ ...property, level: ev.target.value })
-                      }
-                      placeholder="level"
+
+                    <NumericFormat
+                      value={property.level || ''}
+                      onValueChange={handleNumericChange("level")}
+                      name="level"
+                      allowNegative={false}
+                      customInput={TextField}
+                      label="Nivel"
+                      variant="standard"
                     />
                   </div>
                   <div className="col-span-1 md:col-span-1 lg:col-span-1">
-                    <span class="text-pink-700">Floors</span>
-                    <input
-                      type="number"
-                      class="mt-0 block w-full px-0.5 border-0 border-b-2 border-pink-600 focus:ring-0 focus:border-black"
-                      value={property.floors}
-                      onChange={(ev) =>
-                        setProperty({ ...property, floors: ev.target.value })
-                      }
-                      placeholder="floors"
+
+                    <NumericFormat
+                      value={property.floors || ''}
+                      onValueChange={handleNumericChange("floors")}
+                      name="floors"
+                      allowNegative={false}
+                      customInput={TextField}
+                      label="Pisos"
+                      variant="standard"
                     />
                   </div>
                   <div className="lg:col-span-3">
                     <button className="border border-green-600 text-green-600 py-2 px-4 hover:bg-green-600 hover:text-white transition-colors">
-                      Save
+                      Guardar
                     </button>
                   </div>
                 </div>

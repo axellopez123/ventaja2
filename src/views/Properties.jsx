@@ -92,13 +92,13 @@ export default function Properties() {
 
             </div> */}
             <div style={{ height: '600px', position: 'relative' }}>
-  {/* <Grid 
+  <Grid 
     items={properties}
     radius={300}
     damping={0.45}
     fadeOut={0.6}
     ease="power3.out"
-  /> */}
+  />
 </div>
         </div>
     )
