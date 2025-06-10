@@ -6,6 +6,13 @@ import { useStateContext } from "../contexts/ContextProvider";
 import { useDropzone } from "react-dropzone";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { v4 as uuidv4 } from "uuid";
+import Box from '@mui/material/Box';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import StepContent from '@mui/material/StepContent';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 
 import {
   RiCloseCircleLine,
@@ -53,6 +60,7 @@ export default function PropertyForm() {
   const navigate = useNavigate();
   const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/`;
   const [loading, setLoading] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
   const [errors, setErrors] = useState(null);
   const { setNotification } = useStateContext();
   const [image, setImage] = useState(null);
@@ -86,17 +94,123 @@ export default function PropertyForm() {
     status: undefined,
   });
 
-  const normalizeImage = (file) => ({
+  console.log(images);
+  console.log(property);
+  console.log(id);
+  const handleSubmitStep1 = async (ev) => {
+    
+    
+    ev.preventDefault();
+
+    if (activeStep === 0) {
+      if (id) {
+        // 🔁 ACTUALIZAR propiedad
+        try {
+          await axiosClient.put(`/products/${property.id}`, property);
+
+        } catch (err) {
+          const response = err.response;
+          if (response?.status === 403 || response?.status === 422) {
+            setErrors(response.data.errors);
+          }
+        }
+      } else {
+        // Validación básica
+        if (!property.name || !property.bedrooms) {
+          alert("Completa todos los campos antes de continuar.");
+          return;
+        }
+        // if (!property.id) {
+        //   alert("Debes completar el paso 1 antes de continuar.");
+        //   return;
+        // }
+
+        try {
+          setLoading(true);
+          const res = await axiosClient.post(`/products`, property);
+          // setPropertyId(res.data.id);
+          const created = res.data;
+
+
+          setProperty((prev) => ({
+            ...prev,
+            id: created.id,
+          }));
+          setActiveStep(1);
+        } catch (err) {
+          console.error("Error al crear propiedad:", err);
+          alert("No se pudo crear la propiedad.");
+        } finally {
+          setLoading(false);
+        }
+      }
+    }
+  }
+
+
+
+  const handleNext = async () => {
+
+
+    if (activeStep === 0) {
+      // Validación básica
+      if (!property.name || !property.bedrooms) {
+        alert("Completa todos los campos antes de continuar.");
+        return;
+      }
+      // if (!property.id) {
+      //   alert("Debes completar el paso 1 antes de continuar.");
+      //   return;
+      // }
+
+      try {
+        setLoading(true);
+        const res = await axiosClient.post("/properties", formData);
+        // setPropertyId(res.data.id);
+        const created = res.data;
+
+        setProperty((prev) => ({
+          ...prev,
+          id: created.id,
+        }));
+        setActiveStep(1);
+      } catch (err) {
+        console.error("Error al crear propiedad:", err);
+        alert("No se pudo crear la propiedad.");
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setActiveStep((prevStep) => prevStep + 1);
+    }
+
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleReset = () => {
+    setActiveStep(0);
+  };
+
+  const normalizeImage = (file, order) => ({
     id: uuidv4(),
     name: file.name,
     preview: URL.createObjectURL(file),
     file,
+    order,
   });
 
   const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles?.length) {
-      const normalized = acceptedFiles.map(normalizeImage);
-      setImages((prev) => [...prev, ...normalized]);
+      setImages((prevImages) => {
+        const startOrder = prevImages.length;
+        const normalized = acceptedFiles.map((file, index) =>
+          normalizeImage(file, startOrder + index)
+        );
+        return [...prevImages, ...normalized];
+      });
     }
   }, []);
 
@@ -142,32 +256,32 @@ export default function PropertyForm() {
       nextRef?.current?.focus();
     }
   };
-const saveImageOrder = async (productId, images, coverIndex) => {
-  try {
-    const body = {
-      order: images.map((img, index) => ({
-        id: img.id,
-        order: index,
-        is_cover: index === coverIndex,
-      })),
-    };
+  const saveImageOrder = async (productId, images, coverIndex) => {
+    try {
+      const body = {
+        order: images.map((img, index) => ({
+          id: img.id,
+          order: index,
+          is_cover: index === coverIndex,
+        })),
+      };
 
-    const response = await axiosClient.put(
-      `/products/${productId}/images/reorder`,
-      body
-    );
+      const response = await axiosClient.put(
+        `/products/${productId}/images/reorder`,
+        body
+      );
 
-    console.log("Orden actualizado correctamente", response.data);
-    return response.data;
-  } catch (error) {
-    if (error.response) {
-      console.error("Error del servidor:", error.response.data);
-    } else {
-      console.error("Error de red o desconocido:", error.message);
+      console.log("Orden actualizado correctamente", response.data);
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        console.error("Error del servidor:", error.response.data);
+      } else {
+        console.error("Error de red o desconocido:", error.message);
+      }
+      throw error; // Re-lanza si quieres manejarlo más arriba
     }
-    throw error; // Re-lanza si quieres manejarlo más arriba
-  }
-};
+  };
   const onDragEnd = (result) => {
     if (!result.destination) return;
     const reordered = Array.from(images);
@@ -313,7 +427,7 @@ const saveImageOrder = async (productId, images, coverIndex) => {
     if (property.id) {
       // 🔁 ACTUALIZAR propiedad
       try {
-        await axiosClient.put(`/properties/${property.id}`, property);
+        await axiosClient.put(`/products/${property.id}`, property);
 
         // 🆕 Subir imágenes nuevas
         const newImages = images.filter((img) => img.file);
@@ -439,6 +553,88 @@ const saveImageOrder = async (productId, images, coverIndex) => {
     }
   };
 
+  const steps = [
+    {
+      label: 'Datos principales',
+      content: <div><form onSubmit={handleSubmitStep1}>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-16">
+
+          <div className="col-span-2 md:col-span-4 lg:col-span-4">
+            <TextField
+              id="name"
+              name="name"
+              label="Aliás"
+              variant="standard"
+              value={property.name}
+              onChange={handleTextChange}
+              fullWidth
+            />
+          </div>
+          <div className="col-span-2 md:col-span-2 lg:col-span-2">
+            <NumericFormat
+              value={property.bedrooms || ""}
+              onValueChange={handleNumericChange("bedrooms")}
+              name="bedrooms"
+              allowNegative={false}
+              customInput={TextField}
+              label="Habitaciones"
+              variant="standard"
+              fullWidth
+            />
+          </div>
+          <div className="col-span-2 md:col-span-2 lg:col-span-2">
+            <NumericFormat
+              value={property.bathrooms || ""}
+              onValueChange={handleNumericChange("bathrooms")}
+              name="bathrooms"
+              allowNegative={false}
+              decimalScale={1}
+              fixedDecimalScale={true}
+              customInput={TextField}
+              label="Baños"
+              variant="standard"
+              fullWidth
+            />
+          </div>
+          <div className="col-span-2 md:col-span-2 lg:col-span-2">
+            <NumericFormat
+              value={property.cleanrooms || ""}
+              onValueChange={handleNumericChange("cleanrooms")}
+              name="cleanrooms"
+              allowNegative={false}
+              customInput={TextField}
+              label="Cuarto de servicio"
+              variant="standard"
+              fullWidth
+            />
+          </div>
+          <div className="col-span-2 md:col-span-2 lg:col-span-2">
+            <NumericFormat
+              value={property.parkings || ""}
+              onValueChange={handleNumericChange("parkings")}
+              name="parkings"
+              allowNegative={false}
+              customInput={TextField}
+              label="Estacionamiento"
+              variant="standard"
+              fullWidth
+            />
+          </div>
+        </div>
+      </form></div>,
+    },
+    {
+      label: 'Mas datos',
+      content: <div><p>Hola</p></div>,
+
+    },
+    {
+      label: 'Imagenes',
+      content: <div><p>Hola</p></div>,
+
+    },
+  ];
+
   return (
     <div>
       {/* {property?.id && (
@@ -484,6 +680,43 @@ const saveImageOrder = async (productId, images, coverIndex) => {
             <div className="col-span-1 row-span-1 m-12"></div>
             {/* ----------------------------------- */}
             <div className="col-span-1 row-span-1">
+              <Box sx={{ maxWidth: 400 }}>
+                <Stepper activeStep={activeStep} orientation="vertical">
+                  {steps.map((step, index) => (
+                    <Step key={step.label}>
+                      <StepLabel
+                        optional={
+                          index === steps.length - 1 ? (
+                            <Typography variant="caption">Last step</Typography>
+                          ) : null
+                        }
+                      >
+                        {step.label}
+                      </StepLabel>
+                      <StepContent>
+                        <Box>{step.content}</Box>
+                        <Box sx={{ mb: 2 }}>
+                          <Button
+                            variant="contained"
+                            onClick={handleNext}
+                            sx={{ mt: 1, mr: 1 }}
+                          >
+                            {index === steps.length - 1 ? 'Finish' : 'Continue'}
+                          </Button>
+                          <Button
+                            disabled={index === 0}
+                            onClick={handleBack}
+                            sx={{ mt: 1, mr: 1 }}
+                          >
+                            Back
+                          </Button>
+                        </Box>
+                      </StepContent>
+                    </Step>
+                  ))}
+                </Stepper>
+              </Box>
+
               <form onSubmit={onSubmit}>
                 {/* <div>
                             <input type="file" onChange={ev => setImage(ev.target.files[0])}/>
@@ -583,14 +816,14 @@ const saveImageOrder = async (productId, images, coverIndex) => {
                                     ref={provided.innerRef}
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
-                                    className={`relative w-24 h-24 rounded overflow-hidden border-4 ${
-                                      index === coverIndex
-                                        ? "border-blue-500"
-                                        : "border-gray-300"
-                                    }`}
+                                    className={`relative w-24 h-24 rounded overflow-hidden border-4 ${index === coverIndex
+                                      ? "border-blue-500"
+                                      : "border-gray-300"
+                                      }`}
                                   >
                                     <img
-                                      src={`${baseUrl}${img.url}`}
+                                      // src={`${baseUrl}${img.url}`}
+                                      src={img.url ? `${baseUrl}${img.url}` : img.preview} // Si tiene URL, usa esa; si no, la previsualización
                                       // src={img.preview}
                                       // onMouseDown={(e) => e.stopPropagation()} // evita conflicto con drag
                                       alt="preview"
@@ -624,7 +857,7 @@ const saveImageOrder = async (productId, images, coverIndex) => {
                   </DragDropContext>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-16">
                   <input
                     type="file"
                     multiple
@@ -640,9 +873,10 @@ const saveImageOrder = async (productId, images, coverIndex) => {
                       variant="standard"
                       value={property.name}
                       onChange={handleTextChange}
+                      fullWidth
                     />
                   </div>
-                  <div className="col-span-1 md:col-span-1 lg:col-span-1">
+                  <div className="col-span-2 md:col-span-2 lg:col-span-2">
                     <NumericFormat
                       value={property.bedrooms || ""}
                       onValueChange={handleNumericChange("bedrooms")}
@@ -651,9 +885,10 @@ const saveImageOrder = async (productId, images, coverIndex) => {
                       customInput={TextField}
                       label="Habitaciones"
                       variant="standard"
+                      fullWidth
                     />
                   </div>
-                  <div className="col-span-1 md:col-span-1 lg:col-span-1">
+                  <div className="col-span-2 md:col-span-2 lg:col-span-2">
                     <NumericFormat
                       value={property.bathrooms || ""}
                       onValueChange={handleNumericChange("bathrooms")}
@@ -664,9 +899,10 @@ const saveImageOrder = async (productId, images, coverIndex) => {
                       customInput={TextField}
                       label="Baños"
                       variant="standard"
+                      fullWidth
                     />
                   </div>
-                  <div className="col-span-1 md:col-span-1 lg:col-span-1">
+                  <div className="col-span-2 md:col-span-2 lg:col-span-2">
                     <NumericFormat
                       value={property.cleanrooms || ""}
                       onValueChange={handleNumericChange("cleanrooms")}
@@ -675,9 +911,10 @@ const saveImageOrder = async (productId, images, coverIndex) => {
                       customInput={TextField}
                       label="Cuarto de servicio"
                       variant="standard"
+                      fullWidth
                     />
                   </div>
-                  <div className="col-span-1 md:col-span-1 lg:col-span-1">
+                  <div className="col-span-2 md:col-span-2 lg:col-span-2">
                     <NumericFormat
                       value={property.parkings || ""}
                       onValueChange={handleNumericChange("parkings")}
@@ -686,6 +923,7 @@ const saveImageOrder = async (productId, images, coverIndex) => {
                       customInput={TextField}
                       label="Estacionamiento"
                       variant="standard"
+                      fullWidth
                     />
                   </div>
                   <div className="col-span-2 md:col-span-3 lg:col-span-3">
@@ -696,6 +934,7 @@ const saveImageOrder = async (productId, images, coverIndex) => {
                       variant="standard"
                       value={property.address}
                       onChange={handleTextChange}
+                      fullWidth
                     />
                   </div>
                   <div className="col-span-2 md:col-span-3 lg:col-span-3">
