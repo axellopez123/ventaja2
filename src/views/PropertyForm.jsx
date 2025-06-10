@@ -18,7 +18,7 @@ import { BiSolidWasher } from "react-icons/bi";
 import { SiGooglemaps } from "react-icons/si";
 import { IoCameraOutline, IoClose } from "react-icons/io5";
 import TextField from "@mui/material/TextField";
-import { NumericFormat } from 'react-number-format';
+import { NumericFormat } from "react-number-format";
 
 const baseStyle = {
   flex: 1,
@@ -51,7 +51,7 @@ const rejectStyle = {
 export default function PropertyForm() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/storage/`;
+  const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/`;
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState(null);
   const { setNotification } = useStateContext();
@@ -101,12 +101,12 @@ export default function PropertyForm() {
   }, []);
 
   const removeImage = (index) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
+    setImages((prev) => prev.filter((_, i) => i !== index));
     // Ajustar el índice de la portada si es necesario
     if (coverIndex === index) {
       setCoverIndex(0);
     } else if (coverIndex > index) {
-      setCoverIndex(prev => prev - 1);
+      setCoverIndex((prev) => prev - 1);
     }
   };
   // const onDrop = useCallback((acceptedFiles) => {
@@ -116,7 +116,7 @@ export default function PropertyForm() {
   //       ...acceptedFiles.map((image) =>
   //         Object.assign(image, {id: uuidv4(),preview: URL.createObjectURL(image) })
   //       ),
-  //     ]);      
+  //     ]);
   //   }
   // }, []);
 
@@ -132,17 +132,42 @@ export default function PropertyForm() {
   const handleNumericChange = (name) => (values) => {
     setProperty((prev) => ({
       ...prev,
-      [name]: values.floatValue ?? '',
+      [name]: values.floatValue ?? "",
     }));
   };
 
   const handleKeyDown = (e, nextRef) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       nextRef?.current?.focus();
     }
   };
+const saveImageOrder = async (productId, images, coverIndex) => {
+  try {
+    const body = {
+      order: images.map((img, index) => ({
+        id: img.id,
+        order: index,
+        is_cover: index === coverIndex,
+      })),
+    };
 
+    const response = await axiosClient.put(
+      `/products/${productId}/images/reorder`,
+      body
+    );
+
+    console.log("Orden actualizado correctamente", response.data);
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error("Error del servidor:", error.response.data);
+    } else {
+      console.error("Error de red o desconocido:", error.message);
+    }
+    throw error; // Re-lanza si quieres manejarlo más arriba
+  }
+};
   const onDragEnd = (result) => {
     if (!result.destination) return;
     const reordered = Array.from(images);
@@ -164,10 +189,11 @@ export default function PropertyForm() {
     ) {
       setCoverIndex((prev) => prev + 1);
     }
-    console.log(images);
-    
+    const allImagesHaveId = reordered.every((img) => img.id);
+    if (allImagesHaveId) {
+      saveImageOrder(id, reordered, coverIndex);
+    }
   };
-
 
   const {
     getRootProps,
@@ -195,40 +221,68 @@ export default function PropertyForm() {
     }),
     [isFocused, isDragAccept, isDragReject]
   );
+  useEffect(() => {
+    if (!id) return; // modo “crear”, sin fetch
 
-  if (id) {
-    useEffect(() => {
-      setLoading(true);
-      axiosClient
-        .get(`/properties/${id}`)
-        .then(({ data }) => {
-          setLoading(false);
-          setProperty(data.data);
-        })
-        .catch(() => {
-          setLoading(false);
-        });
-      setShowShinner(true);
-      axiosClient
-        .get(`/imagesNames/${id}`)
-        .then((res) => {
-          setFiles(res.data);
-          var main = files.find((e) => e.main == true);
-          if (main) {
-            setImagePreview(`${baseUrl}${main.preview}`);
-          } else {
-            setImagePreview(`${baseUrl}${files[0].preview}`);
-          }
-          console.log(files);
-        })
-        .catch((err) => {
-          const response = err.response;
-          if (response && response.status === 422) {
-            setErrors(response.data.errors);
-          }
-        });
-    }, []);
-  }
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        // 1) producto
+        const { data: prod } = await axiosClient.get(`/products/${id}`);
+        setProperty(prod);
+
+        // // 2) imágenes
+        // const { data: imgs } = await axiosClient.get(`/imagesNames/${id}`);
+        setImages(prod.images); // ya son { id, preview, main }
+
+        // // opcional: portada
+        const coverIdx = images.findIndex((i) => i.main);
+        if (coverIdx !== -1) setCoverIndex(coverIdx);
+      } catch (err) {
+        console.error(err);
+        setErrors(err.response?.data);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+  // if (id) {
+  //   useEffect(() => {
+  //     setLoading(true);
+  //     axiosClient
+  //       .get(`/products/${id}`)
+  //       .then(({ data }) => {
+  //         setLoading(false);
+  //         setProperty(data.data);
+  //       })
+  //       .catch(() => {
+  //         setLoading(false);
+  //       });
+  //     setShowShinner(true);
+  //     // axiosClient
+  //     //   .get(`/imagesNames/${id}`)
+  //     //   .then((res) => {
+  //     //     setFiles(res.data);
+  //     //     var main = files.find((e) => e.main == true);
+  //     //     if (main) {
+  //     //       setImagePreview(`${baseUrl}${main.preview}`);
+  //     //     } else {
+  //     //       setImagePreview(`${baseUrl}${files[0].preview}`);
+  //     //     }
+  //     //     console.log(files);
+  //     //   })
+  //     //   .catch((err) => {
+  //     //     const response = err.response;
+  //     //     if (response && response.status === 422) {
+  //     //       setErrors(response.data.errors);
+  //     //     }
+  //     //   });
+  //   }, [id]);
+  // }
 
   const uploadImage = (id, file) => {
     const data = new FormData();
@@ -254,6 +308,74 @@ export default function PropertyForm() {
   };
 
   const onSubmit = async (ev) => {
+    ev.preventDefault();
+
+    if (property.id) {
+      // 🔁 ACTUALIZAR propiedad
+      try {
+        await axiosClient.put(`/properties/${property.id}`, property);
+
+        // 🆕 Subir imágenes nuevas
+        const newImages = images.filter((img) => img.file);
+        if (newImages.length > 0) {
+          const formData = new FormData();
+          newImages.forEach((img) => {
+            formData.append("files", img.file);
+          });
+          formData.append("cover_index", coverIndex);
+          await axiosClient.post(`/products/${property.id}/images`, formData);
+        }
+
+        // 🔃 Reordenar imágenes si todas tienen ID
+        const existingImages = images.filter((img) => img.id);
+        if (existingImages.length === images.length) {
+          const body = {
+            order: images.map((img, index) => ({
+              id: img.id,
+              order: index,
+              is_cover: index === coverIndex,
+            })),
+          };
+          await axiosClient.put(
+            `/products/${property.id}/images/reorder`,
+            body
+          );
+        }
+
+        setNotification("Property was successfully updated");
+        navigate("/properties");
+      } catch (err) {
+        const response = err.response;
+        if (response?.status === 403 || response?.status === 422) {
+          setErrors(response.data.errors);
+        }
+      }
+    } else {
+      // ➕ CREAR propiedad
+      try {
+        const prop = await axiosClient.post(`/products`, property);
+
+        const formData = new FormData();
+        images.forEach((img) => {
+          formData.append("files", img.file); // solo nuevos
+        });
+        formData.append("cover_index", coverIndex);
+        formData.append("order", JSON.stringify(images.map((_, idx) => idx)));
+
+        await axiosClient.post(`/products/${prop.data.id}/images`, formData);
+
+        setNotification("Property was successfully created");
+        navigate("/properties");
+      } catch (err) {
+        const response = err.response;
+        if (response?.status === 422) {
+          setErrors(response.data.errors);
+        }
+      }
+    }
+  };
+
+  const onSubmit2 = async (ev) => {
     ev.preventDefault();
 
     if (property.id) {
@@ -290,6 +412,7 @@ export default function PropertyForm() {
       axiosClient
         .post(`/products`, property)
         .then((prop) => {
+          console.log(prop);
           const formData = new FormData();
           images.forEach((img, index) => {
             formData.append("files", img);
@@ -297,7 +420,7 @@ export default function PropertyForm() {
           formData.append("cover_index", coverIndex);
           formData.append("order", JSON.stringify(images.map((img) => img.id)));
 
-          axiosClient.post(`/api/products/${prop.id}/images`, formData);
+          axiosClient.post(`/products/${prop.data.id}/images`, formData);
 
           // filesSelected.map((file, index) => {
           //   uploadImage(prop.data.id, file);
@@ -318,12 +441,12 @@ export default function PropertyForm() {
 
   return (
     <div>
-      {property.id && (
+      {/* {property?.id && (
         <h2 className="text-xl text-gray-300">
           Update property: {property.name}
         </h2>
       )}
-      {!property.id && <h2 className="text-xl text-gray-300">New property</h2>}
+      {!property.id && <h2 className="text-xl text-gray-300">New property</h2>} */}
 
       <div>
         {loading && <div>Loading...</div>}
@@ -440,7 +563,6 @@ export default function PropertyForm() {
                 </div>
 
                 <div>
-
                   <DragDropContext onDragEnd={onDragEnd}>
                     <Droppable droppableId="images" direction="horizontal">
                       {(provided) => (
@@ -450,19 +572,26 @@ export default function PropertyForm() {
                           {...provided.droppableProps}
                         >
                           {images.map((img, index) => (
-                            <Draggable key={img.id} draggableId={String(img.id)} index={index}>
+                            <Draggable
+                              key={img.id}
+                              draggableId={String(img.id)}
+                              index={index}
+                            >
                               {(provided) => {
                                 return (
-
                                   <div
                                     ref={provided.innerRef}
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
-                                    className={`relative w-24 h-24 rounded overflow-hidden border-4 ${index === coverIndex ? 'border-blue-500' : 'border-gray-300'
-                                      }`}
+                                    className={`relative w-24 h-24 rounded overflow-hidden border-4 ${
+                                      index === coverIndex
+                                        ? "border-blue-500"
+                                        : "border-gray-300"
+                                    }`}
                                   >
                                     <img
-                                      src={img.preview}
+                                      src={`${baseUrl}${img.url}`}
+                                      // src={img.preview}
                                       // onMouseDown={(e) => e.stopPropagation()} // evita conflicto con drag
                                       alt="preview"
                                       className="w-full h-full object-cover"
@@ -472,8 +601,7 @@ export default function PropertyForm() {
                                       onClick={() => {
                                         // e.stopPropagation();
                                         removeImage(index);
-                                      }
-                                      }
+                                      }}
                                       className="absolute top-0 right-0 p-1 bg-white rounded-bl-lg hover:bg-red-200"
                                       title="Eliminar"
                                     >
@@ -485,7 +613,7 @@ export default function PropertyForm() {
                                       </div>
                                     )}
                                   </div>
-                                )
+                                );
                               }}
                             </Draggable>
                           ))}
@@ -494,15 +622,17 @@ export default function PropertyForm() {
                       )}
                     </Droppable>
                   </DragDropContext>
-
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8">
-                  <input type="file" multiple accept="image/*" onChange={handleFileChange} />
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
 
                   <div className="col-span-2 md:col-span-4 lg:col-span-4">
-
-
                     <TextField
                       id="name"
                       name="name"
@@ -510,13 +640,11 @@ export default function PropertyForm() {
                       variant="standard"
                       value={property.name}
                       onChange={handleTextChange}
-
                     />
                   </div>
                   <div className="col-span-1 md:col-span-1 lg:col-span-1">
-
                     <NumericFormat
-                      value={property.bedrooms || ''}
+                      value={property.bedrooms || ""}
                       onValueChange={handleNumericChange("bedrooms")}
                       name="bedrooms"
                       allowNegative={false}
@@ -527,7 +655,7 @@ export default function PropertyForm() {
                   </div>
                   <div className="col-span-1 md:col-span-1 lg:col-span-1">
                     <NumericFormat
-                      value={property.bathrooms || ''}
+                      value={property.bathrooms || ""}
                       onValueChange={handleNumericChange("bathrooms")}
                       name="bathrooms"
                       allowNegative={false}
@@ -539,9 +667,8 @@ export default function PropertyForm() {
                     />
                   </div>
                   <div className="col-span-1 md:col-span-1 lg:col-span-1">
-
                     <NumericFormat
-                      value={property.cleanrooms || ''}
+                      value={property.cleanrooms || ""}
                       onValueChange={handleNumericChange("cleanrooms")}
                       name="cleanrooms"
                       allowNegative={false}
@@ -551,9 +678,8 @@ export default function PropertyForm() {
                     />
                   </div>
                   <div className="col-span-1 md:col-span-1 lg:col-span-1">
-
                     <NumericFormat
-                      value={property.parkings || ''}
+                      value={property.parkings || ""}
                       onValueChange={handleNumericChange("parkings")}
                       name="parkings"
                       allowNegative={false}
@@ -563,7 +689,6 @@ export default function PropertyForm() {
                     />
                   </div>
                   <div className="col-span-2 md:col-span-3 lg:col-span-3">
-
                     <TextField
                       id="address"
                       name="address"
@@ -574,7 +699,6 @@ export default function PropertyForm() {
                     />
                   </div>
                   <div className="col-span-2 md:col-span-3 lg:col-span-3">
-
                     <TextField
                       id="moodsBuy"
                       name="moodsBuy"
@@ -585,7 +709,6 @@ export default function PropertyForm() {
                     />
                   </div>
                   <div className="col-span-2 md:col-span-3 lg:col-span-3">
-
                     <TextField
                       id="typeMode"
                       name="typeMode"
@@ -596,7 +719,6 @@ export default function PropertyForm() {
                     />
                   </div>
                   <div className="col-span-2 md:col-span-3 lg:col-span-3">
-
                     <TextField
                       id="type"
                       name="type"
@@ -607,7 +729,6 @@ export default function PropertyForm() {
                     />
                   </div>
                   <div className="col-span-1 md:col-span-2 lg:col-span-2">
-
                     <NumericFormat
                       value={property.price}
                       onValueChange={handleNumericChange("price")}
@@ -634,7 +755,6 @@ export default function PropertyForm() {
                     />
                   </div>
                   <div className="col-span-1 md:col-span-1 lg:col-span-1">
-
                     <NumericFormat
                       value={property.sizeLength}
                       onValueChange={handleNumericChange("sizeLength")}
@@ -647,7 +767,6 @@ export default function PropertyForm() {
                     />
                   </div>
                   <div className="col-span-1 md:col-span-1 lg:col-span-1">
-
                     <NumericFormat
                       value={property.sizeWidth}
                       onValueChange={handleNumericChange("sizeWidth")}
@@ -660,9 +779,8 @@ export default function PropertyForm() {
                     />
                   </div>
                   <div className="col-span-1 md:col-span-1 lg:col-span-1">
-
                     <NumericFormat
-                      value={property.level || ''}
+                      value={property.level || ""}
                       onValueChange={handleNumericChange("level")}
                       name="level"
                       allowNegative={false}
@@ -672,9 +790,8 @@ export default function PropertyForm() {
                     />
                   </div>
                   <div className="col-span-1 md:col-span-1 lg:col-span-1">
-
                     <NumericFormat
-                      value={property.floors || ''}
+                      value={property.floors || ""}
                       onValueChange={handleNumericChange("floors")}
                       name="floors"
                       allowNegative={false}
