@@ -15,7 +15,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
-import { RiArrowLeftLine, RiArrowRightLine  } from "react-icons/ri";
+import { RiArrowLeftLine, RiArrowRightLine } from "react-icons/ri";
 
 import {
   RiCloseCircleLine,
@@ -238,25 +238,6 @@ export default function PropertyForm() {
     setActiveStep(0);
   };
 
-  const normalizeImage = (file, order) => ({
-    id: uuidv4(),
-    name: file.name,
-    preview: URL.createObjectURL(file),
-    file,
-    order,
-  });
-
-  const onDrop2 = useCallback((acceptedFiles) => {
-    if (acceptedFiles?.length) {
-      setImages((prevImages) => {
-        const startOrder = prevImages.length;
-        const normalized = acceptedFiles.map((file, index) =>
-          normalizeImage(file, startOrder + index)
-        );
-        return [...prevImages, ...normalized];
-      });
-    }
-  }, []);
   const onDrop = useCallback(
     (acceptedFiles) => {
       if (!acceptedFiles?.length) return;
@@ -304,16 +285,16 @@ export default function PropertyForm() {
               prev.map((img) =>
                 img.id === tempId
                   ? {
-                      ...img,
-                      id: res.data.id,
-                      preview: res.data.preview,
-                      uploading: false,
-                      is_cover: res.data.is_cover,
-                    }
+                    ...img,
+                    id: res.data.id,
+                    preview: res.data.preview,
+                    uploading: false,
+                    is_cover: res.data.is_cover,
+                  }
                   : img
               )
             );
-console.log(images);
+            console.log(images);
 
           })
           .catch((err) => {
@@ -452,14 +433,17 @@ console.log(images);
     const fetchData = async () => {
       try {
         setLoading(true);
+        console.log(`Gei: ${id}`);
 
         // 1) producto
         const { data: prod } = await axiosClient.get(`/products/${id}`);
         setProperty(prod);
+        console.log(`Property: ${property}`);
 
         // // 2) imágenes
         // const { data: imgs } = await axiosClient.get(`/imagesNames/${id}`);
         setImages(prod.images); // ya son { id, preview, main }
+        console.log(`Images: ${images.length}`);
 
         // // opcional: portada
         const coverIdx = images.findIndex((i) => i.main);
@@ -665,10 +649,11 @@ console.log(images);
   };
 
   const imageGalleryItems = images.map((img) => ({
-  original: `${baseUrl}${img.preview}`,
-  thumbnail: `${baseUrl}${img.thumbnail}`,
-}));
+    original: `${baseUrl}${img.preview}`,
+    thumbnail: `${baseUrl}${img.thumbnail}`,
+  }));
   const shouldShowDropZone = isDragActive || images.length === 0;
+  console.log(imageGalleryItems);
 
   const steps = [
     {
@@ -851,164 +836,182 @@ console.log(images);
       label: "Imagenes",
       content: (
         <div>
-<div className="max-w-4xl mx-auto px-1 py-4">
-  <div className="relative w-full h-[400px] rounded-2xl shadow-xl overflow-hidden bg-black flex items-center justify-center">
-            {isDraggingOverWindow || images.length === 0 ? (
-              <div>
-            <div {...getRootProps({ style })}>
-              <input {...getInputProps()} />
-              {isDragActive ? (
-                <p className="text-white">Suelta aqui tus imagenes...</p>
+          <div className="max-w-4xl mx-auto px-1 py-4">
+            <div className="relative w-full h-[400px] rounded-2xl shadow-xl overflow-hidden bg-black flex items-center justify-center">
+              {isDraggingOverWindow || images.length === 0 ? (
+                <div>
+                  <div {...getRootProps({ style })}>
+                    <input {...getInputProps()} />
+                    {isDragActive ? (
+                      <p className="text-white">Suelta aqui tus imagenes...</p>
+                    ) : (
+                      <div className="grid grid-cols-12">
+                        <div className="col-span-2">
+                          <IoCameraOutline className="text-3xl" />
+                        </div>
+                        <div className="col-span-10">
+                          <p className="text-white">Selecciona o arrastra tus fotos</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               ) : (
-                <div className="grid grid-cols-12">
-                  <div className="col-span-2">
-                    <IoCameraOutline className="text-3xl" />
-                  </div>
-                  <div className="col-span-10">
-                    <p className="text-white">Selecciona o arrastra tus fotos</p>
-                  </div>
+                <div>
+                  <ImageGallery
+                    items={imageGalleryItems}
+                    showThumbnails={false}
+                    showBullets={true}
+                    showFullscreenButton={false}
+                    showPlayButton={false}
+                    renderLeftNav={(onClick, disabled) => (
+                      <button
+                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full shadow p-2 z-20 hover:bg-gray-100 disabled:opacity-30"
+                        onClick={onClick}
+                        disabled={disabled}
+                      >
+                        <RiArrowLeftLine className="w-6 h-6 text-gray-800" />
+                      </button>
+                    )}
+                    renderRightNav={(onClick, disabled) => (
+                      <button
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full shadow p-2 z-20 hover:bg-gray-100 disabled:opacity-30"
+                        onClick={onClick}
+                        disabled={disabled}
+                      >
+                        <RiArrowRightLine className="w-6 h-6 text-gray-800" />
+                      </button>
+                    )}
+                    renderBullet={(index, className, isSelected, onClick) => (
+                      <button
+                        key={index}
+                        className={`w-3 h-3 mx-1 rounded-full ${isSelected ? 'bg-blue-600' : 'bg-gray-400'
+                          }`}
+                        onClick={() => onClick(index)}
+                      />
+                    )}
+                  />
+
                 </div>
               )}
             </div>
-          </div>
-            ):(
               <div>
-                    <ImageGallery
-      items={imageGalleryItems}
-      showThumbnails={false}
-      showBullets={true}
-      showFullscreenButton={false}
-      showPlayButton={false}
-       renderLeftNav={(onClick, disabled) => (
-        <button
-          className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full shadow p-2 z-10 hover:bg-gray-100 disabled:opacity-30"
-          onClick={onClick}
-          disabled={disabled}
-        >
-          <RiArrowLeftLine  className="w-6 h-6 text-gray-800" />
-        </button>
-      )}
-      renderRightNav={(onClick, disabled) => (
-        <button
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full shadow p-2 z-10 hover:bg-gray-100 disabled:opacity-30"
-          onClick={onClick}
-          disabled={disabled}
-        >
-          <RiArrowRightLine  className="w-6 h-6 text-gray-800" />
-        </button>
-      )}
-      renderBullet={(index, className, isSelected, onClick) => (
-        <button
-          key={index}
-          className={`w-3 h-3 mx-1 rounded-full ${
-            isSelected ? 'bg-blue-600' : 'bg-gray-400'
-          }`}
-          onClick={() => onClick(index)}
-        />
-      )}
-    />
-    <div>
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="images" direction="horizontal">
-                {(provided) => (
-                  <div
-                    className="flex overflow-auto gap-4 mt-4 pb-2"
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                  >
-                    {images.map((img, index) => (
-                      <Draggable
-                        key={img.id}
-                        draggableId={String(img.id)}
-                        index={index}
-                      >
-                        {(provided) => {
-                          return (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              className={`relative w-24 h-24 rounded overflow-hidden border-4 ${
-                                index === coverIndex
-                                  ? "border-blue-500"
-                                  : "border-gray-300"
-                              }`}
-                            >
-                              <img
-                                // src={`${baseUrl}${img.url}`}
-                                src={
-                                  `${baseUrl}${img.preview}`
-                                } // Si tiene URL, usa esa; si no, la previsualización
-                                // src={img.preview}
-                                // onMouseDown={(e) => e.stopPropagation()} // evita conflicto con drag
-                                alt="preview"
-                                className="w-full h-full object-cover"
-                                onClick={() => setCoverIndex(index)}
-                              />
-                              <button
-                                onClick={() => {
-                                  // e.stopPropagation();
-                                  removeImage(index);
-                                }}
-                                className="absolute top-0 right-0 p-1 bg-white rounded-bl-lg hover:bg-red-200"
-                                title="Eliminar"
-                              >
-                                <IoClose className="text-red-500" />
-                              </button>
-                              {index === coverIndex && (
-                                <div className="absolute bottom-0 left-0 bg-blue-600 text-white text-xs px-1 rounded-tr">
-                                  Portada
-                                </div>
-                              )}
-                            </div>
-                          );
-                        }}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
+
+<DragDropContext onDragEnd={onDragEnd}>
+  <Droppable droppableId="images" direction="horizontal">
+    {(provided) => (
+      <div
+        className="grid grid-flow-col auto-cols-[minmax(80px,_1fr)] gap-4 mt-4 pb-2 overflow-x-auto"
+        ref={provided.innerRef}
+        {...provided.droppableProps}
+      >
+        {images.map((img, index) => (
+          <Draggable key={img.id} draggableId={String(img.id)} index={index}>
+            {(provided) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
+                className={`relative aspect-square rounded overflow-hidden border-4 ${
+                  index === coverIndex ? "border-blue-500" : "border-gray-300"
+                }`}
+              >
+                <img
+                  src={`${baseUrl}${img.preview || img.url}`}
+                  alt="preview"
+                  className="w-full h-full object-cover"
+                  onClick={() => setCoverIndex(index)}
+                />
+                <button
+                  onClick={() => removeImage(index)}
+                  className="absolute top-0 right-0 p-1 bg-white rounded-bl-lg hover:bg-red-200"
+                  title="Eliminar"
+                >
+                  <IoClose className="text-red-500" />
+                </button>
+                {index === coverIndex && (
+                  <div className="absolute bottom-0 left-0 bg-blue-600 text-white text-xs px-1 rounded-tr">
+                    Portada
                   </div>
                 )}
-              </Droppable>
-            </DragDropContext>
-          </div>
               </div>
             )}
-    {/* <ImageGallery
-      items={imageGalleryItems}
-      showThumbnails={false}
-      showBullets={true}
-      showFullscreenButton={false}
-      showPlayButton={false}
-       renderLeftNav={(onClick, disabled) => (
-        <button
-          className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full shadow p-2 z-10 hover:bg-gray-100 disabled:opacity-30"
-          onClick={onClick}
-          disabled={disabled}
-        >
-          <RiArrowLeftLine  className="w-6 h-6 text-gray-800" />
-        </button>
-      )}
-      renderRightNav={(onClick, disabled) => (
-        <button
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white rounded-full shadow p-2 z-10 hover:bg-gray-100 disabled:opacity-30"
-          onClick={onClick}
-          disabled={disabled}
-        >
-          <RiArrowRightLine  className="w-6 h-6 text-gray-800" />
-        </button>
-      )}
-      renderBullet={(index, className, isSelected, onClick) => (
-        <button
-          key={index}
-          className={`w-3 h-3 mx-1 rounded-full ${
-            isSelected ? 'bg-blue-600' : 'bg-gray-400'
-          }`}
-          onClick={() => onClick(index)}
-        />
-      )}
-    /> */}
-  </div>
-</div>
+          </Draggable>
+        ))}
+        {provided.placeholder}
+      </div>
+    )}
+  </Droppable>
+</DragDropContext>
+                <DragDropContext onDragEnd={onDragEnd}>
+                      <Droppable droppableId="images" direction="horizontal">
+                        {(provided) => (
+                          <div
+                            className="flex overflow-auto gap-4 mt-4 pb-2"
+                            ref={provided.innerRef}
+                            {...provided.droppableProps}
+                          >
+                            {images.map((img, index) => {
+                              // console.log(img);
+
+                              return (
+                                <Draggable
+                                  key={img.id}
+                                  draggableId={String(img.id)}
+                                  index={index}
+                                >
+                                  {(provided) => {
+                                    return (
+                                      <div
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                        className={`relative w-24 h-24 rounded overflow-hidden border-4 ${index === coverIndex
+                                            ? "border-blue-500"
+                                            : "border-gray-300"
+                                          }`}
+                                      >
+                                        <img
+                                          // src={`${baseUrl}${img.url}`}
+                                          src={
+                                            `${baseUrl}${img.preview}`
+                                          } // Si tiene URL, usa esa; si no, la previsualización
+                                          // src={img.preview}
+                                          // onMouseDown={(e) => e.stopPropagation()} // evita conflicto con drag
+                                          alt="preview"
+                                          className="w-full h-full object-cover"
+                                          onClick={() => setCoverIndex(index)}
+                                        />
+                                        <button
+                                          onClick={() => {
+                                            // e.stopPropagation();
+                                            removeImage(index);
+                                          }}
+                                          className="absolute top-0 right-0 p-1 bg-white rounded-bl-lg hover:bg-red-200"
+                                          title="Eliminar"
+                                        >
+                                          <IoClose className="text-red-500" />
+                                        </button>
+                                        {index === coverIndex && (
+                                          <div className="absolute bottom-0 left-0 bg-blue-600 text-white text-xs px-1 rounded-tr">
+                                            Portada
+                                          </div>
+                                        )}
+                                      </div>
+                                    );
+                                  }}
+                                </Draggable>
+                              )
+                            })}
+                            {provided.placeholder}
+                          </div>
+                        )}
+                      </Droppable>
+                    </DragDropContext>
+              </div>
+
+
+          </div>
           {/* <div>
             <div {...getRootProps({ style })}>
               <input {...getInputProps()} />
