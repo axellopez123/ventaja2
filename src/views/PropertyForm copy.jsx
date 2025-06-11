@@ -269,15 +269,13 @@ export default function PropertyForm() {
                   ? {
                       ...img,
                       id: res.data.id,
-                      preview: res.data.preview,
+                      url: res.data.url,
                       uploading: false,
                       is_cover: res.data.is_cover,
                     }
                   : img
               )
             );
-console.log(images);
-
           })
           .catch((err) => {
             console.error("Error al subir imagen", err);
@@ -968,6 +966,341 @@ console.log(images);
                   ))}
                 </Stepper>
               </Box>
+
+              <form onSubmit={onSubmit}>
+                {/* <div>
+                            <input type="file" onChange={ev => setImage(ev.target.files[0])}/>
+                        </div> */}
+                {/* OTRO METODO CHIdO  */}
+
+                <div>
+                  <img
+                    src={imagePreview}
+                    alt=""
+                    className="w-full h-64 rounded-lg border-4 border-double border-indigo-500/75 hover:border-indigo-300"
+                  />
+                </div>
+                <div className="relative">
+                  <img
+                    src={imagePreview}
+                    alt=""
+                    className="w-full h-64 rounded-lg border-4 border-double border-indigo-500/75 hover:border-indigo-300"
+                  />
+                  {showShinner && (
+                    <div className="absolute top-0 left-0 w-full h-full flex justify-start items-start">
+                      <div className="bg-green-600 opacity-50 text-white m-4 p-2 rounded-full hover:opacity-90">
+                        <RiSparkling2Fill className="text-4xl text-yellow-600" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <div class="mt-8 flex overflow-x-scroll gap-4">
+                    {files.map((file, index) => (
+                      <div>
+                        {/* <button onClick={removeFile(file.preview)}>X</button> */}
+                        <img
+                          src={`${baseUrl}${file.preview}`}
+                          alt=""
+                          onLoad={() => {
+                            URL.revokeObjectURL(file.preview);
+                          }}
+                          onClick={() => {
+                            setImagePreview(`${baseUrl}${file.preview}`);
+                          }}
+                          className="w-16 md:w-32 lg:w-48 rounded-lg border-4 border-double border-indigo-500/75 hover:border-indigo-300"
+                        />
+                      </div>
+                    ))}
+                    {filesSelected.map((file, index) => (
+                      <img
+                        src={file.preview}
+                        alt=""
+                        onLoad={() => {
+                          URL.revokeObjectURL(file.preview);
+                        }}
+                        onClick={() => {
+                          setImagePreview(file.preview);
+                        }}
+                        className="w-16 md:w-20 lg:w-48 rounded-lg border-4 border-double border-indigo-500/75 hover:border-indigo-300"
+                      />
+                    ))}
+                  </div>
+                  <div>
+                    <div {...getRootProps({ style })}>
+                      <input {...getInputProps()} />
+                      {isDragActive ? (
+                        <p>Suelta aqui tus imagenes...</p>
+                      ) : (
+                        <div className="grid grid-cols-12">
+                          <div className="col-span-2">
+                            <IoCameraOutline className="text-3xl" />
+                          </div>
+                          <div className="col-span-10">
+                            <p>Selecciona o arrastra tus fotos</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId="images" direction="horizontal">
+                      {(provided) => (
+                        <div
+                          className="flex overflow-auto gap-4 mt-4 pb-2"
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                        >
+                          {images.map((img, index) => (
+                            <Draggable
+                              key={img.id}
+                              draggableId={String(img.id)}
+                              index={index}
+                            >
+                              {(provided) => {
+                                return (
+                                  <div
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                    className={`relative w-24 h-24 rounded overflow-hidden border-4 ${
+                                      index === coverIndex
+                                        ? "border-blue-500"
+                                        : "border-gray-300"
+                                    }`}
+                                  >
+                                    <img
+                                      // src={`${baseUrl}${img.url}`}
+                                      src={
+                                        img.url
+                                          ? `${baseUrl}${img.url}`
+                                          : img.preview
+                                      } // Si tiene URL, usa esa; si no, la previsualización
+                                      // src={img.preview}
+                                      // onMouseDown={(e) => e.stopPropagation()} // evita conflicto con drag
+                                      alt="preview"
+                                      className="w-full h-full object-cover"
+                                      onClick={() => setCoverIndex(index)}
+                                    />
+                                    <button
+                                      onClick={() => {
+                                        // e.stopPropagation();
+                                        removeImage(index);
+                                      }}
+                                      className="absolute top-0 right-0 p-1 bg-white rounded-bl-lg hover:bg-red-200"
+                                      title="Eliminar"
+                                    >
+                                      <IoClose className="text-red-500" />
+                                    </button>
+                                    {index === coverIndex && (
+                                      <div className="absolute bottom-0 left-0 bg-blue-600 text-white text-xs px-1 rounded-tr">
+                                        Portada
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              }}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                  </DragDropContext>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-16">
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+
+                  <div className="col-span-2 md:col-span-4 lg:col-span-4">
+                    <TextField
+                      id="name"
+                      name="name"
+                      label="Aliás"
+                      variant="standard"
+                      value={property.name}
+                      onChange={handleTextChange}
+                      fullWidth
+                    />
+                  </div>
+                  <div className="col-span-2 md:col-span-2 lg:col-span-2">
+                    <NumericFormat
+                      value={property.bedrooms || ""}
+                      onValueChange={handleNumericChange("bedrooms")}
+                      name="bedrooms"
+                      allowNegative={false}
+                      customInput={TextField}
+                      label="Habitaciones"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </div>
+                  <div className="col-span-2 md:col-span-2 lg:col-span-2">
+                    <NumericFormat
+                      value={property.bathrooms || ""}
+                      onValueChange={handleNumericChange("bathrooms")}
+                      name="bathrooms"
+                      allowNegative={false}
+                      decimalScale={1}
+                      fixedDecimalScale={true}
+                      customInput={TextField}
+                      label="Baños"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </div>
+                  <div className="col-span-2 md:col-span-2 lg:col-span-2">
+                    <NumericFormat
+                      value={property.cleanrooms || ""}
+                      onValueChange={handleNumericChange("cleanrooms")}
+                      name="cleanrooms"
+                      allowNegative={false}
+                      customInput={TextField}
+                      label="Cuarto de servicio"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </div>
+                  <div className="col-span-2 md:col-span-2 lg:col-span-2">
+                    <NumericFormat
+                      value={property.parkings || ""}
+                      onValueChange={handleNumericChange("parkings")}
+                      name="parkings"
+                      allowNegative={false}
+                      customInput={TextField}
+                      label="Estacionamiento"
+                      variant="standard"
+                      fullWidth
+                    />
+                  </div>
+                  <div className="col-span-2 md:col-span-3 lg:col-span-3">
+                    <TextField
+                      id="address"
+                      name="address"
+                      label="Dirección"
+                      variant="standard"
+                      value={property.address}
+                      onChange={handleTextChange}
+                      fullWidth
+                    />
+                  </div>
+                  <div className="col-span-2 md:col-span-3 lg:col-span-3">
+                    <TextField
+                      id="moodsBuy"
+                      name="moodsBuy"
+                      label="MoodsBuy"
+                      variant="standard"
+                      value={property.moodsBuy}
+                      onChange={handleTextChange}
+                    />
+                  </div>
+                  <div className="col-span-2 md:col-span-3 lg:col-span-3">
+                    <TextField
+                      id="typeMode"
+                      name="typeMode"
+                      label="typeMode"
+                      variant="standard"
+                      value={property.typeMode}
+                      onChange={handleTextChange}
+                    />
+                  </div>
+                  <div className="col-span-2 md:col-span-3 lg:col-span-3">
+                    <TextField
+                      id="type"
+                      name="type"
+                      label="type"
+                      variant="standard"
+                      value={property.type}
+                      onChange={handleTextChange}
+                    />
+                  </div>
+                  <div className="col-span-1 md:col-span-2 lg:col-span-2">
+                    <NumericFormat
+                      value={property.price}
+                      onValueChange={handleNumericChange("price")}
+                      customInput={TextField}
+                      thousandSeparator
+                      valueIsNumericString
+                      prefix="$"
+                      name="price"
+                      variant="standard"
+                      label="Precio"
+                    />
+                  </div>
+                  <div className="col-span-1 md:col-span-2 lg:col-span-2">
+                    <NumericFormat
+                      value={property.discount}
+                      onValueChange={handleNumericChange("discount")}
+                      customInput={TextField}
+                      thousandSeparator
+                      valueIsNumericString
+                      name="discount"
+                      prefix="$"
+                      variant="standard"
+                      label="Descuento"
+                    />
+                  </div>
+                  <div className="col-span-1 md:col-span-1 lg:col-span-1">
+                    <NumericFormat
+                      value={property.sizeLength}
+                      onValueChange={handleNumericChange("sizeLength")}
+                      customInput={TextField}
+                      thousandSeparator
+                      name="sizeLength"
+                      suffix=" m²"
+                      label="Largo (m²)"
+                      variant="standard"
+                    />
+                  </div>
+                  <div className="col-span-1 md:col-span-1 lg:col-span-1">
+                    <NumericFormat
+                      value={property.sizeWidth}
+                      onValueChange={handleNumericChange("sizeWidth")}
+                      customInput={TextField}
+                      thousandSeparator
+                      suffix=" m²"
+                      label="Ancho (m²)"
+                      name="sizeWidth"
+                      variant="standard"
+                    />
+                  </div>
+                  <div className="col-span-1 md:col-span-1 lg:col-span-1">
+                    <NumericFormat
+                      value={property.level || ""}
+                      onValueChange={handleNumericChange("level")}
+                      name="level"
+                      allowNegative={false}
+                      customInput={TextField}
+                      label="Nivel"
+                      variant="standard"
+                    />
+                  </div>
+                  <div className="col-span-1 md:col-span-1 lg:col-span-1">
+                    <NumericFormat
+                      value={property.floors || ""}
+                      onValueChange={handleNumericChange("floors")}
+                      name="floors"
+                      allowNegative={false}
+                      customInput={TextField}
+                      label="Pisos"
+                      variant="standard"
+                    />
+                  </div>
+                  <div className="lg:col-span-3">
+                    <button className="border border-green-600 text-green-600 py-2 px-4 hover:bg-green-600 hover:text-white transition-colors">
+                      Guardar
+                    </button>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
         )}
