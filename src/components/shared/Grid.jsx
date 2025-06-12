@@ -77,6 +77,7 @@ export const Grid = ({
     },
   ];
   const data = items?.length ? items : demo;
+console.log(data);
 
   useEffect(() => {
     const el = rootRef.current;

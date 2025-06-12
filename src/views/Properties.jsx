@@ -32,7 +32,7 @@ export default function Properties() {
 
     const getProperties = () =>{
         setLoading(false)
-        axiosClient.get('/properties')
+        axiosClient.get('/products')
         .then(({data})=>{
             setLoading(false)
             setProperties(data)
