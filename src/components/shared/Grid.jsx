@@ -19,6 +19,7 @@ export const Grid = ({
   const setX = useRef(null);
   const setY = useRef(null);
   const pos = useRef({ x: 0, y: 0 });
+  const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/`;
 
   const demo = [
     {
@@ -76,7 +77,17 @@ export const Grid = ({
       url: "https://aws.amazon.com/",
     },
   ];
-  const data = items?.length ? items : demo;
+  const data = items.length ? items : demo;
+console.log(data);
+
+const imageGalleryItems = (data = []) =>
+  Array.isArray(data)
+    ? data.map((img) => ({
+        original: `${baseUrl}${img.original}`,
+        thumbnail: `${baseUrl}${img.thumbnail}`,
+      }))
+    : [];
+
 console.log(data);
 
   useEffect(() => {
@@ -147,7 +158,11 @@ console.log(data);
       onPointerMove={handleMove}
       onPointerLeave={handleLeave}
     >
-      {data.map((c, i) => (
+      {data.map((c, i) => {
+
+          const galleryItems = Array.isArray(c.images) ? imageGalleryItems(c.images) : [];
+
+        return (
         <article
           key={i}
           className="chroma-card"
@@ -162,9 +177,10 @@ console.log(data);
         //   }
         >
           <div className="chroma-img-wrapper">
+            {/* <ImageGallery items={imageGalleryItems(c.images)}></ImageGallery> */}
             {/* <img src={c.image} alt={c.title} loading="lazy" /> */}
                   <ImageGallery
-        items={c.images} // Este debe ser un array de objetos { original, thumbnail }
+        items={galleryItems} // Este debe ser un array de objetos { original, thumbnail }
         showFullscreenButton={false}
         showPlayButton={false}
         showThumbnails={true}
@@ -182,7 +198,7 @@ console.log(data);
             {c.price && <span className="location">{c.price}</span>}
           </footer>
         </article>
-      ))}
+      )})}
       <div className="chroma-overlay" />
       <div ref={fadeRef} className="chroma-fade" />
     </div>
