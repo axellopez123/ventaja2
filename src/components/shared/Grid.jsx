@@ -1,8 +1,9 @@
 import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import "./Grid.css";
-import ImageGallery from 'react-image-gallery';
-import 'react-image-gallery/styles/css/image-gallery.css';
+import ImageGallery from "react-image-gallery";
+import "react-image-gallery/styles/css/image-gallery.css";
+import { RiArrowLeftLine, RiArrowRightLine } from "react-icons/ri";
 
 export const Grid = ({
   items,
@@ -78,17 +79,17 @@ export const Grid = ({
     },
   ];
   const data = items.length ? items : demo;
-console.log(data);
+  console.log(data);
 
-const imageGalleryItems = (data = []) =>
-  Array.isArray(data)
-    ? data.map((img) => ({
-        original: `${baseUrl}${img.original}`,
-        thumbnail: `${baseUrl}${img.thumbnail}`,
-      }))
-    : [];
+  const imageGalleryItems = (data = []) =>
+    Array.isArray(data)
+      ? data.map((img) => ({
+          original: `${baseUrl}${img.original}`,
+          thumbnail: `${baseUrl}${img.thumbnail}`,
+        }))
+      : [];
 
-console.log(data);
+  console.log(data);
 
   useEffect(() => {
     const el = rootRef.current;
@@ -148,57 +149,93 @@ console.log(data);
     <div
       ref={rootRef}
       className={`chroma-grid ${className}`}
-      style={
-        {
-          "--r": `${radius}px`,
-          "--cols": columns,
-          "--rows": rows,
-        }
-      }
+      style={{
+        "--r": `${radius}px`,
+        "--cols": columns,
+        "--rows": rows,
+      }}
       onPointerMove={handleMove}
       onPointerLeave={handleLeave}
     >
       {data.map((c, i) => {
-
-          const galleryItems = Array.isArray(c.images) ? imageGalleryItems(c.images) : [];
+        const galleryItems = Array.isArray(c.images)
+          ? imageGalleryItems(c.images)
+          : [];
 
         return (
-        <article
-          key={i}
-          className="chroma-card"
-          onMouseMove={handleCardMove}
-          onClick={() => handleCardClick(c.url)}
-        //   style={
-        //     {
-        //       "--card-border": c.borderColor || "transparent",
-        //       "--card-gradient": c.gradient,
-        //       cursor: c.url ? "pointer" : "default",
-        //     }
-        //   }
-        >
-          <div className="chroma-img-wrapper">
-            {/* <ImageGallery items={imageGalleryItems(c.images)}></ImageGallery> */}
-            {/* <img src={c.image} alt={c.title} loading="lazy" /> */}
-                  <ImageGallery
-        items={galleryItems} // Este debe ser un array de objetos { original, thumbnail }
-        showFullscreenButton={false}
-        showPlayButton={false}
-        showThumbnails={true}
-        showNav={true}
-        slideDuration={250}
-        slideInterval={3000}
-        additionalClass="chroma-gallery"
-      />
-
-          </div>
-          <footer className="chroma-info">
-            <h3 className="name">{c.name}</h3>
-            {c.address && <span className="handle">{c.address}</span>}
-            <p className="role">{c.discount}</p>
-            {c.price && <span className="location">{c.price}</span>}
-          </footer>
-        </article>
-      )})}
+          <article
+            key={i}
+            className="chroma-card"
+            onMouseMove={handleCardMove}
+            onClick={() => handleCardClick(c.url)}
+            //   style={
+            //     {
+            //       "--card-border": c.borderColor || "transparent",
+            //       "--card-gradient": c.gradient,
+            //       cursor: c.url ? "pointer" : "default",
+            //     }
+            //   }
+          >
+            <div className="chroma-img-wrapper">
+              {/* <ImageGallery items={imageGalleryItems(c.images)}></ImageGallery> */}
+              {/* <img src={c.image} alt={c.title} loading="lazy" /> */}
+              <ImageGallery
+                items={galleryItems} // Este debe ser un array de objetos { original, thumbnail }
+                showFullscreenButton={false}
+                showPlayButton={false}
+                showBullets={true}
+                showThumbnails={false}
+                showNav={true}
+                slideDuration={250}
+                slideInterval={500}
+                renderLeftNav={(onClick, disabled) => (
+                  <button
+                    aria-label="Previous image"
+                    onClick={onClick}
+                    disabled={disabled}
+                    className={`absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-200 bg-white/80 hover:bg-white shadow-lg rounded-full p-2 z-20 backdrop-blur-sm border border-gray-200 
+                        ${disabled ? "opacity-40 cursor-not-allowed" : "hover:scale-105"}`}
+                  >
+                    <RiArrowLeftLine className="w-5 h-5 text-gray-800" />
+                  </button>
+                )}
+                renderRightNav={(onClick, disabled) => (
+                  <button
+                    aria-label="Next image"
+                    onClick={onClick}
+                    disabled={disabled}
+                    className={`absolute right-4 top-1/2 -translate-y-1/2 transition-all duration-200 
+                        bg-white/80 hover:bg-white shadow-lg rounded-full p-2 z-20
+                        backdrop-blur-sm border border-gray-200 
+                        ${disabled ? "opacity-40 cursor-not-allowed" : "hover:scale-105"}`}
+                  >
+                    <RiArrowRightLine className="w-5 h-5 text-gray-800" />
+                  </button>
+                )}
+                renderBullet={(index, className, isSelected, onClick) => (
+                  <button
+                    key={index}
+                    aria-label={`Select image ${index + 1}`}
+                    className={`w-3 h-3 mx-1 rounded-full transition-all duration-200 ${
+                      isSelected
+                        ? "bg-blue-600 scale-110 shadow"
+                        : "bg-gray-300 hover:bg-gray-500"
+                    }`}
+                    onClick={() => onClick(index)}
+                  />
+                )}
+                additionalClass="chroma-gallery"
+              />
+            </div>
+            <footer className="chroma-info">
+              <h3 className="name">{c.name}</h3>
+              {c.address && <span className="handle">{c.address}</span>}
+              <p className="role">{c.discount}</p>
+              {c.price && <span className="location">{c.price}</span>}
+            </footer>
+          </article>
+        );
+      })}
       <div className="chroma-overlay" />
       <div ref={fadeRef} className="chroma-fade" />
     </div>

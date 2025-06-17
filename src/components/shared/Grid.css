@@ -88,6 +88,14 @@
   border-radius: 10px;
   display: block;
 }
+/* Estilos para imágenes dentro de react-image-gallery */
+.chroma-gallery .image-gallery-image {
+  width: 100%;
+  height: 250px; /* ajustable */
+  object-fit: cover;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
 
 .chroma-info {
   position: relative;
