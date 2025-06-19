@@ -10,7 +10,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 const LIMIT = 6;
 
 export default function Properties() {
-    const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/`;
+  const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/`;
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(false);
   const { setNotification } = useStateContext();
@@ -60,9 +60,9 @@ export default function Properties() {
   const imageGalleryItems = (data = []) =>
     Array.isArray(data)
       ? data.map((img) => ({
-          original: `${baseUrl}${img.original}`,
-          thumbnail: `${baseUrl}${img.thumbnail}`,
-        }))
+        original: `${baseUrl}${img.original}`,
+        thumbnail: `${baseUrl}${img.thumbnail}`,
+      }))
       : [];
   const items = [
     {
@@ -87,46 +87,49 @@ export default function Properties() {
 
   return (
 <div
-//  id="scrollableDiv"
-className="min-h-screen px-4 md:px-16 py-10 bg-[#111827] text-white">
-
+  id="scrollableDiv"
+  className="px-4 md:px-16 py-10 bg-[#111827] text-white overflow-y-auto"
+  style={{ height: 'calc(100vh - 200px)' }} // Solo aquí el scroll
+>
       <h2 className="text-3xl font-bold mb-6">Explora propiedades</h2>
-      <InfiniteScroll
-        dataLength={properties.length}
-        next={() => {
-          console.log("Fire");
 
-          getProperties();
-        }}
-        hasMore={hasMore}
-        loader={<Loader />}
-        endMessage={
-          <p className="text-center text-gray-500 mt-6">
-            Ya no hay más propiedades por cargar.
-          </p>
-        }
-        // scrollableTarget="scrollableDiv"
-      >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
-          {properties.map((u) =>{
-            const galleryItems = Array.isArray(u.images)
-          ? imageGalleryItems(u.images)
-          : [];
-            return (
-              <Card
-              key={u.id}
-              id={u.id}
-              img={galleryItems}
-              description={u.name}
-              price={u.price}
-              inventory={u.bedrooms}
-              />
-            )
-          } 
-          
-          )}
-        </div>
-      </InfiniteScroll>
+        <InfiniteScroll
+          dataLength={properties.length}
+          next={() => {
+            console.log("Fire");
+
+            getProperties();
+          }}
+          hasMore={hasMore}
+          loader={<Loader />}
+          endMessage={
+            <p className="text-center text-gray-500 mt-6">
+              Ya no hay más propiedades por cargar.
+            </p>
+          }
+          scrollThreshold="250px"
+          scrollableTarget="scrollableDiv"
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+            {properties.map((u) => {
+              const galleryItems = Array.isArray(u.images)
+                ? imageGalleryItems(u.images)
+                : [];
+              return (
+                <Card
+                  key={u.id}
+                  id={u.id}
+                  img={galleryItems}
+                  description={u.name}
+                  price={u.price}
+                  inventory={u.bedrooms}
+                />
+              )
+            }
+
+            )}
+          </div>
+        </InfiniteScroll>
     </div>
     // <div>
     //   <button className="border border-green-600 text-green-600 py-2 px-4 hover:bg-green-600 hover:text-white transition-colors">
