@@ -7,9 +7,10 @@ import { RiArrowDownSLine } from "react-icons/ri";
 import Card from "../components/shared/Card";
 import Grid from "../components/shared/Grid";
 import InfiniteScroll from "react-infinite-scroll-component";
-const LIMIT = 2;
+const LIMIT = 6;
 
 export default function Properties() {
+    const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/`;
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(false);
   const { setNotification } = useStateContext();
@@ -32,16 +33,21 @@ export default function Properties() {
 
   const getProperties = async () => {
     setLoading(false);
+    console.log(page);
+    console.log(properties);
+
     await axiosClient
       .get(`/products?page=${page}&limit=${LIMIT}`)
       .then(({ data }) => {
         // Si ya no hay más propiedades
         if (data.length < LIMIT) setHasMore(false);
         // setProperties(data);
+
         setProperties((prev) => [...prev, ...data]);
-
+        // pageRef.current += 1;
         setPage((prev) => prev + 1);
-
+        console.log(properties);
+        console.log(page);
         setLoading(false);
         console.log(data);
       })
@@ -51,7 +57,13 @@ export default function Properties() {
         setLoading(false);
       });
   };
-
+  const imageGalleryItems = (data = []) =>
+    Array.isArray(data)
+      ? data.map((img) => ({
+          original: `${baseUrl}${img.original}`,
+          thumbnail: `${baseUrl}${img.thumbnail}`,
+        }))
+      : [];
   const items = [
     {
       image: "https://i.pravatar.cc/300?img=1",
@@ -74,11 +86,18 @@ export default function Properties() {
   ];
 
   return (
-    <div className="px-4 md:px-16 py-10 bg-[#111827] min-h-screen text-white">
+<div
+//  id="scrollableDiv"
+className="min-h-screen px-4 md:px-16 py-10 bg-[#111827] text-white">
+
       <h2 className="text-3xl font-bold mb-6">Explora propiedades</h2>
       <InfiniteScroll
         dataLength={properties.length}
-        next={getProperties}
+        next={() => {
+          console.log("Fire");
+
+          getProperties();
+        }}
         hasMore={hasMore}
         loader={<Loader />}
         endMessage={
@@ -86,18 +105,26 @@ export default function Properties() {
             Ya no hay más propiedades por cargar.
           </p>
         }
+        // scrollableTarget="scrollableDiv"
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-36">
-          {properties.map((u) => (
-            <Card
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+          {properties.map((u) =>{
+            const galleryItems = Array.isArray(u.images)
+          ? imageGalleryItems(u.images)
+          : [];
+            return (
+              <Card
               key={u.id}
               id={u.id}
-              img={u.image || "default.png"}
+              img={galleryItems}
               description={u.name}
               price={u.price}
               inventory={u.bedrooms}
-            />
-          ))}
+              />
+            )
+          } 
+          
+          )}
         </div>
       </InfiniteScroll>
     </div>

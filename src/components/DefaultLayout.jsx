@@ -33,17 +33,16 @@ const theme = createTheme({
 
 export default function ToolpadLayout() {
   const location = useLocation();
-  const {user,token, notification, setUser, setToken} = useStateContext()
-  
-  if(!token)
-  {
-      return <Navigate to="/login"/>
+  const { user, token, notification, setUser, setToken } = useStateContext();
+
+  if (!token) {
+    return <Navigate to="/login" />;
   }
 
   return (
     <AppProvider navigation={NAVIGATION} theme={theme}>
       <DashboardLayout>
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: 2, height: "auto", overflow: "visible" }}>
           <Outlet />
         </Box>
       </DashboardLayout>
