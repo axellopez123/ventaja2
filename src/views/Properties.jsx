@@ -13,12 +13,13 @@ export default function Properties() {
   const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/`;
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { setNotification } = useStateContext();
+  const { user, setNotification } = useStateContext();
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   useEffect(() => {
     getProperties();
   }, []);
+console.log(user);
 
   const onDelete = (u) => {
     if (!window.confirm("Are you sure you want to delete this property?")) {
@@ -46,10 +47,8 @@ export default function Properties() {
         setProperties((prev) => [...prev, ...data]);
         // pageRef.current += 1;
         setPage((prev) => prev + 1);
-        console.log(properties);
-        console.log(page);
+
         setLoading(false);
-        console.log(data);
       })
       .catch(() => {
         setHasMore(false);
@@ -60,9 +59,9 @@ export default function Properties() {
   const imageGalleryItems = (data = []) =>
     Array.isArray(data)
       ? data.map((img) => ({
-        original: `${baseUrl}${img.original}`,
-        thumbnail: `${baseUrl}${img.thumbnail}`,
-      }))
+          original: `${baseUrl}${img.original}`,
+          thumbnail: `${baseUrl}${img.thumbnail}`,
+        }))
       : [];
   const items = [
     {
@@ -86,48 +85,44 @@ export default function Properties() {
   ];
 
   return (
-<div
-  className=" text-white"
->
+    <div className="px-16 text-white">
       <h2 className="text-3xl font-bold mb-6">Explora propiedades</h2>
+      <p> {user.id} </p>
+      <InfiniteScroll
+        dataLength={properties.length}
+        next={() => {
+          console.log("Fire");
 
-        <InfiniteScroll
-          dataLength={properties.length}
-          next={() => {
-            console.log("Fire");
-
-            getProperties();
-          }}
-          hasMore={hasMore}
-          loader={<Loader />}
-          endMessage={
-            <p className="text-center text-gray-500 mt-6">
-              Ya no hay más propiedades por cargar.
-            </p>
-          }
-          scrollThreshold="250px"
-          scrollableTarget="scrollableDiv"
-        >
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
-            {properties.map((u) => {
-              const galleryItems = Array.isArray(u.images)
-                ? imageGalleryItems(u.images)
-                : [];
-              return (
-                <Card
-                  key={u.id}
-                  id={u.id}
-                  img={galleryItems}
-                  description={u.name}
-                  price={u.price}
-                  inventory={u.bedrooms}
-                />
-              )
-            }
-
-            )}
-          </div>
-        </InfiniteScroll>
+          getProperties();
+        }}
+        hasMore={hasMore}
+        loader={<Loader />}
+        endMessage={
+          <p className="text-center text-gray-500 mt-6">
+            Ya no hay más propiedades por cargar.
+          </p>
+        }
+        scrollThreshold="250px"
+        scrollableTarget="scrollableDiv"
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+          {properties.map((u) => {
+            const galleryItems = Array.isArray(u.images)
+              ? imageGalleryItems(u.images)
+              : [];
+            return (
+              <Card
+                key={u.id}
+                id={u.id}
+                img={galleryItems}
+                description={u.name}
+                price={u.price}
+                inventory={u.bedrooms}
+              />
+            );
+          })}
+        </div>
+      </InfiniteScroll>
     </div>
     // <div>
     //   <button className="border border-green-600 text-green-600 py-2 px-4 hover:bg-green-600 hover:text-white transition-colors">
