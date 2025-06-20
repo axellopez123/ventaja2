@@ -3,8 +3,10 @@ import { useStateContext } from "../contexts/ContextProvider";
 
 export default function GuestLayout(){
 
-    const {token} = useStateContext()
-    if (token)
+      const { user, loading } = useStateContext();
+  if (loading) return <p>Cargando...</p>;
+
+    if (user)
     {
         return <Navigate to={"/dashboard"}/>
     }

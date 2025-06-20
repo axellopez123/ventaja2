@@ -19,7 +19,6 @@ export default function Properties() {
   useEffect(() => {
     getProperties();
   }, []);
-console.log(user);
 
   const onDelete = (u) => {
     if (!window.confirm("Are you sure you want to delete this property?")) {

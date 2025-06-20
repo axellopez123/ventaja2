@@ -22,12 +22,12 @@ export default function Signup() {
 
     try {
       const { data } = await axiosClient.post("/auth/register", payload);
-      const token = data.access_token;
+      // const token = data.access_token;
 
-      setToken(token);
+      // setToken(token);
 
       // ⚠️ Usa el token directamente, no el del estado
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      // axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
       const meRes = await axiosClient.get("/auth/me");
       setUser(meRes.data);

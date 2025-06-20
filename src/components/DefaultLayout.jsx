@@ -35,7 +35,7 @@ export default function ToolpadLayout() {
   const location = useLocation();
   const { user, token, notification, setUser, setToken } = useStateContext();
 
-  if (!token) {
+  if (!user) {
     return <Navigate to="/login" />;
   }
 
