@@ -87,9 +87,7 @@ export default function Properties() {
 
   return (
 <div
-  id="scrollableDiv"
-  className="px-4 md:px-16 py-10 bg-[#111827] text-white overflow-y-auto"
-  style={{ height: 'calc(100vh - 200px)' }} // Solo aquí el scroll
+  className=" text-white"
 >
       <h2 className="text-3xl font-bold mb-6">Explora propiedades</h2>
 

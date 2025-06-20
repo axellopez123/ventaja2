@@ -42,8 +42,25 @@ export default function ToolpadLayout() {
   return (
     <AppProvider navigation={NAVIGATION} theme={theme}>
       <DashboardLayout>
-        <Box sx={{ p: 2, height: "auto", overflow: "visible" }}>
-          <Outlet />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100vh", // ✅ altura total de viewport
+            overflow: "hidden",
+          }}
+        >
+          <Box
+            id="scrollableDiv" // 👈 este será tu objetivo de scroll
+            sx={{
+              flex: 1,
+              overflowY: "auto", // ✅ solo esta área tiene scroll
+              px: 2,
+              py: 3,
+            }}
+          >
+            <Outlet />
+          </Box>
         </Box>
       </DashboardLayout>
     </AppProvider>
