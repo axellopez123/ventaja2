@@ -163,7 +163,7 @@ export default function PropertyForm() {
         // }
 
         try {
-          const res = await axiosClient.post(`/products`, property);
+          const res = await axiosClient.post(`/products/`, property);
           // setPropertyId(res.data.id);
           const created = res.data;
 
