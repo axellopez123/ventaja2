@@ -37,7 +37,7 @@ export default function Properties() {
     console.log(properties);
 
     await axiosClient
-      .get(`/products?page=${page}&limit=${LIMIT}`)
+      .get(`/products/?page=${page}&limit=${LIMIT}`)
       .then(({ data }) => {
         // Si ya no hay más propiedades
         if (data.length < LIMIT) setHasMore(false);

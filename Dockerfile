@@ -20,7 +20,7 @@ COPY . .
 RUN npm install
 
 # Construir el proyecto React para producción
-RUN npm run build && \
+RUN rm -rf dist && npm run build && \
     echo "Build completo" && \
     ls -lah /app/dist && \
     cat /app/dist/index.html | grep script
