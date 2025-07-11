@@ -7,16 +7,38 @@ import {
   RiHeartFill,
   RiHeartLine,
 } from "react-icons/ri";
+import axiosClient from "../../axios-client";
 
 const Card = (props) => {
-  const { id, img, description, price, inventory } = props;
-  // const [favorited, setFavorited] = useState(isInitiallyFavorited);
-  const [favorited, setFavorited] = useState(false);
+  const { id, img, description, price, inventory, isInitiallyFavorited } = props;
+  const [favorited, setFavorited] = useState(isInitiallyFavorited);
+  const [loading, setLoading] = useState(false);
 
-  const handleToggle = () => {
-    setFavorited((prev) => !prev);
-    if (onToggle) onToggle(!favorited);
+  const handleToggle = async () => {
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      if (favorited) {
+        // Quitar favorito → DELETE
+        await axiosClient.delete(`/products/favorites/${id}`);
+        setFavorited(false);
+      } else {
+        // Agregar favorito → POST
+        await axiosClient.post(`/products/favorites/${id}`, {
+          comment: "Producto agregado a favoritos",
+          rating: 5,
+        });
+        setFavorited(true);
+      }
+    } catch (error) {
+      console.error("Error al actualizar favorito:", error);
+      // opcional: mostrar notificación o revertir estado
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
     <div className="bg-[#1F1D2B] min-h-[300px] rounded-xl flex flex-col items-center gap-2 text-center text-gray-300 shadow-lg hover:shadow-xl transition-shadow duration-300">
       <div className="relative w-full h-[200px] md:h-[250px] bg-gray-200">

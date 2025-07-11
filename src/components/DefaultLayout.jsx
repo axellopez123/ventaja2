@@ -8,6 +8,7 @@ import TimelineIcon from "@mui/icons-material/Timeline";
 import { createTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import { useStateContext } from "../contexts/ContextProvider";
+import { RiHomeHeartFill } from "react-icons/ri";
 
 const NAVIGATION = [
   { kind: "header", title: "Main" },
@@ -40,7 +41,16 @@ export default function ToolpadLayout() {
   }
 
   return (
-    <AppProvider navigation={NAVIGATION} theme={theme}>
+    <AppProvider
+      navigation={NAVIGATION}
+      branding={{
+        // logo: <img src="https://mui.com/static/logo.png" alt="MUI logo" />,
+        logo: <RiHomeHeartFill />,
+        title: "INMOBILIARIA ",
+        homeUrl: "/",
+      }}
+      theme={theme}
+    >
       <DashboardLayout>
         <Box
           sx={{

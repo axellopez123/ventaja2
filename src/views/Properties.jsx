@@ -3,6 +3,8 @@ import axiosClient from "../axios-client";
 import { Link } from "react-router-dom";
 import { useStateContext } from "../contexts/ContextProvider";
 import { RiArrowDownSLine } from "react-icons/ri";
+import Button from "@mui/material/Button";
+import { RiHomeHeartFill } from "react-icons/ri";
 
 import Card from "../components/shared/Card";
 import Grid from "../components/shared/Grid";
@@ -85,8 +87,20 @@ export default function Properties() {
 
   return (
     <div className="px-16 text-white">
-      <h2 className="text-3xl font-bold mb-6">Explora propiedades</h2>
-      <p> {user.id} </p>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold">Explora propiedades</h2>
+
+        <Link to="/properties/new">
+          <Button
+            variant="contained"
+            size="medium"
+            endIcon={<RiHomeHeartFill />}
+          >
+            Nueva
+          </Button>
+        </Link>
+      </div>
+      {/* <p> {user.id} </p> */}
       <InfiniteScroll
         dataLength={properties.length}
         next={() => {
@@ -117,6 +131,9 @@ export default function Properties() {
                 description={u.name}
                 price={u.price}
                 inventory={u.bedrooms}
+                isInitiallyFavorited={user?.favorites?.some(
+                  (f) => f.product_id === product.id
+                )}
               />
             );
           })}
