@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import ImageGallery from "react-image-gallery";
+import { LuToilet } from "react-icons/lu";
+import { FaBed } from "react-icons/fa";
+import { IoCarSport } from "react-icons/io5";
+import { BiSolidWasher } from "react-icons/bi";
+
 import {
   RiArrowLeftLine,
   RiArrowRightLine,
@@ -102,11 +107,10 @@ const Card = (props) => {
               <button
                 key={index}
                 aria-label={`Select image ${index + 1}`}
-                className={`w-3 h-3 mx-1 rounded-full transition-all duration-200 ${
-                  isSelected
-                    ? "bg-blue-600 scale-110 shadow"
-                    : "bg-gray-300 hover:bg-gray-500"
-                }`}
+                className={`w-3 h-3 mx-1 rounded-full transition-all duration-200 ${isSelected
+                  ? "bg-blue-600 scale-110 shadow"
+                  : "bg-gray-300 hover:bg-gray-500"
+                  }`}
                 onClick={() => onClick(index)}
               />
             )}
@@ -119,9 +123,29 @@ const Card = (props) => {
         )}
       </div>
 
-      <p className="text-xl">{description}</p>
-      <span className="text-gray-400">${price}</span>
-      <p className="text-gray-600">{inventory} Bowls available</p>
+      <p className="text-xl text-left self-start pl-3 font-bold">{description}</p>
+      <span className="text-gray-400 text-left self-start pl-4 font-semibold">${price}</span>
+<div className="flex overflow-x-auto snap-x gap-4 px-4 py-2 scrollbar-thin scrollbar-thumb-gray-500">
+<div className="snap-center flex items-center gap-2 px-3 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] text-gray-300 min-w-max">
+  <FaBed className="text-blue-400" />
+  <span>2</span>
+</div>
+<div className="snap-center flex items-center gap-2 px-3 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] text-gray-300 min-w-max">
+          <LuToilet />
+
+          1
+        </div>
+<div className="snap-center flex items-center gap-2 px-3 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] text-gray-300 min-w-max">
+          <IoCarSport />
+
+          3
+        </div>
+<div className="snap-center flex items-center gap-2 px-3 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] text-gray-300 min-w-max">
+          <BiSolidWasher />
+
+          4
+        </div>
+      </div>
       <Link to={"/properties/" + id}>Edit</Link>
     </div>
   );

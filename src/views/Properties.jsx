@@ -132,7 +132,7 @@ export default function Properties() {
                 price={u.price}
                 inventory={u.bedrooms}
                 isInitiallyFavorited={user?.favorites?.some(
-                  (f) => f.product_id === product.id
+                  (f) => f.product_id === u.id
                 )}
               />
             );
