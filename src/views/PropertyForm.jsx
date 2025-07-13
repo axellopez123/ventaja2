@@ -16,7 +16,7 @@ import Button from "@mui/material/Button";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 import { RiArrowLeftLine, RiArrowRightLine } from "react-icons/ri";
-
+import Card from "../components/shared/Card";
 import {
   RiCloseCircleLine,
   RiHotelBedFill,
@@ -1154,8 +1154,7 @@ export default function PropertyForm() {
         )}
 
         {!loading && (
-          <div className="grid grid-cols-2 grid-row-1">
-            {/* <div className="col-span-1 row-span-1 m-12"></div> */}
+          <div className="grid grid-cols-2 grid-row-1 xs:px-0 sm:px-16 md:px-32">
             {/* ----------------------------------- */}
             <div className="col-span-2 sm:col-span-1 row-span-1">
               <Box sx={{ maxWidth: 400 }}>
@@ -1187,6 +1186,18 @@ export default function PropertyForm() {
                   ))}
                 </Stepper>
               </Box>
+            </div>
+            {/* --------------------------- */}
+            <div className="col-span-2 sm:col-span-1 row-span-1">
+              <Card
+                id={0}
+                img={imageGalleryItems}
+                description={property.name}
+                price={property.price}
+                bedrooms={property.bedrooms}
+                bathrooms={property.bathrooms}
+                isInitiallyFavorited={true}
+              />{" "}
             </div>
           </div>
         )}

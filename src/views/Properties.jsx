@@ -86,7 +86,7 @@ export default function Properties() {
   ];
 
   return (
-    <div className="px-16 text-white">
+    <div className="px-3 text-white">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold">Explora propiedades</h2>
 
@@ -130,9 +130,9 @@ export default function Properties() {
                 img={galleryItems}
                 description={u.name}
                 price={u.price}
-                inventory={u.bedrooms}
+                bedrooms={u.bedrooms}
                 isInitiallyFavorited={user?.favorites?.some(
-                  (f) => f.product_id === u.id
+                  (f) => f.product_id === u.id && f.is_active
                 )}
               />
             );

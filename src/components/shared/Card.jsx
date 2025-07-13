@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import ImageGallery from "react-image-gallery";
-import { LuToilet } from "react-icons/lu";
+// import { LuToilet } from "react-icons/lu";
 import { FaBed } from "react-icons/fa";
 import { IoCarSport } from "react-icons/io5";
 import { BiSolidWasher } from "react-icons/bi";
+import { LuToilet } from "react-icons/lu";
 
 import {
   RiArrowLeftLine,
@@ -15,7 +16,7 @@ import {
 import axiosClient from "../../axios-client";
 
 const Card = (props) => {
-  const { id, img, description, price, inventory, isInitiallyFavorited } = props;
+  const { id, img, description, price, bedrooms, bathrooms, isInitiallyFavorited } = props;
   const [favorited, setFavorited] = useState(isInitiallyFavorited);
   const [loading, setLoading] = useState(false);
 
@@ -45,8 +46,8 @@ const Card = (props) => {
   };
 
   return (
-    <div className="bg-[#1F1D2B] min-h-[300px] rounded-xl flex flex-col items-center gap-2 text-center text-gray-300 shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <div className="relative w-full h-[200px] md:h-[250px] bg-gray-200">
+    <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto bg-[#1F1D2B] rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col text-white">
+      <div className="relative w-full h-[200px] md:h-[250px]">
         <button
           className="absolute -bottom-5 right-5 bg-white/90 hover:bg-white text-red-500 p-2 rounded-full shadow-md transition-all z-30"
           onClick={handleToggle}
@@ -69,7 +70,7 @@ const Card = (props) => {
             slideDuration={250}
             slideInterval={500}
             renderItem={(item) => (
-              <div className="w-full h-[200px] md:h-[250px] overflow-hidden rounded-xl bg-gray-100">
+              <div className="w-full h-[200px] md:h-[250px] overflow-hidden rounded-t-xl bg-gray-100">
                 <img
                   src={item.original}
                   alt={item.originalAlt || "Imagen"}
@@ -107,10 +108,11 @@ const Card = (props) => {
               <button
                 key={index}
                 aria-label={`Select image ${index + 1}`}
-                className={`w-3 h-3 mx-1 rounded-full transition-all duration-200 ${isSelected
-                  ? "bg-blue-600 scale-110 shadow"
-                  : "bg-gray-300 hover:bg-gray-500"
-                  }`}
+                className={`w-3 h-3 mx-1 rounded-full transition-all duration-200 ${
+                  isSelected
+                    ? "bg-blue-600 scale-110 shadow"
+                    : "bg-gray-300 hover:bg-gray-500"
+                }`}
                 onClick={() => onClick(index)}
               />
             )}
@@ -123,30 +125,43 @@ const Card = (props) => {
         )}
       </div>
 
-      <p className="text-xl text-left self-start pl-3 font-bold">{description}</p>
-      <span className="text-gray-400 text-left self-start pl-4 font-semibold">${price}</span>
-<div className="flex overflow-x-auto snap-x gap-4 px-4 py-2 scrollbar-thin scrollbar-thumb-gray-500">
-<div className="snap-center flex items-center gap-2 px-3 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] text-gray-300 min-w-max">
-  <FaBed className="text-blue-400" />
-  <span>2</span>
-</div>
-<div className="snap-center flex items-center gap-2 px-3 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] text-gray-300 min-w-max">
-          <LuToilet />
+      <div className="p-4 flex flex-col gap-2">
+        <p className="text-xl font-bold">{description}</p>
+        <span className="text-gray-400 font-semibold">
+          {new Intl.NumberFormat("es-MX", {
+            style: "currency",
+            currency: "MXN",
+          }).format(price)}
+        </span>
 
-          1
-        </div>
-<div className="snap-center flex items-center gap-2 px-3 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] text-gray-300 min-w-max">
-          <IoCarSport />
+        {/* Características scroll horizontal */}
+        <div className="flex overflow-x-auto gap-4 py-2 snap-x px-2 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-700 scroll-smooth hover:scrollbar-thumb-blue-400">
+          <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
+            <FaBed className="text-blue-400" />
+            <span>{bedrooms} </span>
+          </div>
+          <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
+            <LuToilet className="text-blue-400" />
 
-          3
+            <span> {bathrooms} </span>
+          </div>
+          <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
+            <IoCarSport className="text-blue-400" />
+            <span>3</span>
+          </div>
+          <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
+            <BiSolidWasher className="text-blue-400" />
+            <span>4</span>
+          </div>
         </div>
-<div className="snap-center flex items-center gap-2 px-3 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] text-gray-300 min-w-max">
-          <BiSolidWasher />
 
-          4
-        </div>
+        <Link
+          to={`/properties/${id}`}
+          className="text-blue-400 underline text-sm mt-2 self-start hover:text-blue-300"
+        >
+          Editar propiedad
+        </Link>
       </div>
-      <Link to={"/properties/" + id}>Edit</Link>
     </div>
   );
 };
