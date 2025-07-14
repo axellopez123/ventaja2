@@ -60,9 +60,9 @@ export default function Properties() {
   const imageGalleryItems = (data = []) =>
     Array.isArray(data)
       ? data.map((img) => ({
-          original: `${baseUrl}${img.original}`,
-          thumbnail: `${baseUrl}${img.thumbnail}`,
-        }))
+        original: `${baseUrl}${img.original}`,
+        thumbnail: `${baseUrl}${img.thumbnail}`,
+      }))
       : [];
   const items = [
     {
@@ -88,13 +88,20 @@ export default function Properties() {
   return (
     <div className="px-3 text-white">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold">Explora propiedades</h2>
+        <h2 className="text-3xl font-bold text-white dark:text-orange-500">Explora propiedades</h2>
 
         <Link to="/properties/new">
           <Button
             variant="contained"
             size="medium"
             endIcon={<RiHomeHeartFill />}
+            sx={{
+              backgroundColor: '#f97316', // orange-500 en Tailwind
+              color: '#fff',
+              '&:hover': {
+                backgroundColor: '#ea580c', // orange-600 para hover
+              },
+            }}
           >
             Nueva
           </Button>
@@ -131,6 +138,10 @@ export default function Properties() {
                 description={u.name}
                 price={u.price}
                 bedrooms={u.bedrooms}
+                bathrooms={u.bathrooms}
+                status={u.status}
+                parkings={u.bathrooms}
+                cleanrooms={u.cleanrooms}
                 isInitiallyFavorited={user?.favorites?.some(
                   (f) => f.product_id === u.id && f.is_active
                 )}

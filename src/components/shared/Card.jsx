@@ -16,7 +16,7 @@ import {
 import axiosClient from "../../axios-client";
 
 const Card = (props) => {
-  const { id, img, description, price, bedrooms, bathrooms, isInitiallyFavorited } = props;
+  const { id, img, description, price, bedrooms, bathrooms, parkings, cleanrooms, status, isInitiallyFavorited } = props;
   const [favorited, setFavorited] = useState(isInitiallyFavorited);
   const [loading, setLoading] = useState(false);
 
@@ -46,7 +46,7 @@ const Card = (props) => {
   };
 
   return (
-    <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto bg-[#1F1D2B] rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col text-white">
+    <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto bg-[#1F1D2B] rounded-xl shadow-lg hover:shadow-xl shadow-gray-700/70 transition-shadow duration-300 flex flex-col text-white">
       <div className="relative w-full h-[200px] md:h-[250px]">
         <button
           className="absolute -bottom-5 right-5 bg-white/90 hover:bg-white text-red-500 p-2 rounded-full shadow-md transition-all z-30"
@@ -108,24 +108,34 @@ const Card = (props) => {
               <button
                 key={index}
                 aria-label={`Select image ${index + 1}`}
-                className={`w-3 h-3 mx-1 rounded-full transition-all duration-200 ${
-                  isSelected
-                    ? "bg-blue-600 scale-110 shadow"
-                    : "bg-gray-300 hover:bg-gray-500"
-                }`}
+                className={`w-3 h-3 mx-1 rounded-full transition-all duration-200 ${isSelected
+                  ? "bg-blue-600 scale-110 shadow"
+                  : "bg-gray-300 hover:bg-gray-500"
+                  }`}
                 onClick={() => onClick(index)}
               />
             )}
             additionalClass="chroma-gallery"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-center bg-gray-300 rounded-t-xl">
             <span className="text-gray-400">Sin imágenes</span>
           </div>
         )}
       </div>
 
       <div className="p-4 flex flex-col gap-2">
+        <div className="flex justify-start">
+        <div className="bg-green-500 rounded-xl px-3 py-1 w-fit text-white text-sm font-semibold mr-2">
+          Venta
+        </div>
+        <div className="bg-green-500 rounded-xl px-3 py-1 w-fit text-white text-sm font-semibold mr-2">
+          Renta
+        </div>
+        <div className="bg-green-500 rounded-xl px-3 py-1 w-fit text-white text-sm font-semibold mr-2">
+          Traspaso
+        </div>
+        </div>
         <p className="text-xl font-bold">{description}</p>
         <span className="text-gray-400 font-semibold">
           {new Intl.NumberFormat("es-MX", {
@@ -137,21 +147,21 @@ const Card = (props) => {
         {/* Características scroll horizontal */}
         <div className="flex overflow-x-auto gap-4 py-2 snap-x px-2 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-700 scroll-smooth hover:scrollbar-thumb-blue-400">
           <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
-            <FaBed className="text-blue-400" />
+            <FaBed className="text-orange-500" />
             <span>{bedrooms} </span>
           </div>
           <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
-            <LuToilet className="text-blue-400" />
+            <LuToilet className="text-orange-500" />
 
             <span> {bathrooms} </span>
           </div>
           <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
-            <IoCarSport className="text-blue-400" />
-            <span>3</span>
+            <IoCarSport className="text-orange-500" />
+            <span>{parkings}</span>
           </div>
           <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
-            <BiSolidWasher className="text-blue-400" />
-            <span>4</span>
+            <BiSolidWasher className="text-orange-500" />
+            <span>{cleanrooms}</span>
           </div>
         </div>
 

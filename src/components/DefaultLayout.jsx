@@ -46,7 +46,9 @@ export default function ToolpadLayout() {
       branding={{
         // logo: <img src="https://mui.com/static/logo.png" alt="MUI logo" />,
         logo: <RiHomeHeartFill />,
-        title: "INMOBILIARIA ",
+        title: <span className="text-orange-500">
+          INMOBILIARIA
+        </span>,
         homeUrl: "/",
       }}
       theme={theme}

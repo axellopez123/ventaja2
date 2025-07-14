@@ -1180,6 +1180,8 @@ export default function PropertyForm() {
                           >
                             Back
                           </Button>
+
+                          
                         </Box>
                       </StepContent>
                     </Step>
@@ -1196,6 +1198,9 @@ export default function PropertyForm() {
                 price={property.price}
                 bedrooms={property.bedrooms}
                 bathrooms={property.bathrooms}
+                status={property.status}
+                parkings={property.bathrooms}
+                cleanrooms={property.cleanrooms}
                 isInitiallyFavorited={true}
               />{" "}
             </div>
