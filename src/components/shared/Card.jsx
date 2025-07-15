@@ -6,6 +6,8 @@ import { FaBed } from "react-icons/fa";
 import { IoCarSport } from "react-icons/io5";
 import { BiSolidWasher } from "react-icons/bi";
 import { LuToilet } from "react-icons/lu";
+import Skeleton from "@mui/material/Skeleton";
+import Box from "@mui/material/Box";
 
 import {
   RiArrowLeftLine,
@@ -16,7 +18,18 @@ import {
 import axiosClient from "../../axios-client";
 
 const Card = (props) => {
-  const { id, img, description, price, bedrooms, bathrooms, parkings, cleanrooms, status, isInitiallyFavorited } = props;
+  const {
+    id,
+    img,
+    description,
+    price,
+    bedrooms,
+    bathrooms,
+    parkings,
+    cleanrooms,
+    status,
+    isInitiallyFavorited,
+  } = props;
   const [favorited, setFavorited] = useState(isInitiallyFavorited);
   const [loading, setLoading] = useState(false);
 
@@ -108,10 +121,11 @@ const Card = (props) => {
               <button
                 key={index}
                 aria-label={`Select image ${index + 1}`}
-                className={`w-3 h-3 mx-1 rounded-full transition-all duration-200 ${isSelected
-                  ? "bg-blue-600 scale-110 shadow"
-                  : "bg-gray-300 hover:bg-gray-500"
-                  }`}
+                className={`w-3 h-3 mx-1 rounded-full transition-all duration-200 ${
+                  isSelected
+                    ? "bg-blue-600 scale-110 shadow"
+                    : "bg-gray-300 hover:bg-gray-500"
+                }`}
                 onClick={() => onClick(index)}
               />
             )}
@@ -126,43 +140,89 @@ const Card = (props) => {
 
       <div className="p-4 flex flex-col gap-2">
         <div className="flex justify-start">
-        <div className="bg-green-500 rounded-xl px-3 py-1 w-fit text-white text-sm font-semibold mr-2">
-          Venta
+          <div className="bg-green-500 rounded-xl px-3 py-1 w-fit text-white text-sm font-semibold mr-2">
+            Venta
+          </div>
+          <div className="bg-green-500 rounded-xl px-3 py-1 w-fit text-white text-sm font-semibold mr-2">
+            Renta
+          </div>
+          <div className="bg-green-500 rounded-xl px-3 py-1 w-fit text-white text-sm font-semibold mr-2">
+            Traspaso
+          </div>
         </div>
-        <div className="bg-green-500 rounded-xl px-3 py-1 w-fit text-white text-sm font-semibold mr-2">
-          Renta
-        </div>
-        <div className="bg-green-500 rounded-xl px-3 py-1 w-fit text-white text-sm font-semibold mr-2">
-          Traspaso
-        </div>
-        </div>
-        <p className="text-xl font-bold">{description}</p>
-        <span className="text-gray-400 font-semibold">
-          {new Intl.NumberFormat("es-MX", {
-            style: "currency",
-            currency: "MXN",
-          }).format(price)}
-        </span>
-
+        {description ? (
+          <Box sx={{ pr: 2 }}>
+            <p className="text-xl font-bold">{description}</p>
+          </Box>
+        ) : (
+          <Box sx={{ pt: 0.5 }}>
+            <Skeleton width="60%" height={40} />
+          </Box>
+        )}
+        {price ? (
+          <Box sx={{ pr: 2 }}>
+            <span className="text-gray-400 font-semibold">
+              {new Intl.NumberFormat("es-MX", {
+                style: "currency",
+                currency: "MXN",
+              }).format(price)}
+            </span>
+          </Box>
+        ) : (
+          <Box sx={{ pt: 0.5 }}>
+            <Skeleton width="60%" height={40} />
+          </Box>
+        )}
         {/* Características scroll horizontal */}
         <div className="flex overflow-x-auto gap-4 py-2 snap-x px-2 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-700 scroll-smooth hover:scrollbar-thumb-blue-400">
-          <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
-            <FaBed className="text-orange-500" />
-            <span>{bedrooms} </span>
-          </div>
-          <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
-            <LuToilet className="text-orange-500" />
+        {/* Características scroll horizontal */}
+<div className="w-full overflow-x-auto py-2 px-2 scroll-smooth scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-700 hover:scrollbar-thumb-blue-400">
+  <div className="flex gap-4 snap-x snap-mandatory min-w-full">
+    {/* Recámaras */}
+    {price !== undefined && bedrooms !== undefined ? (
+      <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
+        <FaBed className="text-orange-500" />
+        <span>{bedrooms}</span>
+      </div>
+    ) : (
+      <Box sx={{ pt: 0.5 }}>
+        <Skeleton width={70} height={70} />
+      </Box>
+    )}
 
-            <span> {bathrooms} </span>
-          </div>
-          <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
-            <IoCarSport className="text-orange-500" />
-            <span>{parkings}</span>
-          </div>
-          <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
-            <BiSolidWasher className="text-orange-500" />
-            <span>{cleanrooms}</span>
-          </div>
+    {/* Baños */}
+    {bathrooms !== undefined && (
+      <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
+        <LuToilet className="text-orange-500" />
+        <span>{bathrooms}</span>
+      </div>
+    )}
+
+    {/* Estacionamiento */}
+    {parkings !== undefined && (
+      <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
+        <IoCarSport className="text-orange-500" />
+        <span>{parkings}</span>
+      </div>
+    )}
+
+    {/* Cuarto de lavado */}
+    {cleanrooms !== undefined && (
+      <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
+        <BiSolidWasher className="text-orange-500" />
+        <span>{cleanrooms}</span>
+      </div>
+    )}
+  </div>
+</div>
+
+{/* Link para editar */}
+<Link
+  to={`/properties/${id}`}
+  className="text-blue-400 underline text-sm mt-2 self-start hover:text-blue-300"
+>
+  Editar propiedad
+</Link>
         </div>
 
         <Link
