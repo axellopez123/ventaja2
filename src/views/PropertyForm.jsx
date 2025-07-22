@@ -1287,11 +1287,13 @@ export default function PropertyForm() {
                 price={property.price}
                 bedrooms={property.bedrooms}
                 bathrooms={property.bathrooms}
+                typeMode={property.typeMode}
+                moodsBuy={property.moodsBuy}
                 status={property.status}
                 parkings={property.parkings}
                 cleanrooms={property.cleanrooms}
                 isInitiallyFavorited={true}
-              />{" "}
+              />
             </div>
           </div>
         )}
