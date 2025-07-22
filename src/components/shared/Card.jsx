@@ -58,6 +58,8 @@ const Card = (props) => {
     }
   };
 
+  console.log(img.length);
+
   return (
     <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto bg-[#1F1D2B] rounded-xl shadow-lg hover:shadow-xl shadow-gray-700/70 transition-shadow duration-300 flex flex-col text-white">
       <div className="relative w-full h-[200px] md:h-[250px]">
@@ -132,9 +134,9 @@ const Card = (props) => {
             additionalClass="chroma-gallery"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gray-300 rounded-t-xl">
-            <span className="text-gray-400">Sin imágenes</span>
-          </div>
+          <Box className="w-full h-[200px] md:h-[250px] overflow-hidden rounded-t-xl">
+            <Skeleton width="100%" height="100%" variant="rectangular" />
+          </Box>
         )}
       </div>
 
@@ -175,54 +177,52 @@ const Card = (props) => {
         )}
         {/* Características scroll horizontal */}
         <div className="flex overflow-x-auto gap-4 py-2 snap-x px-2 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-700 scroll-smooth hover:scrollbar-thumb-blue-400">
-        {/* Características scroll horizontal */}
-<div className="w-full overflow-x-auto py-2 px-2 scroll-smooth scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-700 hover:scrollbar-thumb-blue-400">
-  <div className="flex gap-4 snap-x snap-mandatory min-w-full">
-    {/* Recámaras */}
-    {price !== undefined && bedrooms !== undefined ? (
-      <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
-        <FaBed className="text-orange-500" />
-        <span>{bedrooms}</span>
-      </div>
-    ) : (
-      <Box sx={{ pt: 0.5 }}>
-        <Skeleton width={70} height={70} />
-      </Box>
-    )}
-
-    {/* Baños */}
-    {bathrooms !== undefined && (
-      <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
-        <LuToilet className="text-orange-500" />
-        <span>{bathrooms}</span>
-      </div>
-    )}
-
-    {/* Estacionamiento */}
-    {parkings !== undefined && (
-      <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
-        <IoCarSport className="text-orange-500" />
-        <span>{parkings}</span>
-      </div>
-    )}
-
-    {/* Cuarto de lavado */}
-    {cleanrooms !== undefined && (
-      <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
-        <BiSolidWasher className="text-orange-500" />
-        <span>{cleanrooms}</span>
-      </div>
-    )}
-  </div>
-</div>
-
-{/* Link para editar */}
-<Link
-  to={`/properties/${id}`}
-  className="text-blue-400 underline text-sm mt-2 self-start hover:text-blue-300"
->
-  Editar propiedad
-</Link>
+          {/* Características scroll horizontal */}
+          <div className="w-full overflow-x-auto py-2 px-2 scroll-smooth scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-700 hover:scrollbar-thumb-blue-400">
+            <div className="flex items-center gap-4 snap-x snap-mandatory min-w-full">
+              {/* Recámaras */}
+              {bedrooms ? (
+                <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
+                  <FaBed className="text-orange-500" />
+                  <span>{bedrooms}</span>
+                </div>
+              ) : (
+                <Box sx={{}}>
+                  <Skeleton width={70} height={70} />
+                </Box>
+              )}
+              {bathrooms ? (
+                <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
+                  <LuToilet className="text-orange-500" />
+                  <span>{bathrooms}</span>
+                </div>
+              ) : (
+                <Box sx={{ }}>
+                  <Skeleton width={70} height={70} />
+                </Box>
+              )}
+              {parkings ? (
+                <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
+                  <IoCarSport className="text-orange-500" />
+                  <span>{parkings}</span>
+                </div>
+              ) : (
+                <Box sx={{}}>
+                  <Skeleton width={70} height={70} />
+                </Box>
+              )}
+              {cleanrooms ? (
+                <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
+                  <BiSolidWasher className="text-orange-500" />
+                  <span>{cleanrooms}</span>
+                </div>
+              ) : (
+                <Box sx={{  }}>
+                  <Skeleton width={70} height={70} />
+                </Box>
+              )}
+            </div>
+          </div>
         </div>
 
         <Link

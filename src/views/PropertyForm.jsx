@@ -76,6 +76,18 @@ export default function PropertyForm() {
   const [imagePreview, setImagePreview] = useState(
     `${baseUrl}photos/default.jpg`
   );
+  const typeMode = ["venta", "renta"];
+  const type = ["casa", "departamento", "terrano"];
+  const moodsBuy = [
+    "contado",
+    "infonavit",
+    "bancario",
+    "fovissste",
+    "trato",
+    "pensiones",
+    "traspaso",
+  ];
+
   const [property, setProperty] = useState({
     id: null,
     name: "",
@@ -84,15 +96,15 @@ export default function PropertyForm() {
     cleanrooms: undefined,
     parkings: undefined,
     address: undefined,
-    moodsBuy: undefined,
+    moodsBuy: [],
     price: undefined,
     discount: undefined,
     sizeLength: undefined,
     sizeWidth: undefined,
     level: undefined,
     floors: undefined,
-    typeMode: undefined,
-    type: undefined,
+    typeMode: [],
+    type: [],
     appliances: undefined,
     status: undefined,
   });
@@ -294,7 +306,7 @@ export default function PropertyForm() {
                   : img
               )
             );
-            console.log(images);
+            // console.log(images);
           })
           .catch((err) => {
             console.error("Error al subir imagen", err);
@@ -582,7 +594,29 @@ export default function PropertyForm() {
       }
     }
   };
+  const toggleTipoCompra = (tipo) => {
+    setProperty((prev) => {
+      const typeMode = Array.isArray(prev.typeMode) ? prev.typeMode : [];
+      const yaSeleccionado = typeMode.includes(tipo);
+      const typeModeActualizado = yaSeleccionado
+        ? typeMode.filter((t) => t !== tipo)
+        : [...typeMode, tipo];
+      console.log(typeModeActualizado);
+      return { ...prev, typeMode: typeModeActualizado };
+    });
+  };
+  const toggleTipoVenta = (tipo) => {
+    setProperty((prev) => {
+      const moodsBuy = Array.isArray(prev.moodsBuy) ? prev.moodsBuy : [];
+      const yaSeleccionado = moodsBuy.includes(tipo);
+      const moodsBuyActualizado = yaSeleccionado
+        ? moodsBuy.filter((t) => t !== tipo)
+        : [...moodsBuy, tipo];
+      console.log(moodsBuyActualizado);
 
+      return { ...prev, moodsBuy: moodsBuyActualizado };
+    });
+  };
   const onSubmit2 = async (ev) => {
     ev.preventDefault();
 
@@ -652,7 +686,6 @@ export default function PropertyForm() {
     thumbnail: `${baseUrl}${img.thumbnail}`,
   }));
   const shouldShowDropZone = isDragActive || images.length === 0;
-  console.log(imageGalleryItems);
 
   const steps = [
     {
@@ -700,24 +733,24 @@ export default function PropertyForm() {
               </div>
               <div className="col-span-2 md:col-span-2 lg:col-span-2">
                 <NumericFormat
-                  value={property.cleanrooms || ""}
-                  onValueChange={handleNumericChange("cleanrooms")}
-                  name="cleanrooms"
-                  allowNegative={false}
-                  customInput={TextField}
-                  label="Cuarto de servicio"
-                  variant="standard"
-                  fullWidth
-                />
-              </div>
-              <div className="col-span-2 md:col-span-2 lg:col-span-2">
-                <NumericFormat
                   value={property.parkings || ""}
                   onValueChange={handleNumericChange("parkings")}
                   name="parkings"
                   allowNegative={false}
                   customInput={TextField}
                   label="Estacionamiento"
+                  variant="standard"
+                  fullWidth
+                />
+              </div>
+              <div className="col-span-2 md:col-span-2 lg:col-span-2">
+                <NumericFormat
+                  value={property.cleanrooms || ""}
+                  onValueChange={handleNumericChange("cleanrooms")}
+                  name="cleanrooms"
+                  allowNegative={false}
+                  customInput={TextField}
+                  label="Cuarto de servicio"
                   variant="standard"
                   fullWidth
                 />
@@ -732,6 +765,64 @@ export default function PropertyForm() {
                   onChange={handleTextChange}
                   fullWidth
                 />
+              </div>
+              <div className="col-span-2 md:col-span-3 lg:col-span-3">
+                <div className="flex justify-start">
+                  {typeMode.map((tipo) => (
+                    <div
+                      key={tipo}
+                      onClick={() => toggleTipoCompra(tipo)}
+                      className={`cursor-pointer rounded-xl px-3 py-1 w-fit text-sm font-semibold mr-2 transition ${
+                        Array.isArray(property.typeMode) &&
+                        property.typeMode.includes(tipo)
+                          ? "bg-green-700 text-white"
+                          : "bg-green-500 text-white"
+                      }`}
+                    >
+                      {tipo.charAt(0).toUpperCase() + tipo.slice(1)}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="col-span-2 md:col-span-3 lg:col-span-3">
+                <div className="flex justify-start">
+                  {moodsBuy.map((tipo) => (
+                    <div
+                      key={tipo}
+                      onClick={() => toggleTipoVenta(tipo)}
+                      className={`cursor-pointer rounded-xl px-3 py-1 w-fit text-sm font-semibold mr-2 transition ${
+                        Array.isArray(property.moodsBuy) &&
+                        property.moodsBuy.includes(tipo)
+                          ? "bg-green-700 text-white"
+                          : "bg-green-500 text-white"
+                      }`}
+                    >
+                      {tipo.charAt(0).toUpperCase() + tipo.slice(1)}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="col-span-2 md:col-span-3 lg:col-span-3">
+                <div className="flex justify-start">
+                  {type.map((tipo) => (
+                    <div
+                      key={tipo}
+                      onClick={() =>
+                        setProperty((prev) => ({
+                          ...prev,
+                          type: tipo,
+                        }))
+                      }
+                      className={`cursor-pointer rounded-xl px-3 py-1 w-fit text-sm font-semibold mr-2 ${
+                        property.type === tipo
+                          ? "bg-green-700 text-white"
+                          : "bg-green-500 text-white"
+                      }`}
+                    >
+                      {tipo.charAt(0).toUpperCase() + tipo.slice(1)}
+                    </div>
+                  ))}
+                </div>
               </div>
               <div>
                 <Button variant="contained" type="submit" sx={{ mt: 1, mr: 1 }}>
@@ -1180,8 +1271,6 @@ export default function PropertyForm() {
                           >
                             Back
                           </Button>
-
-                          
                         </Box>
                       </StepContent>
                     </Step>
@@ -1199,7 +1288,7 @@ export default function PropertyForm() {
                 bedrooms={property.bedrooms}
                 bathrooms={property.bathrooms}
                 status={property.status}
-                parkings={property.bathrooms}
+                parkings={property.parkings}
                 cleanrooms={property.cleanrooms}
                 isInitiallyFavorited={true}
               />{" "}
