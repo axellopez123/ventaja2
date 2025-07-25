@@ -61,7 +61,7 @@ const Card = (props) => {
     }
   };
 
-  console.log(img.length);
+  console.log(typeMode);
 
   return (
     <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto bg-[#1F1D2B] rounded-xl shadow-lg hover:shadow-xl shadow-gray-700/70 transition-shadow duration-300 flex flex-col text-white">
@@ -126,11 +126,10 @@ const Card = (props) => {
               <button
                 key={index}
                 aria-label={`Select image ${index + 1}`}
-                className={`w-3 h-3 mx-1 rounded-full transition-all duration-200 ${
-                  isSelected
-                    ? "bg-blue-600 scale-110 shadow"
-                    : "bg-gray-300 hover:bg-gray-500"
-                }`}
+                className={`w-3 h-3 mx-1 rounded-full transition-all duration-200 ${isSelected
+                  ? "bg-blue-600 scale-110 shadow"
+                  : "bg-gray-300 hover:bg-gray-500"
+                  }`}
                 onClick={() => onClick(index)}
               />
             )}
