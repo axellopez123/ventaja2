@@ -77,7 +77,7 @@ export default function PropertyForm() {
     `${baseUrl}photos/default.jpg`
   );
   const typeMode = ["venta", "renta"];
-  const type = ["casa", "departamento", "terrano"];
+  const type = ["casa", "departamento", "terreno"];
   const moodsBuy = [
     "contado",
     "infonavit",
@@ -601,7 +601,6 @@ export default function PropertyForm() {
       const typeModeActualizado = yaSeleccionado
         ? typeMode.filter((t) => t !== tipo)
         : [...typeMode, tipo];
-      console.log(typeModeActualizado);
       return { ...prev, typeMode: typeModeActualizado };
     });
   };
@@ -612,7 +611,6 @@ export default function PropertyForm() {
       const moodsBuyActualizado = yaSeleccionado
         ? moodsBuy.filter((t) => t !== tipo)
         : [...moodsBuy, tipo];
-      console.log(moodsBuyActualizado);
 
       return { ...prev, moodsBuy: moodsBuyActualizado };
     });
@@ -1290,8 +1288,11 @@ export default function PropertyForm() {
                 status={property.status}
                 parkings={property.parkings}
                 cleanrooms={property.cleanrooms}
+                typeMode={property.typeMode}
+                moodsBuy={property.moodsBuy}
+                type={property.type}
                 isInitiallyFavorited={true}
-              />{" "}
+              />
             </div>
           </div>
         )}

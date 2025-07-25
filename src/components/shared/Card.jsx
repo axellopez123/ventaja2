@@ -27,6 +27,9 @@ const Card = (props) => {
     bathrooms,
     parkings,
     cleanrooms,
+    typeMode,
+    moodsBuy,
+    type,
     status,
     isInitiallyFavorited,
   } = props;
@@ -142,15 +145,11 @@ const Card = (props) => {
 
       <div className="p-4 flex flex-col gap-2">
         <div className="flex justify-start">
-          <div className="bg-green-500 rounded-xl px-3 py-1 w-fit text-white text-sm font-semibold mr-2">
-            Venta
-          </div>
-          <div className="bg-green-500 rounded-xl px-3 py-1 w-fit text-white text-sm font-semibold mr-2">
-            Renta
-          </div>
-          <div className="bg-green-500 rounded-xl px-3 py-1 w-fit text-white text-sm font-semibold mr-2">
-            Traspaso
-          </div>
+          {typeMode.map((type) => {
+            <div className="bg-green-500 rounded-xl px-3 py-1 w-fit text-white text-sm font-semibold mr-2">
+              {type.charAt(0).toUpperCase() + type.slice(1)}
+            </div>;
+          })}
         </div>
         {description ? (
           <Box sx={{ pr: 2 }}>
@@ -197,7 +196,7 @@ const Card = (props) => {
                   <span>{bathrooms}</span>
                 </div>
               ) : (
-                <Box sx={{ }}>
+                <Box sx={{}}>
                   <Skeleton width={70} height={70} />
                 </Box>
               )}
@@ -217,7 +216,7 @@ const Card = (props) => {
                   <span>{cleanrooms}</span>
                 </div>
               ) : (
-                <Box sx={{  }}>
+                <Box sx={{}}>
                   <Skeleton width={70} height={70} />
                 </Box>
               )}
