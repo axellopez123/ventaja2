@@ -1290,8 +1290,6 @@ export default function PropertyForm() {
                 status={property.status}
                 parkings={property.parkings}
                 cleanrooms={property.cleanrooms}
-                typeMode={property.typeMode}
-                moodsBuy={property.moodsBuy}
                 type={property.type}
                 isInitiallyFavorited={true}
               />

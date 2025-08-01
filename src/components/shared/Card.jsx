@@ -126,10 +126,11 @@ const Card = (props) => {
               <button
                 key={index}
                 aria-label={`Select image ${index + 1}`}
-                className={`w-3 h-3 mx-1 rounded-full transition-all duration-200 ${isSelected
-                  ? "bg-blue-600 scale-110 shadow"
-                  : "bg-gray-300 hover:bg-gray-500"
-                  }`}
+                className={`w-3 h-3 mx-1 rounded-full transition-all duration-200 ${
+                  isSelected
+                    ? "bg-blue-600 scale-110 shadow"
+                    : "bg-gray-300 hover:bg-gray-500"
+                }`}
                 onClick={() => onClick(index)}
               />
             )}
@@ -144,11 +145,14 @@ const Card = (props) => {
 
       <div className="p-4 flex flex-col gap-2">
         <div className="flex justify-start">
-          {typeMode.map((type) => {
-            <div className="bg-green-500 rounded-xl px-3 py-1 w-fit text-white text-sm font-semibold mr-2">
-              {type.charAt(0).toUpperCase() + type.slice(1)}
-            </div>;
-          })}
+          {typeMode &&
+            typeMode.map((type) => {
+              return (
+                <div className="bg-green-500 rounded-xl px-3 py-1 w-fit text-white text-sm font-semibold mr-2">
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </div>
+              );
+            })}
         </div>
         {description ? (
           <Box sx={{ pr: 2 }}>
