@@ -8,6 +8,7 @@ import { BiSolidWasher } from "react-icons/bi";
 import { LuToilet } from "react-icons/lu";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
+import { useTheme } from '@mui/material/styles';
 
 import {
   RiArrowLeftLine,
@@ -35,6 +36,7 @@ const Card = (props) => {
   } = props;
   const [favorited, setFavorited] = useState(isInitiallyFavorited);
   const [loading, setLoading] = useState(false);
+  const theme = useTheme();
 
   const handleToggle = async () => {
     if (loading) return;
@@ -64,7 +66,22 @@ const Card = (props) => {
   console.log(typeMode);
 
   return (
-    <div className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto bg-[#1F1D2B] rounded-xl shadow-lg hover:shadow-xl shadow-gray-700/70 transition-shadow duration-300 flex flex-col text-white">
+    <Link
+          to={`/properties/${id}`}
+          className="block"
+        >
+    <div style={{
+          backgroundColor: theme.palette.mode === 'dark'
+            ? theme.palette.background.paper
+            : theme.palette.primary.light
+        }}
+        className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto rounded-xl shadow-lg hover:shadow-xl shadow-gray-700/70 transition-shadow duration-300 flex flex-col text-white">
+      {/* Listón en la esquina superior izquierda
+      <div className="absolute top-0 left-0 z-30">
+        <div className="bg-green-600 text-white text-xs font-bold px-10 py-1 transform -rotate-45 -translate-x-6 translate-y-3 shadow-md select-none">
+          Terreno
+        </div>
+      </div> */}
       <div className="relative w-full h-[200px] md:h-[250px]">
         <button
           className="absolute -bottom-5 right-5 bg-white/90 hover:bg-white text-red-500 p-2 rounded-full shadow-md transition-all z-30"
@@ -165,7 +182,7 @@ const Card = (props) => {
         )}
         {price ? (
           <Box sx={{ pr: 2 }}>
-            <span className="text-gray-400 font-semibold">
+            <span className="text-gray-200 font-semibold text-lg">
               {new Intl.NumberFormat("es-MX", {
                 style: "currency",
                 currency: "MXN",
@@ -178,15 +195,18 @@ const Card = (props) => {
           </Box>
         )}
         {/* Características scroll horizontal */}
-        <div className="flex overflow-x-auto gap-4 py-2 snap-x px-2 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-700 scroll-smooth hover:scrollbar-thumb-blue-400">
+        <div className="flex overflow-x-auto gap-4 py-2 snap-x px-0 sm:px-2  md:px-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-700 scroll-smooth hover:scrollbar-thumb-blue-400">
           {/* Características scroll horizontal */}
           <div className="w-full overflow-x-auto py-2 px-2 scroll-smooth scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-700 hover:scrollbar-thumb-blue-400">
             <div className="flex items-center gap-4 snap-x snap-mandatory min-w-full">
               {/* Recámaras */}
               {bedrooms ? (
-                <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
-                  <FaBed className="text-orange-500" />
-                  <span>{bedrooms}</span>
+                <div className="snap-center flex flex-col items-center gap-1 px-4 py-2 border-2 border-orange-500 rounded-lg bg-[#fcfcfc] min-w-max">
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-600 font-bold">{bedrooms}</span>
+                    <FaBed className="text-orange-500 text-xl" />
+                  </div>
+                  <span className="text-xs text-gray-600">Recs.</span>
                 </div>
               ) : (
                 <Box sx={{}}>
@@ -194,9 +214,12 @@ const Card = (props) => {
                 </Box>
               )}
               {bathrooms ? (
-                <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
-                  <LuToilet className="text-orange-500" />
-                  <span>{bathrooms}</span>
+                <div className="snap-center flex flex-col items-center gap-1 px-4 py-2 border-2 border-orange-500 rounded-lg bg-[#fcfcfc] min-w-max">
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-600 font-bold">{bathrooms}</span>
+                    <LuToilet className="text-orange-500 text-xl" />
+                  </div>
+                  <span className="text-xs text-gray-600">W.C.</span>
                 </div>
               ) : (
                 <Box sx={{}}>
@@ -204,9 +227,12 @@ const Card = (props) => {
                 </Box>
               )}
               {parkings ? (
-                <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
-                  <IoCarSport className="text-orange-500" />
-                  <span>{parkings}</span>
+                <div className="snap-center flex flex-col items-center gap-1 px-4 py-2 border-2 border-orange-500 rounded-lg bg-[#fcfcfc] min-w-max">
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-600 font-bold">{parkings}</span>
+                    <IoCarSport className="text-orange-500 text-xl" />
+                  </div>
+                  <span className="text-xs text-gray-600">Cajón</span>
                 </div>
               ) : (
                 <Box sx={{}}>
@@ -214,9 +240,12 @@ const Card = (props) => {
                 </Box>
               )}
               {cleanrooms ? (
-                <div className="snap-center flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-md bg-[#2B2A3D] min-w-max">
-                  <BiSolidWasher className="text-orange-500" />
-                  <span>{cleanrooms}</span>
+                <div className="snap-center flex flex-col items-center gap-1 px-4 py-2 border-2 border-orange-500 rounded-lg bg-[#fcfcfc] min-w-max">
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-600 font-bold">{cleanrooms}</span>
+                    <BiSolidWasher className="text-orange-500 text-xl" />
+                  </div>
+                  <span className="text-xs text-gray-600">Lavado</span>
                 </div>
               ) : (
                 <Box sx={{}}>
@@ -226,15 +255,16 @@ const Card = (props) => {
             </div>
           </div>
         </div>
+<div className="snap-center flex justify-center">
 
         <Link
           to={`/properties/${id}`}
-          className="text-blue-400 underline text-sm mt-2 self-start hover:text-blue-300"
-        >
-          Editar propiedad
-        </Link>
+          className="text-white underline text-sm mt-2 self-start hover:text-blue-300 rounded-3xl bg-gray-200/50 px-4 py-2"
+        ><span>Mas información</span></Link>
+        </div>
       </div>
     </div>
+        </Link>
   );
 };
 

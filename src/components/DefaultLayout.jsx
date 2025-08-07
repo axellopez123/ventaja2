@@ -18,9 +18,48 @@ const NAVIGATION = [
 
 const theme = createTheme({
   cssVariables: {
-    colorSchemeSelector: "data-toolpad-color-scheme",
+    colorSchemeSelector: 'data-toolpad-color-scheme',
   },
-  colorSchemes: { light: true, dark: true },
+  colorSchemes: {
+    light: {
+      palette: {
+        mode: 'light',
+        primary: {
+          main: '#004AAD', // Azul inmobiliario profesional
+        },
+        secondary: {
+          main: '#F9A825', // Amarillo dorado para acentos
+        },
+        background: {
+          default: '#F9FAFB', // Fondo general claro
+          paper: '#FFFFFF',   // Fondo de tarjetas y contenedores
+        },
+        text: {
+          primary: '#1F2937', // Gris oscuro (casi negro)
+          secondary: '#4B5563',
+        },
+      },
+    },
+    dark: {
+      palette: {
+        mode: 'dark',
+        primary: {
+          main: '#4F9CE5', // Azul claro para buen contraste
+        },
+        secondary: {
+          main: '#4F9CE5', // Acento amarillo claro
+        },
+        background: {
+          default: '#00000', // Fondo general oscuro
+          paper: '#00000',   // Tarjetas y contenedores
+        },
+        text: {
+          primary: '#FFFFFF',
+          secondary: '#CCCCCC',
+        },
+      },
+    },
+  },
   breakpoints: {
     values: {
       xs: 0,
@@ -31,6 +70,7 @@ const theme = createTheme({
     },
   },
 });
+
 
 export default function ToolpadLayout() {
   const location = useLocation();
