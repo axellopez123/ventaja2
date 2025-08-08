@@ -86,7 +86,7 @@ export default function Properties() {
   ];
 
   return (
-    <div className="px-3 text-white">
+    <div className="px-3 text-white h-full">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-white dark:text-orange-500">Explora propiedades</h2>
 
@@ -125,7 +125,7 @@ export default function Properties() {
         scrollThreshold="250px"
         scrollableTarget="scrollableDiv"
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 h-full">
           {properties.map((u) => {
             const galleryItems = Array.isArray(u.images)
               ? imageGalleryItems(u.images)

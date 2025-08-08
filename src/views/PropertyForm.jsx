@@ -1,4 +1,11 @@
-import { React, useEffect, useState, useCallback, useMemo } from "react";
+import {
+  React,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 // import Image from 'next/image'
 import { useNavigate, useParams } from "react-router-dom";
 import axiosClient from "../axios-client";
@@ -110,6 +117,16 @@ export default function PropertyForm() {
   });
   const [isDraggingOverWindow, setIsDraggingOverWindow] = useState(false);
   const [dragCounter, setDragCounter] = useState(0);
+  const fileInputRef = useRef(null);
+  const [showCard, setShowCard] = useState(false);
+
+  const handleFileSelect = (event) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      onDrop(Array.from(files)); // reutiliza tu lógica de subida
+    }
+  };
+
   useEffect(() => {
     const handleDragEnter = (e) => {
       e.preventDefault();
@@ -150,6 +167,8 @@ export default function PropertyForm() {
   }, []);
   const handleSubmitStep = async (ev) => {
     ev.preventDefault();
+    console.log(activeStep);
+    console.log(steps.length);
 
     if (activeStep === 0) {
       if (id) {
@@ -192,6 +211,7 @@ export default function PropertyForm() {
         }
       }
     }
+
     if (activeStep === 1) {
       if (property.id) {
         // 🔁 ACTUALIZAR propiedad
@@ -206,6 +226,11 @@ export default function PropertyForm() {
         }
       }
     }
+  };
+
+  // Mover handleFinish fuera como función independiente
+  const handleFinish = () => {
+    navigate("/properties");
   };
 
   const handleNext = async () => {
@@ -690,7 +715,7 @@ export default function PropertyForm() {
       label: "Datos principales",
       content: (
         <div>
-          <form onSubmit={handleSubmitStep}>
+          <form id={`step-form-${activeStep}`} onSubmit={handleSubmitStep}>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
               <div className="col-span-2 md:col-span-4 lg:col-span-4">
                 <TextField
@@ -753,7 +778,7 @@ export default function PropertyForm() {
                   fullWidth
                 />
               </div>
-              <div className="col-span-2 md:col-span-3 lg:col-span-3">
+              <div className="col-span-4">
                 <TextField
                   id="address"
                   name="address"
@@ -764,13 +789,13 @@ export default function PropertyForm() {
                   fullWidth
                 />
               </div>
-              <div className="col-span-2 md:col-span-3 lg:col-span-3">
+              <div className="col-span-4">
                 <div className="flex justify-start">
                   {typeMode.map((tipo) => (
                     <div
                       key={tipo}
                       onClick={() => toggleTipoCompra(tipo)}
-                      className={`cursor-pointer rounded-xl px-3 py-1 w-fit text-sm font-semibold mr-2 transition ${
+                      className={`cursor-pointer rounded-xl px-3 py-1 w-full text-sm font-semibold mr-2 transition text-center ${
                         Array.isArray(property.typeMode) &&
                         property.typeMode.includes(tipo)
                           ? "bg-green-700 text-white"
@@ -782,13 +807,15 @@ export default function PropertyForm() {
                   ))}
                 </div>
               </div>
-              <div className="col-span-2 md:col-span-3 lg:col-span-3">
-                <div className="flex justify-start">
+              <div className="col-span-4 md:col-span-4 lg:col-span-4">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {" "}
+                  {/* 2 cols en móvil, 4 cols en sm y mayores */}
                   {moodsBuy.map((tipo) => (
                     <div
                       key={tipo}
                       onClick={() => toggleTipoVenta(tipo)}
-                      className={`cursor-pointer rounded-xl px-3 py-1 w-fit text-sm font-semibold mr-2 transition ${
+                      className={`cursor-pointer rounded-xl px-3 py-1 text-sm font-semibold text-center transition ${
                         Array.isArray(property.moodsBuy) &&
                         property.moodsBuy.includes(tipo)
                           ? "bg-green-700 text-white"
@@ -822,11 +849,11 @@ export default function PropertyForm() {
                   ))}
                 </div>
               </div>
-              <div>
+              {/* <div>
                 <Button variant="contained" type="submit" sx={{ mt: 1, mr: 1 }}>
                   Siguiente
                 </Button>
-              </div>
+              </div> */}
             </div>
           </form>
         </div>
@@ -836,7 +863,7 @@ export default function PropertyForm() {
       label: "Mas datos",
       content: (
         <div>
-          <form onSubmit={handleSubmitStep}>
+          <form id={`step-form-${activeStep}`} onSubmit={handleSubmitStep}>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
               <div className="col-span-1 md:col-span-2 lg:col-span-2">
                 <NumericFormat
@@ -910,11 +937,11 @@ export default function PropertyForm() {
                   variant="standard"
                 />
               </div>
-              <div>
+              {/* <div>
                 <Button variant="contained" type="submit" sx={{ mt: 1, mr: 1 }}>
                   Siguiente
                 </Button>
-              </div>
+              </div> */}
             </div>
           </form>
         </div>
@@ -948,6 +975,22 @@ export default function PropertyForm() {
                 </div>
               ) : (
                 <div>
+                  {/* Botón fijo para subir imágenes manualmente */}
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="absolute bottom-3 right-3 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg shadow-md transition-all z-30"
+                  >
+                    +
+                  </button>
+                  {/* Input oculto */}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={handleFileSelect}
+                  />
                   <ImageGallery
                     items={imageGalleryItems}
                     showThumbnails={false}
@@ -1243,56 +1286,165 @@ export default function PropertyForm() {
         )}
 
         {!loading && (
-          <div className="grid grid-cols-2 grid-row-1 xs:px-0 sm:px-16 md:px-32">
-            {/* ----------------------------------- */}
-            <div className="col-span-2 sm:col-span-1 row-span-1">
-              <Box sx={{ maxWidth: 400 }}>
-                <Stepper activeStep={activeStep} orientation="vertical">
-                  {steps.map((step, index) => (
-                    <Step key={step.label}>
-                      <StepLabel
-                        optional={
-                          index === steps.length - 1 ? (
-                            <Typography variant="caption">Last step</Typography>
-                          ) : null
-                        }
-                      >
-                        {step.label}
-                      </StepLabel>
-                      <StepContent>
-                        <Box>{step.content}</Box>
-                        <Box sx={{ mb: 2 }}>
-                          <Button
-                            disabled={index === 0}
-                            onClick={handleBack}
-                            sx={{ mt: 1, mr: 1 }}
+          <div>
+<div className="flex flex-col min-h-screen">
+              {/* <p>Registra tu propiedad</p> */}
+              <div className="grid grid-cols-2 grid-row-1 xs:px-0 sm:px-16 md:px-32">
+                {/* ----------------------------------- */}
+                <div className="col-span-2 lg:col-span-1 row-span-1">
+                  <Box sx={{ maxWidth: 400 }}>
+                    <Stepper activeStep={activeStep} orientation="vertical">
+                      {steps.map((step, index) => (
+                        <Step key={step.label}>
+                          <StepLabel
+                            optional={
+                              index === steps.length - 1 ? (
+                                <Typography variant="caption">
+                                  Last step
+                                </Typography>
+                              ) : null
+                            }
                           >
-                            Back
-                          </Button>
-                        </Box>
-                      </StepContent>
-                    </Step>
-                  ))}
-                </Stepper>
-              </Box>
-            </div>
-            {/* --------------------------- */}
-            <div className="col-span-2 sm:col-span-1 row-span-1">
-              <Card
-                id={0}
-                img={imageGalleryItems}
-                description={property.name}
-                price={property.price}
-                bedrooms={property.bedrooms}
-                bathrooms={property.bathrooms}
-                typeMode={property.typeMode}
-                moodsBuy={property.moodsBuy}
-                status={property.status}
-                parkings={property.parkings}
-                cleanrooms={property.cleanrooms}
-                type={property.type}
-                isInitiallyFavorited={true}
-              />
+                            {step.label}
+                          </StepLabel>
+                          <StepContent>
+                            <Box>{step.content}</Box>
+                            <Box sx={{ mb: 2 }}>
+                              {/* <Button
+                              disabled={index === 0}
+                              onClick={handleBack}
+                              sx={{ mt: 1, mr: 1 }}
+                            >
+                              Back
+                            </Button> */}
+
+                              <div className="grid grid-cols-2 gap-6 mt-2 px-4">
+                                <Button
+                                  variant="outlined"
+                                  onClick={handleBack}
+                                  disabled={activeStep === 0}
+                                >
+                                  Atrás
+                                </Button>
+
+                                {activeStep === steps.length - 1 ? (
+                                  /* Botón Finalizar para el último paso */
+                                  <Button
+                                    variant="contained"
+                                    onClick={handleFinish}
+                                    disabled={imageGalleryItems.length === 0}
+                                  >
+                                    Finalizar
+                                  </Button>
+                                ) : (
+                                  /* Botón Siguiente para pasos normales */
+                                  <Button
+                                    variant="contained"
+                                    type="submit"
+                                    form={`step-form-${activeStep}`}
+                                  >
+                                    Siguiente
+                                  </Button>
+                                )}
+                              </div>
+                            </Box>
+                          </StepContent>
+                        </Step>
+                      ))}
+                    </Stepper>
+                  </Box>
+                </div>
+                {/* --------------------------- */}
+                <div className="hidden md:block col-span-1 row-span-1 px-16">
+                  <Card
+                    id={0}
+                    img={imageGalleryItems}
+                    description={property.name}
+                    price={property.price}
+                    bedrooms={property.bedrooms}
+                    bathrooms={property.bathrooms}
+                    typeMode={property.typeMode}
+                    moodsBuy={property.moodsBuy}
+                    status={property.status}
+                    parkings={property.parkings}
+                    cleanrooms={property.cleanrooms}
+                    type={property.type}
+                    isInitiallyFavorited={true}
+                  />
+                </div>
+                <button
+                  onClick={() => setShowCard(!showCard)}
+                  aria-label={showCard ? "Cerrar tarjeta" : "Ver tarjeta"}
+                  className="sm:hidden fixed bottom-4 right-4 bg-orange-500 hover:bg-orange-600 text-white p-3 rounded-full shadow-lg z-50 flex items-center justify-center"
+                >
+                  {showCard ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
+                    </svg>
+                  )}
+                </button>
+
+                {showCard && (
+                  <div
+                    className="sm:hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+                    onClick={() => setShowCard(false)} // Cierra al hacer clic en el fondo
+                  >
+                    {/* Contenedor de la Card (evita que el clic se propague) */}
+                    <div
+                      className="bg-white rounded-xl shadow-lg max-w-sm w-full relative"
+                      onClick={(e) => e.stopPropagation()} // Evita que el clic en la Card cierre el modal
+                    >
+                      <Card
+                        id={0}
+                        img={imageGalleryItems}
+                        description={property.name}
+                        price={property.price}
+                        bedrooms={property.bedrooms}
+                        bathrooms={property.bathrooms}
+                        typeMode={property.typeMode}
+                        moodsBuy={property.moodsBuy}
+                        status={property.status}
+                        parkings={property.parkings}
+                        cleanrooms={property.cleanrooms}
+                        type={property.type}
+                        isInitiallyFavorited={true}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
