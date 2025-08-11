@@ -8,7 +8,7 @@ import NotFound from "./views/NotFound.jsx";
 import DefaultLayout from "./components/DefaultLayout.jsx";
 import GuestLayout from "./components/GuestLayout.jsx";
 import Dashboard from "./views/Dashboard.jsx";
-
+import Property from "./views/Property.jsx";
 const router = createBrowserRouter([
     {
         path: '/',
@@ -33,6 +33,11 @@ const router = createBrowserRouter([
             {
                 path: '/properties',
                 element:<Dashboard/>
+                
+            },
+            {
+                path: '/property/:id',
+                element:<Property key="propertyShow"/>
             },
             {
                 path: '/properties/new',

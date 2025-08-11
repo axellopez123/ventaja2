@@ -18,44 +18,44 @@ const NAVIGATION = [
 
 const theme = createTheme({
   cssVariables: {
-    colorSchemeSelector: 'data-toolpad-color-scheme',
+    colorSchemeSelector: "data-toolpad-color-scheme",
   },
   colorSchemes: {
     light: {
       palette: {
-        mode: 'light',
+        mode: "light",
         primary: {
-          main: '#004AAD', // Azul inmobiliario profesional
+          main: "#004AAD", // Azul inmobiliario profesional
         },
         secondary: {
-          main: '#F9A825', // Amarillo dorado para acentos
+          main: "#F9A825", // Amarillo dorado para acentos
         },
         background: {
-          default: '#F9FAFB', // Fondo general claro
-          paper: '#FFFFFF',   // Fondo de tarjetas y contenedores
+          default: "#F9FAFB", // Fondo general claro
+          paper: "#FFFFFF", // Fondo de tarjetas y contenedores
         },
         text: {
-          primary: '#1F2937', // Gris oscuro (casi negro)
-          secondary: '#4B5563',
+          primary: "#1F2937", // Gris oscuro (casi negro)
+          secondary: "#4B5563",
         },
       },
     },
     dark: {
       palette: {
-        mode: 'dark',
+        mode: "dark",
         primary: {
-          main: '#4F9CE5', // Azul claro para buen contraste
+          main: "#9CA3AF", // Gris claro para buen contraste
         },
         secondary: {
-          main: '#4F9CE5', // Acento amarillo claro
+          main: "#FBC02D", // Amarillo suave para acentos
         },
         background: {
-          default: '#00000', // Fondo general oscuro
-          paper: '#00000',   // Tarjetas y contenedores
+          default: "#1F2937", // Fondo gris muy oscuro
+          paper: "#111827", // Fondo para tarjetas
         },
         text: {
-          primary: '#FFFFFF',
-          secondary: '#CCCCCC',
+          primary: "#FFFFFF",
+          secondary: "#D1D5DB",
         },
       },
     },
@@ -71,7 +71,6 @@ const theme = createTheme({
   },
 });
 
-
 export default function ToolpadLayout() {
   const location = useLocation();
   const { user, token, notification, setUser, setToken } = useStateContext();
@@ -86,9 +85,7 @@ export default function ToolpadLayout() {
       branding={{
         // logo: <img src="https://mui.com/static/logo.png" alt="MUI logo" />,
         logo: <RiHomeHeartFill />,
-        title: <span className="text-orange-500">
-          INMOBILIARIA
-        </span>,
+        title: <span className="text-orange-500">INMOBILIARIA</span>,
         homeUrl: "/",
       }}
       theme={theme}
@@ -107,6 +104,7 @@ export default function ToolpadLayout() {
             sx={{
               flex: 1,
               overflowY: "auto", // ✅ solo esta área tiene scroll
+              overflowX: "hidden", // oculta scroll horizontal global
               px: 2,
               py: 3,
             }}

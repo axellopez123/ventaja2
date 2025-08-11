@@ -717,7 +717,7 @@ export default function PropertyForm() {
         <div>
           <form id={`step-form-${activeStep}`} onSubmit={handleSubmitStep}>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
-              <div className="col-span-2 md:col-span-4 lg:col-span-4">
+              <div className="col-span-4">
                 <TextField
                   id="name"
                   name="name"
@@ -1044,7 +1044,7 @@ export default function PropertyForm() {
                 <Droppable droppableId="images" direction="horizontal">
                   {(provided) => (
                     <div
-                      className="grid grid-flow-col auto-cols-[minmax(80px,_1fr)] gap-4 mt-4 pb-2 overflow-x-auto"
+                      className="grid grid-flow-col auto-cols-[80px] sm:auto-cols-[100px] md:auto-cols-[120px] gap-4 mt-4 pb-2 overflow-x-auto"
                       ref={provided.innerRef}
                       {...provided.droppableProps}
                     >
@@ -1287,8 +1287,10 @@ export default function PropertyForm() {
 
         {!loading && (
           <div>
-<div className="flex flex-col min-h-screen">
-              {/* <p>Registra tu propiedad</p> */}
+            <div className="flex flex-col .h-full">
+              <div className="h-1/5">
+                <p className="text-center">Registra tu propiedad</p>
+              </div>
               <div className="grid grid-cols-2 grid-row-1 xs:px-0 sm:px-16 md:px-32">
                 {/* ----------------------------------- */}
                 <div className="col-span-2 lg:col-span-1 row-span-1">

@@ -190,14 +190,14 @@ const Card = (props) => {
               </span>
             </Box>
           ) : (
-            <Box sx={{ pt: 0.5 }}>
+            <Box sx={{ pt: 0}}>
               <Skeleton width="60%" height={40} />
             </Box>
           )}
           {/* Características scroll horizontal */}
           <div className="flex overflow-x-auto gap-4 py-2 snap-x px-0 sm:px-2  md:px-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-700 scroll-smooth hover:scrollbar-thumb-blue-400">
             {/* Características scroll horizontal */}
-            <div className="w-full overflow-x-auto py-2 px-2 scroll-smooth scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-700 hover:scrollbar-thumb-blue-400">
+            <div className="w-full overflow-x-auto py-2 scroll-smooth scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-700 hover:scrollbar-thumb-blue-400">
               <div className="flex items-center gap-4 snap-x snap-mandatory min-w-full">
                 {/* Recámaras */}
                 {bedrooms ? (
@@ -268,18 +268,18 @@ const Card = (props) => {
               <div className="col-span-2">
                 <Link
                   to={`/properties/${id}`}
-                  className="w-full text-white underline text-sm mt-2 self-start hover:text-blue-300 rounded-3xl bg-gray-200/50 px-2 py-2"
+                  className="w-full  mt-2 self-start hover:text-blue-300 rounded-3xl bg-gray-200/50 px-3 py-2 border-2 border-orange-500"
                 >
-                  <span>Pedir más información</span>
+                  <span className="text-white underline text-md">Pedir más información</span>
                 </Link>
               </div>
               <div className="col-span-1">
                 {" "}
                 <Link
                   to={`/properties/${id}`}
-                  className="w-full text-white underline text-sm mt-2 self-start hover:text-blue-300 rounded-3xl bg-gray-200/50 px-2 py-2"
+                  className="w-full  mt-2 self-start hover:text-blue-300 rounded-3xl bg-gray-200/50 px-3 py-2 border-2 border-orange-500"
                 >
-                  <span>Ver más</span>
+                  <span className="text-white underline text-sm">Ver más</span>
                 </Link>
               </div>
             </div>
