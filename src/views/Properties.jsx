@@ -86,7 +86,7 @@ export default function Properties() {
   ];
 
   return (
-    <div className="text-white h-full">
+    <div className="text-white h-full pl-5 pr-3 pt-3">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-white dark:text-orange-500">
           Explora propiedades
@@ -133,6 +133,8 @@ export default function Properties() {
               ? imageGalleryItems(u.images)
               : [];
             return (
+              
+              // <Link to={`/property/${u.id}`} className="block">
               <Card
                 key={u.id}
                 id={u.id}
@@ -148,6 +150,7 @@ export default function Properties() {
                   (f) => f.product_id === u.id && f.is_active
                 )}
               />
+              // </Link>
             );
           })}
         </div>

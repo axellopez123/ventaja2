@@ -9,6 +9,7 @@ import { LuToilet } from "react-icons/lu";
 import Skeleton from "@mui/material/Skeleton";
 import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
+import { FaEye } from "react-icons/fa";
 
 import {
   RiArrowLeftLine,
@@ -17,6 +18,7 @@ import {
   RiHeartLine,
 } from "react-icons/ri";
 import axiosClient from "../../axios-client";
+import TextField from "@mui/material/TextField";
 
 const Card = (props) => {
   const {
@@ -66,227 +68,229 @@ const Card = (props) => {
   console.log(typeMode);
 
   return (
-    <Link to={`/properties/${id}`} className="block">
-      <div
-        style={{
-          backgroundColor:
-            theme.palette.mode === "dark"
-              ? theme.palette.background.paper
-              : theme.palette.primary.light,
-        }}
-        className="relative w-full h-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto rounded-xl shadow-lg hover:shadow-xl shadow-gray-700/70 transition-shadow duration-300 flex flex-col text-white"
-      >
-        {/* Listón en la esquina superior izquierda
+    // <Link to={`/properties/${id}`} className="block">
+    <div
+      style={{
+        backgroundColor:
+          theme.palette.mode === "dark"
+            ? theme.palette.background.paper
+            : theme.palette.primary.light,
+      }}
+      className="relative w-full h-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto rounded-xl shadow-lg hover:shadow-xl shadow-gray-700/70 transition-shadow duration-300 flex flex-col text-white"
+    >
+      {/* Listón en la esquina superior izquierda
       <div className="absolute top-0 left-0 z-30">
         <div className="bg-green-600 text-white text-xs font-bold px-10 py-1 transform -rotate-45 -translate-x-6 translate-y-3 shadow-md select-none">
           Terreno
         </div>
       </div> */}
-        <div className="relative w-full h-[200px] md:h-[250px]">
-          <button
-            className="absolute -bottom-5 right-5 bg-white/90 hover:bg-white text-red-500 p-2 rounded-full shadow-md transition-all z-30"
-            onClick={handleToggle}
-            aria-label="Marcar como favorito"
-          >
-            {favorited ? (
-              <RiHeartFill className="w-7 h-7" />
-            ) : (
-              <RiHeartLine className="w-7 h-7" />
+      <div className="relative w-full h-[200px] md:h-[250px]">
+        <button
+          className="absolute -bottom-5 right-5 bg-white/90 hover:bg-white text-red-500 p-2 rounded-full shadow-md transition-all z-30"
+          onClick={handleToggle}
+          aria-label="Marcar como favorito"
+        >
+          {favorited ? (
+            <RiHeartFill className="w-7 h-7" />
+          ) : (
+            <RiHeartLine className="w-7 h-7" />
+          )}
+        </button>
+        {img.length > 0 ? (
+          <ImageGallery
+            items={img} // Este debe ser un array de objetos { original, thumbnail }
+            showFullscreenButton={false}
+            showPlayButton={false}
+            showBullets={true}
+            showThumbnails={false}
+            showNav={true}
+            slideDuration={250}
+            slideInterval={500}
+            renderItem={(item) => (
+              <div className="w-full h-[200px] md:h-[250px] overflow-hidden rounded-t-xl bg-gray-100">
+                <img
+                  src={item.original}
+                  alt={item.originalAlt || "Imagen"}
+                  className="w-full h-full object-cover object-center"
+                  loading="lazy"
+                  style={{ imageRendering: "auto" }}
+                />
+              </div>
             )}
-          </button>
-          {img.length > 0 ? (
-            <ImageGallery
-              items={img} // Este debe ser un array de objetos { original, thumbnail }
-              showFullscreenButton={false}
-              showPlayButton={false}
-              showBullets={true}
-              showThumbnails={false}
-              showNav={true}
-              slideDuration={250}
-              slideInterval={500}
-              renderItem={(item) => (
-                <div className="w-full h-[200px] md:h-[250px] overflow-hidden rounded-t-xl bg-gray-100">
-                  <img
-                    src={item.original}
-                    alt={item.originalAlt || "Imagen"}
-                    className="w-full h-full object-cover object-center"
-                    loading="lazy"
-                    style={{ imageRendering: "auto" }}
-                  />
-                </div>
-              )}
-              renderLeftNav={(onClick, disabled) => (
-                <button
-                  aria-label="Previous image"
-                  onClick={onClick}
-                  disabled={disabled}
-                  className={`absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-200 bg-white/80 hover:bg-white shadow-lg rounded-full p-2 z-20 backdrop-blur-sm border border-gray-200 
+            renderLeftNav={(onClick, disabled) => (
+              <button
+                aria-label="Previous image"
+                onClick={onClick}
+                disabled={disabled}
+                className={`absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-200 bg-white/80 hover:bg-white shadow-lg rounded-full p-2 z-20 backdrop-blur-sm border border-gray-200 
                         ${disabled ? "opacity-40 cursor-not-allowed" : "hover:scale-105"}`}
-                >
-                  <RiArrowLeftLine className="w-5 h-5 text-gray-800" />
-                </button>
-              )}
-              renderRightNav={(onClick, disabled) => (
-                <button
-                  aria-label="Next image"
-                  onClick={onClick}
-                  disabled={disabled}
-                  className={`absolute right-4 top-1/2 -translate-y-1/2 transition-all duration-200 
+              >
+                <RiArrowLeftLine className="w-5 h-5 text-gray-800" />
+              </button>
+            )}
+            renderRightNav={(onClick, disabled) => (
+              <button
+                aria-label="Next image"
+                onClick={onClick}
+                disabled={disabled}
+                className={`absolute right-4 top-1/2 -translate-y-1/2 transition-all duration-200 
                         bg-white/80 hover:bg-white shadow-lg rounded-full p-2 z-20
                         backdrop-blur-sm border border-gray-200 
                         ${disabled ? "opacity-40 cursor-not-allowed" : "hover:scale-105"}`}
-                >
-                  <RiArrowRightLine className="w-5 h-5 text-gray-800" />
-                </button>
-              )}
-              renderBullet={(index, className, isSelected, onClick) => (
-                <button
-                  key={index}
-                  aria-label={`Select image ${index + 1}`}
-                  className={`w-3 h-3 mx-1 rounded-full transition-all duration-200 ${
-                    isSelected
-                      ? "bg-blue-600 scale-110 shadow"
-                      : "bg-gray-300 hover:bg-gray-500"
-                  }`}
-                  onClick={() => onClick(index)}
-                />
-              )}
-              additionalClass="chroma-gallery"
-            />
-          ) : (
-            <Box className="w-full h-[200px] md:h-[250px] overflow-hidden rounded-t-xl">
-              <Skeleton width="100%" height="100%" variant="rectangular" />
-            </Box>
-          )}
-        </div>
+              >
+                <RiArrowRightLine className="w-5 h-5 text-gray-800" />
+              </button>
+            )}
+            renderBullet={(index, className, isSelected, onClick) => (
+              <button
+                key={index}
+                aria-label={`Select image ${index + 1}`}
+                className={`w-3 h-3 mx-1 rounded-full transition-all duration-200 ${
+                  isSelected
+                    ? "bg-blue-600 scale-110 shadow"
+                    : "bg-gray-300 hover:bg-gray-500"
+                }`}
+                onClick={() => onClick(index)}
+              />
+            )}
+            additionalClass="chroma-gallery"
+          />
+        ) : (
+          <Box className="w-full h-[200px] md:h-[250px] overflow-hidden rounded-t-xl">
+            <Skeleton width="100%" height="100%" variant="rectangular" />
+          </Box>
+        )}
+      </div>
 
-        <div className="p-4 flex flex-col gap-2 pb-16">
-          <div className="flex justify-start">
-            {typeMode &&
-              typeMode.map((type) => {
-                return (
-                  <div className="bg-green-500 rounded-xl px-3 py-1 w-fit text-white text-sm font-semibold mr-2">
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
-                  </div>
-                );
-              })}
-          </div>
-          {description ? (
-            <Box sx={{ pr: 2 }}>
-              <p className="text-xl font-bold line-clamp-1">{description}</p>
-            </Box>
-          ) : (
-            <Box sx={{ pt: 0.5 }}>
-              <Skeleton width="60%" height={40} />
-            </Box>
-          )}
-          {price ? (
-            <Box sx={{ pr: 2 }}>
-              <span className="text-gray-200 font-semibold text-lg">
-                {new Intl.NumberFormat("es-MX", {
-                  style: "currency",
-                  currency: "MXN",
-                }).format(price)}
-              </span>
-            </Box>
-          ) : (
-            <Box sx={{ pt: 0}}>
-              <Skeleton width="60%" height={40} />
-            </Box>
-          )}
+      <div className="p-4 flex flex-col gap-2 pb-16">
+        <div className="flex justify-start">
+          {typeMode &&
+            typeMode.map((type) => {
+              return (
+                <div className="bg-green-500 rounded-xl px-3 py-1 w-fit text-white text-sm font-semibold mr-2">
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </div>
+              );
+            })}
+        </div>
+        {description ? (
+          <Box sx={{ pr: 2 }}>
+            <p className="text-xl font-bold line-clamp-1">{description}</p>
+          </Box>
+        ) : (
+          <Box sx={{ pt: 0.5 }}>
+            <Skeleton width="60%" height={40} />
+          </Box>
+        )}
+        {price ? (
+          <Box sx={{ pr: 2 }}>
+            <span className="text-gray-200 font-semibold text-lg">
+              {new Intl.NumberFormat("es-MX", {
+                style: "currency",
+                currency: "MXN",
+              }).format(price)}
+            </span>
+          </Box>
+        ) : (
+          <Box sx={{ pt: 0 }}>
+            <Skeleton width="60%" height={40} />
+          </Box>
+        )}
+        {/* Características scroll horizontal */}
+        <div className="flex overflow-x-auto gap-4 py-2 snap-x px-0 sm:px-2  md:px-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-700 scroll-smooth hover:scrollbar-thumb-blue-400">
           {/* Características scroll horizontal */}
-          <div className="flex overflow-x-auto gap-4 py-2 snap-x px-0 sm:px-2  md:px-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-700 scroll-smooth hover:scrollbar-thumb-blue-400">
-            {/* Características scroll horizontal */}
-            <div className="w-full overflow-x-auto py-2 scroll-smooth scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-700 hover:scrollbar-thumb-blue-400">
-              <div className="flex items-center gap-4 snap-x snap-mandatory min-w-full">
-                {/* Recámaras */}
-                {bedrooms ? (
-                  <div className="snap-center flex flex-col items-center gap-1 px-4 py-2 border-2 border-orange-500 rounded-lg bg-[#fcfcfc] min-w-max">
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-600 font-bold">
-                        {bedrooms}
-                      </span>
-                      <FaBed className="text-orange-500 text-xl" />
-                    </div>
-                    <span className="text-xs text-gray-600">Recs.</span>
+          <div className="w-full overflow-x-auto py-2 scroll-smooth scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-700 hover:scrollbar-thumb-blue-400">
+            <div className="flex items-center gap-4 snap-x snap-mandatory min-w-full">
+              {/* Recámaras */}
+              {bedrooms ? (
+                <div className="snap-center flex flex-col items-center gap-1 px-4 py-2 border-2 border-orange-500 rounded-lg bg-[#fcfcfc] min-w-max">
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-600 font-bold">{bedrooms}</span>
+                    <FaBed className="text-orange-500 text-xl" />
                   </div>
-                ) : (
-                  <Box sx={{}}>
-                    <Skeleton width={70} height={70} />
-                  </Box>
-                )}
-                {bathrooms ? (
-                  <div className="snap-center flex flex-col items-center gap-1 px-4 py-2 border-2 border-orange-500 rounded-lg bg-[#fcfcfc] min-w-max">
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-600 font-bold">
-                        {bathrooms}
-                      </span>
-                      <LuToilet className="text-orange-500 text-xl" />
-                    </div>
-                    <span className="text-xs text-gray-600">W.C.</span>
+                  <span className="text-xs text-gray-600">Recs.</span>
+                </div>
+              ) : (
+                <Box sx={{}}>
+                  <Skeleton width={70} height={70} />
+                </Box>
+              )}
+              {bathrooms ? (
+                <div className="snap-center flex flex-col items-center gap-1 px-4 py-2 border-2 border-orange-500 rounded-lg bg-[#fcfcfc] min-w-max">
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-600 font-bold">{bathrooms}</span>
+                    <LuToilet className="text-orange-500 text-xl" />
                   </div>
-                ) : (
-                  <Box sx={{}}>
-                    <Skeleton width={70} height={70} />
-                  </Box>
-                )}
-                {parkings ? (
-                  <div className="snap-center flex flex-col items-center gap-1 px-4 py-2 border-2 border-orange-500 rounded-lg bg-[#fcfcfc] min-w-max">
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-600 font-bold">
-                        {parkings}
-                      </span>
-                      <IoCarSport className="text-orange-500 text-xl" />
-                    </div>
-                    <span className="text-xs text-gray-600">Cajón</span>
+                  <span className="text-xs text-gray-600">W.C.</span>
+                </div>
+              ) : (
+                <Box sx={{}}>
+                  <Skeleton width={70} height={70} />
+                </Box>
+              )}
+              {parkings ? (
+                <div className="snap-center flex flex-col items-center gap-1 px-4 py-2 border-2 border-orange-500 rounded-lg bg-[#fcfcfc] min-w-max">
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-600 font-bold">{parkings}</span>
+                    <IoCarSport className="text-orange-500 text-xl" />
                   </div>
-                ) : (
-                  <Box sx={{}}>
-                    <Skeleton width={70} height={70} />
-                  </Box>
-                )}
-                {cleanrooms ? (
-                  <div className="snap-center flex flex-col items-center gap-1 px-4 py-2 border-2 border-orange-500 rounded-lg bg-[#fcfcfc] min-w-max">
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-600 font-bold">
-                        {cleanrooms}
-                      </span>
-                      <BiSolidWasher className="text-orange-500 text-xl" />
-                    </div>
-                    <span className="text-xs text-gray-600">Lavado</span>
+                  <span className="text-xs text-gray-600">Cajón</span>
+                </div>
+              ) : (
+                <Box sx={{}}>
+                  <Skeleton width={70} height={70} />
+                </Box>
+              )}
+              {cleanrooms ? (
+                <div className="snap-center flex flex-col items-center gap-1 px-4 py-2 border-2 border-orange-500 rounded-lg bg-[#fcfcfc] min-w-max">
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-600 font-bold">
+                      {cleanrooms}
+                    </span>
+                    <BiSolidWasher className="text-orange-500 text-xl" />
                   </div>
-                ) : (
-                  <Box sx={{}}>
-                    <Skeleton width={70} height={70} />
-                  </Box>
-                )}
-              </div>
+                  <span className="text-xs text-gray-600">Lavado</span>
+                </div>
+              ) : (
+                <Box sx={{}}>
+                  <Skeleton width={70} height={70} />
+                </Box>
+              )}
             </div>
           </div>
-          <div className="absolute bottom-5 w-full">
-            <div className="grid grid-cols-3">
-              <div className="col-span-2">
-                <Link
-                  to={`/properties/${id}`}
-                  className="w-full  mt-2 self-start hover:text-blue-300 rounded-3xl bg-gray-200/50 px-3 py-2 border-2 border-orange-500"
-                >
-                  <span className="text-white underline text-md">Pedir más información</span>
-                </Link>
-              </div>
-              <div className="col-span-1">
-                {" "}
-                <Link
-                  to={`/properties/${id}`}
-                  className="w-full  mt-2 self-start hover:text-blue-300 rounded-3xl bg-gray-200/50 px-3 py-2 border-2 border-orange-500"
-                >
-                  <span className="text-white underline text-sm">Ver más</span>
-                </Link>
-              </div>
-            </div>
+        </div>
+        <div className="absolute bottom-5 w-full px-3">
+          <div className="flex items-center gap-3 pr-3">
+            {/* Botón izquierdo grande */}
+            <Link
+              to={`/property/${id}`}
+              className="flex-1"
+              // className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-3xl px-4 py-2 border-2 border-orange-500 text-center transition-colors duration-200"
+            >
+              <TextField
+                id="info"
+                name="info"
+                label="Información"
+                variant="standard"
+                fullWidth
+                defaultValue="Quiero más detalles sobre ..."
+              />
+            </Link>
+
+            {/* Botón derecho pequeño y llamativo */}
+            <Link
+              to={`/property/${id}`}
+  className="flex items-center justify-center px-5 h-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full shadow-lg transition-all duration-200 gap-2"
+              title="Ver más"
+            >
+              <p>Ver</p>
+              <FaEye className="text-lg" />
+            </Link>
           </div>
         </div>
       </div>
-    </Link>
+    </div>
+    // </Link>
   );
 };
 

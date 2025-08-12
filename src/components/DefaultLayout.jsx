@@ -105,8 +105,8 @@ export default function ToolpadLayout() {
               flex: 1,
               overflowY: "auto", // ✅ solo esta área tiene scroll
               overflowX: "hidden", // oculta scroll horizontal global
-              px: 2,
-              py: 3,
+              // px: 2,
+              // py: 3,
             }}
           >
             <Outlet />
