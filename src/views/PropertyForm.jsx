@@ -108,6 +108,7 @@ export default function PropertyForm() {
     discount: undefined,
     sizeLength: undefined,
     sizeWidth: undefined,
+    build: undefined,
     level: undefined,
     floors: undefined,
     typeMode: [],
@@ -373,7 +374,7 @@ export default function PropertyForm() {
 
   const handleNumericChange = (name) => (values) => {
     console.log(property);
-    
+
     setProperty((prev) => ({
       ...prev,
       [name]: values.floatValue ?? "",
@@ -914,6 +915,18 @@ export default function PropertyForm() {
                   suffix=" m²"
                   label="Ancho (m²)"
                   name="sizeWidth"
+                  variant="standard"
+                />
+              </div>
+              <div className="col-span-1 md:col-span-1 lg:col-span-1">
+                <NumericFormat
+                  value={property.build}
+                  onValueChange={handleNumericChange("build")}
+                  customInput={TextField}
+                  thousandSeparator
+                  suffix=" m²"
+                  label="Construcción (m²)"
+                  name="build"
                   variant="standard"
                 />
               </div>

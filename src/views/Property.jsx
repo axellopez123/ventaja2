@@ -32,6 +32,9 @@ import { TbRulerMeasure2 } from "react-icons/tb";
 import { TbRulerMeasure } from "react-icons/tb";
 import { LuBrickWall } from "react-icons/lu";
 import { Link } from "react-router-dom";
+import { BsBuilding, BsHouse } from "react-icons/bs";
+import { CgTerrain } from "react-icons/cg";
+import { MdOutlineTerrain } from "react-icons/md";
 
 import {
   RiCloseCircleLine,
@@ -67,6 +70,7 @@ export default function Property() {
     discount: undefined,
     sizeLength: undefined,
     sizeWidth: undefined,
+    build: undefined,
     level: undefined,
     floors: undefined,
     typeMode: [],
@@ -121,10 +125,9 @@ export default function Property() {
     thumbnail: `${baseUrl}${img.thumbnail}`,
   }));
   return (
-  <div className="flex flex-col lg:flex-row lg:gap-6 lg:p-4">
-    {/* Columna izquierda - Gallery */}
-    <div className="lg:w-1/2 flex items-center justify-center bg-gray-500 rounded-md">
-    
+    <div className="flex flex-col lg:flex-row lg:gap-6 lg:p-4">
+      {/* Columna izquierda - Gallery */}
+      <div className="lg:w-1/2 flex items-center justify-center bg-gray-500 rounded-md">
         <ImageGallery
           items={imageGalleryItems}
           showThumbnails={false}
@@ -171,7 +174,7 @@ export default function Property() {
           )}
         />
       </div>
-    <div className="lg:w-1/2">
+      <div className="lg:w-1/2">
         <div className="pt-3 px-5 flex justify-between items-center">
           {/* Contenedor scroll para moodsBuy */}
           <div className="flex overflow-x-auto gap-2 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-transparent">
@@ -184,14 +187,23 @@ export default function Property() {
                 );
               })}
           </div>
-          
         </div>
-       <Box className="px-3 pt-2 flex justify-between items-center">
-  <p className="flex-1 text-white text-4xl font-bold truncate">{property.name}</p>
-  <div className="flex ml-4">
-    <GoHome className="text-4xl text-bold" />
-  </div>
-</Box>
+        <Box className="px-3 pt-2 flex justify-between items-center">
+          <p className="flex-1 text-white text-4xl font-bold truncate">
+            {property.name}
+          </p>
+          <div className="flex ml-4">
+            {property.type === "casa" && (
+              <BsHouse className="text-orange-500 text-4xl" />
+            )}
+            {property.type === "departamento" && (
+              <BsBuilding className="text-orange-500 text-4xl" />
+            )}
+            {property.type === "terreno" && (
+              <MdOutlineTerrain className="text-orange-500 text-4xl" />
+            )}
+          </div>
+        </Box>
         <Box className="pl-5">
           <span className="text-white font-semibold text-3xl">
             {new Intl.NumberFormat("es-MX", {
@@ -273,17 +285,20 @@ export default function Property() {
           <p className="text-center text-2xl">Medidas</p>
         </div>
         <div className="flex items-center  justify-center gap-4 divide-x divide-gray-300">
-          <div className="flex items-center gap-1 pl-3">
+          <div className="flex items-center gap-1 pl-2">
             <TbRulerMeasure2 className="text-orange-500 text-3xl" />
             <span className="text-3xl">{property.sizeLength}</span>
+            <span>mts.</span>
           </div>
-          <div className="flex items-center gap-1 pl-3">
+          <div className="flex items-center gap-1 pl-2">
             <TbRulerMeasure className="text-orange-500 text-3xl" />
             <span className="text-3xl">{property.sizeWidth}</span>
+            <span>mts.</span>
           </div>
-          <div className="flex items-center gap-1 pl-3">
+          <div className="flex items-center gap-1 pl-2">
             <LuBrickWall className="text-orange-500 text-3xl" />
-            <span className="text-3xl">80 m</span>
+            <span className="text-3xl">{`${property.build}`}</span>
+            <span>mts.²</span>
           </div>
         </div>
         <div className="w-full pt-2">
