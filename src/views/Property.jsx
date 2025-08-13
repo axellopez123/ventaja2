@@ -121,8 +121,10 @@ export default function Property() {
     thumbnail: `${baseUrl}${img.thumbnail}`,
   }));
   return (
-    <>
-      <div>
+  <div className="flex flex-col lg:flex-row lg:gap-6 lg:p-4">
+    {/* Columna izquierda - Gallery */}
+    <div className="lg:w-1/2 flex items-center justify-center bg-gray-500 rounded-md">
+    
         <ImageGallery
           items={imageGalleryItems}
           showThumbnails={false}
@@ -169,7 +171,7 @@ export default function Property() {
           )}
         />
       </div>
-      <div>
+    <div className="lg:w-1/2">
         <div className="pt-3 px-5 flex justify-between items-center">
           {/* Contenedor scroll para moodsBuy */}
           <div className="flex overflow-x-auto gap-2 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-transparent">
@@ -273,11 +275,11 @@ export default function Property() {
         <div className="flex items-center  justify-center gap-4 divide-x divide-gray-300">
           <div className="flex items-center gap-1 pl-3">
             <TbRulerMeasure2 className="text-orange-500 text-3xl" />
-            <span className="text-3xl">20 m</span>
+            <span className="text-3xl">{property.sizeLength}</span>
           </div>
           <div className="flex items-center gap-1 pl-3">
             <TbRulerMeasure className="text-orange-500 text-3xl" />
-            <span className="text-3xl">10 m</span>
+            <span className="text-3xl">{property.sizeWidth}</span>
           </div>
           <div className="flex items-center gap-1 pl-3">
             <LuBrickWall className="text-orange-500 text-3xl" />
@@ -314,6 +316,6 @@ export default function Property() {
           </Link>
         </div>
       </div>
-    </>
+    </div>
   );
 }

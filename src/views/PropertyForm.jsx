@@ -372,6 +372,8 @@ export default function PropertyForm() {
   };
 
   const handleNumericChange = (name) => (values) => {
+    console.log(property);
+    
     setProperty((prev) => ({
       ...prev,
       [name]: values.floatValue ?? "",
