@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
 import { useStateContext } from "../contexts/ContextProvider";
 import axiosClient from "../axios-client";
+import loginImage from "../assets/home.png"; // ruta según dónde la guardes
 
 export default function Login() {
   const emailRef = useRef();
@@ -20,7 +21,7 @@ export default function Login() {
     setErrors(null);
     try {
       await axiosClient.post("/auth/login", payload, {
-        withCredentials: true, 
+        withCredentials: true,
       });
 
       const { data } = await axiosClient.get("/auth/me", {
@@ -40,7 +41,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#252831] grid grid-cols-1 lg:grid-cols-2">
+    <div className="min-h-screen bg-[#252831] grid grid-cols-1 lg:grid-cols-2 bg-amber-500">
       <div className="text-white flex flex-col items-center justify-center gap-8 p-8 max-w-lg mx-auto">
         <div className="flex flex-col gap-1 w-full">
           <h1 className="text-4xl font-medium">Iniciar sesión</h1>
@@ -154,7 +155,16 @@ export default function Login() {
           </p>
         </form>
       </div>
-      <div className="bg hidden lg:block"></div>
+      <div className="relative hidden lg:block">
+        {/* Imagen ocupando todo */}
+        <img
+          src={loginImage}
+          alt="Login"
+          className="w-full h-full object-cover"
+        />
+        {/* Difuminado de bordes */}
+        <div className="absolute inset-0 bg-gradient-to-l from-[#252831] via-transparent to-[#252831] pointer-events-none"></div>
+      </div>
     </div>
   );
 }

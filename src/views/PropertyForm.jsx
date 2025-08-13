@@ -1304,7 +1304,7 @@ export default function PropertyForm() {
           <div>
             <div className="flex flex-col .h-full">
               <div className="h-1/5">
-                <p className="text-center">Registra tu propiedad</p>
+                <p className="text-center text-4xl font-bold text-orange-500">Registra tu propiedad</p>
               </div>
               <div className="grid grid-cols-2 grid-row-1 xs:px-0 sm:px-16 md:px-32">
                 {/* ----------------------------------- */}
