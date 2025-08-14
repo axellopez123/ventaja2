@@ -56,7 +56,21 @@ export default function Property() {
   const [loading, setLoading] = useState(false);
   const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/`;
   const [info, setInfo] = useState("Quiero mas detalles sobre ...");
+  const handleSend = async () => {
+    try {
+      const response = await axios.post(`${baseUrl}messages`  , {
+        product_ids: selectedProducts,
+        sender_id: senderId,
+        text,
+        conversation_id: null // si quieres que el sistema cree una nueva si no existe
+      });
 
+      console.log("Mensaje enviado:", response.data);
+      setText("");
+    } catch (error) {
+      console.error("Error enviando mensaje:", error);
+    }
+  };
   const [property, setProperty] = useState({
     id: null,
     name: "",
@@ -317,7 +331,7 @@ export default function Property() {
             />
           </div>
           <div className="flex justify-center pt-3 px-3">
-            <Button variant="contained" className="w-full">
+            <Button variant="contained" className="w-full" onClick={handleSend}>
               Enviar
             </Button>
           </div>
