@@ -55,22 +55,28 @@ export default function Property() {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/`;
-  const [info, setInfo] = useState("Quiero mas detalles sobre ...");
+  const [content, setContent] = useState("Quiero mas detalles sobre ...");
   const handleSend = async () => {
     try {
-      const response = await axios.post(`${baseUrl}messages`  , {
-        product_ids: selectedProducts,
-        sender_id: senderId,
-        text,
-        conversation_id: null // si quieres que el sistema cree una nueva si no existe
+      setLoading(true);
+      console.log(`Enviando mensaje para producto: ${id}`);
+
+      const { data } = await axiosClient.post(`/messages/`, {
+        product_ids: [id],
+        content,
+        conversation_id: null, // dejar null para que cree nueva si no existe
       });
 
-      console.log("Mensaje enviado:", response.data);
-      setText("");
-    } catch (error) {
-      console.error("Error enviando mensaje:", error);
+      console.log("Mensaje enviado:", data);
+      setContent("");
+    } catch (err) {
+      console.error("Error enviando mensaje:", err);
+      // setErrors(err.response?.data);
+    } finally {
+      // setLoading(false);
     }
   };
+
   const [property, setProperty] = useState({
     id: null,
     name: "",
@@ -94,7 +100,7 @@ export default function Property() {
   });
   const handleTextChange = (e) => {
     const { name, value } = e.target;
-    setInfo(value);
+    setContent(value);
   };
 
   // const handleTextChange = (e) => {
@@ -178,11 +184,10 @@ export default function Property() {
             <button
               key={index}
               aria-label={`Select image ${index + 1}`}
-              className={`w-3 h-3 mx-1 rounded-full transition-all duration-200 ${
-                isSelected
+              className={`w-3 h-3 mx-1 rounded-full transition-all duration-200 ${isSelected
                   ? "bg-blue-600 scale-110 shadow"
                   : "bg-gray-300 hover:bg-gray-500"
-              }`}
+                }`}
               onClick={() => onClick(index)}
             />
           )}
@@ -318,11 +323,11 @@ export default function Property() {
         <div className="w-full pt-2">
           <div className="px-3">
             <TextField
-              id="info"
-              name="info"
+              id="content"
+              name="content"
               label="Pedir más información"
               variant="standard"
-              value={info}
+              value={content}
               onChange={handleTextChange}
               fullWidth
               rows={4}

@@ -9,11 +9,14 @@ import { createTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import { useStateContext } from "../contexts/ContextProvider";
 import { RiHomeHeartFill } from "react-icons/ri";
+import { BiMessageAltDetail } from "react-icons/bi";
 
 const NAVIGATION = [
   { kind: "header", title: "Main" },
   { segment: "users", title: "Usuarios", icon: <DashboardIcon /> },
   { segment: "properties", title: "Propiedades", icon: <TimelineIcon /> },
+  { segment: "conversation", title: "Conversacion", icon: <BiMessageAltDetail /> },
+
 ];
 
 const theme = createTheme({

@@ -5,6 +5,7 @@ import { useStateContext } from "../contexts/ContextProvider";
 import { RiArrowDownSLine } from "react-icons/ri";
 import Button from "@mui/material/Button";
 import { RiHomeHeartFill } from "react-icons/ri";
+import { BiMessageAltDetail } from "react-icons/bi";
 
 import Card from "../components/shared/Card";
 import Grid from "../components/shared/Grid";
@@ -86,7 +87,7 @@ export default function Properties() {
   ];
 
   return (
-    <div className="text-white h-full pl-5 pr-3 pt-3">
+    <div className="text-white h-full pl-5 pr-3 pt-3 relative">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-white dark:text-orange-500">
           Explora propiedades
@@ -155,38 +156,14 @@ export default function Properties() {
           })}
         </div>
       </InfiniteScroll>
+          <button
+      className="fixed bottom-6 right-6 bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-full shadow-lg transition"
+      onClick={() => console.log("Botón clickeado")}
+    >
+      <BiMessageAltDetail/>
+    </button>
     </div>
-    // <div>
-    //   <button className="border border-green-600 text-green-600 py-2 px-4 hover:bg-green-600 hover:text-white transition-colors">
-    //     <Link to="/properties/new" className="btn-add">
-    //       New
-    //     </Link>
-    //   </button>
 
-    //   {/* Title content
-    //         <div className="flex items-center justify-between mb-16">
-    //           <h2 className="text-xl text-gray-300">Choose your sweet home</h2>
-    //           <button className="border border-green-600 text-green-600 py-2 px-4 hover:bg-green-600 hover:text-white transition-colors">
-    //             <Link to="/properties/new" className="btn-add">New</Link>
-    //           </button>
-    //           <button className="flex items-center gap-4 text-gray-300 bg-[#1F1D2B] py-2 px-4 rounded-lg">
-    //             <RiArrowDownSLine /> Prices
-    //           </button>
-    //         </div>
-    //         <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
-    //             {properties.map( u =>(
-    //                 <Card
-    //                 id={u.id}
-    //                 img="comida.png"
-    //                 description={u.name}
-    //                 price={u.price}
-    //                 inventory={u.bedrooms}
-    //                 />
-    //             ))}
-
-    //         </div> */}
-    //   {/* <div style={{ height: "600px", position: "relative" }}></div> */}
-    // </div>
   );
 }
 

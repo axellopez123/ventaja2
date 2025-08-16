@@ -1,4 +1,4 @@
-import {Navigate, createBrowserRouter} from "react-router-dom";
+import { Navigate, createBrowserRouter } from "react-router-dom";
 import Login from "./views/Login.jsx";
 import Signup from "./views/Signup.jsx";
 import Users from "./views/Users.jsx";
@@ -9,68 +9,73 @@ import DefaultLayout from "./components/DefaultLayout.jsx";
 import GuestLayout from "./components/GuestLayout.jsx";
 import Dashboard from "./views/Dashboard.jsx";
 import Property from "./views/Property.jsx";
+import Conversation from "./views/Conversation.jsx";
 const router = createBrowserRouter([
     {
         path: '/',
-        element:<DefaultLayout/>,
-        children:[
+        element: <DefaultLayout />,
+        children: [
             {
-                path:"/",
-                element: <Navigate to="/users"/>
+                path: "/",
+                element: <Navigate to="/users" />
             },
             {
                 path: '/users',
-                element:<Users/>
+                element: <Users />
             },
             {
                 path: '/users/new',
-                element:<UserForm key="userCreate"/>
+                element: <UserForm key="userCreate" />
             },
             {
                 path: '/users/:id',
-                element:<UserForm key="userUpdate"/>
+                element: <UserForm key="userUpdate" />
             },
             {
                 path: '/properties',
-                element:<Dashboard/>
-                
+                element: <Dashboard />
+
             },
             {
                 path: '/property/:id',
-                element:<Property key="propertyShow"/>
+                element: <Property key="propertyShow" />
             },
             {
                 path: '/properties/new',
-                element:<PropertyForm key="propertyCreate"/>
+                element: <PropertyForm key="propertyCreate" />
             },
             {
                 path: '/properties/:id',
-                element:<PropertyForm key="propertyUpdate"/>
+                element: <PropertyForm key="propertyUpdate" />
+            },
+            {
+                path: '/conversation',
+                element: <Conversation />
             },
             {
                 path: '/dashboard',
-                element:<Dashboard/>
+                element: <Dashboard />
             },
         ]
 
     },
     {
         path: '/',
-        element:<GuestLayout/>,
-        children:[
+        element: <GuestLayout />,
+        children: [
             {
                 path: '/signup',
-                element:<Signup/>
+                element: <Signup />
             },
             {
                 path: '/login',
-                element:<Login/>
+                element: <Login />
             },
         ]
     },
     {
         path: '*',
-        element:<NotFound/>
+        element: <NotFound />
     },
 ])
 
