@@ -51,111 +51,26 @@ import TextField from "@mui/material/TextField";
 import { NumericFormat } from "react-number-format";
 import Skeleton from "@mui/material/Skeleton";
 
-export default function Conversation() {
+export default function Conversations(props) {
+  const { conversations } = props;
   const { id } = useParams();
+  const { user } = useStateContext();
 
   const [loading, setLoading] = useState(false);
   const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/`;
   const [content, setContent] = useState("Quiero mas detalles sobre ...");
-  const [messages, setMessages] = useState([]);
+  const [conversations2, setConversations2] = useState(conversations);
 
-
-  const ws = useRef(null);
-  const messagesEndRef = useRef(null);
-
-
-  useEffect(() => {
-    ws.current = new WebSocket(`ws://back-properties.arwax.pro/ws/chat/${id}`);
-
-    ws.current.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      setMessages((prev) => [...prev, message]);
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
-
-    return () => ws.current.close();
-  }, [id]);
-
-  const handleSend = async () => {
-    if (!content.trim()) return;
-
-    try {
-      setLoading(true);
-
-      const { data } = await axiosClient.post(`/messages/`, {
-        content,
-        // conversation_id: null, // dejar null para que cree nueva si no existe
-      });
-
-      console.log("Mensaje enviado:", data);
-      setContent("");
-    } catch (err) {
-      console.error("Error enviando mensaje:", err);
-      // setErrors(err.response?.data);
-    } finally {
-      // setLoading(false);
-    }
-  };
-
-
-  useEffect(() => {
-
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-
-        await axiosClient.get(`/messages/conversation`)
-          .then(({ data }) => {
-            setMessages(data);
-            console.log(data);
-          })
-          .catch(({ }) => {
-
-          })
-
-
-      } catch (err) {
-        console.error(err);
-        // setErrors(err.response?.data);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
+  console.log(user);
 
   return (
     <div className="relative h-full flex flex-col">
-      {/* Contenedor de mensajes */}
       <div className="flex-1 overflow-y-auto px-4 pb-16">
-        {messages.map((msg) => (
-          <div className="mb-2 bg-gray-500 rounded-md pl-2 py-1">
-            {/* <div key={msg.id} className="mb-2"> */}
-
-            <span>{msg.content}</span>
+        {/* {conversations2.map((msg, index) => (
+          <div key={index} className="mb-2 bg-gray-500 rounded-md pl-2 py-1">
+            <span>{msg}</span>
           </div>
-        ))}
-        <div ref={messagesEndRef}></div>
-      </div>
-      <div className="absolute bottom-0 w-full bg-gray-500 px-4 py-2 flex items-center gap-2">
-        <TextField
-          id="content"
-          name="content"
-          label="Pedir más información"
-          variant="standard"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          fullWidth
-          placeholder="Quiero más detalles sobre ..."
-        />
-        <button
-          onClick={handleSend}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          <IoSendSharp />
-        </button>
+        ))} */}
       </div>
     </div>
 

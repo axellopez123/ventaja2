@@ -10,6 +10,8 @@ import GuestLayout from "./components/GuestLayout.jsx";
 import Dashboard from "./views/Dashboard.jsx";
 import Property from "./views/Property.jsx";
 import Conversation from "./views/Conversation.jsx";
+import Conversations from "./views/Conversations.jsx";
+
 const router = createBrowserRouter([
     {
         path: '/',
@@ -49,8 +51,12 @@ const router = createBrowserRouter([
                 element: <PropertyForm key="propertyUpdate" />
             },
             {
-                path: '/conversation',
+                path: '/conversation/:id',
                 element: <Conversation />
+            },
+                        {
+                path: '/conversations',
+                element: <Conversations />
             },
             {
                 path: '/dashboard',

@@ -15,7 +15,7 @@ const NAVIGATION = [
   { kind: "header", title: "Main" },
   { segment: "users", title: "Usuarios", icon: <DashboardIcon /> },
   { segment: "properties", title: "Propiedades", icon: <TimelineIcon /> },
-  { segment: "conversation", title: "Conversacion", icon: <BiMessageAltDetail /> },
+  { segment: "conversations", title: "Conversaciones", icon: <BiMessageAltDetail /> },
 
 ];
 
