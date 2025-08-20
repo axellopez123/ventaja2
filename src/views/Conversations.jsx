@@ -52,27 +52,64 @@ import { NumericFormat } from "react-number-format";
 import Skeleton from "@mui/material/Skeleton";
 
 export default function Conversations(props) {
-  const { conversations } = props;
+  const {} = props;
   const { id } = useParams();
   const { user } = useStateContext();
 
   const [loading, setLoading] = useState(false);
   const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/`;
   const [content, setContent] = useState("Quiero mas detalles sobre ...");
-  const [conversations2, setConversations2] = useState(conversations);
-
-  console.log(user);
-
+  const [conversations, setConversations] = useState([]);
+  useEffect(() => {
+    if (user?.conversations) {
+      setConversations(user.conversations);
+    }
+  }, [user]);
   return (
     <div className="relative h-full flex flex-col">
-      <div className="flex-1 overflow-y-auto px-4 pb-16">
-        {/* {conversations2.map((msg, index) => (
-          <div key={index} className="mb-2 bg-gray-500 rounded-md pl-2 py-1">
-            <span>{msg}</span>
-          </div>
-        ))} */}
+      <div className="flex-1 overflow-y-auto px-2 pb-16">
+        {conversations.length === 0 ? (
+          <p className="text-gray-500 dark:text-gray-400 text-center mt-4">
+            No tienes conversaciones todavía.
+          </p>
+        ) : (
+          conversations.map((msg) => {
+            const lastMessage = msg.last_message || {};
+            return (
+              <Link
+                key={msg.id}
+                to={`/conversation/${msg.id}`}
+                className="flex items-center justify-between p-3 mb-2 bg-white dark:bg-gray-700 rounded-lg shadow-sm hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer transition"
+              >
+                {/* Parte izquierda (producto + mensaje) */}
+                <div className="flex flex-col">
+                  <span className="font-semibold text-gray-900 dark:text-white text-sm">
+                    {msg.product_info?.name || "Sin producto asignado"}
+                  </span>
+                  <span className="text-gray-700 dark:text-gray-300 text-sm truncate max-w-[220px]">
+                    <span className="font-medium">
+                      {lastMessage.sender_username || "Sistema"}:{" "}
+                    </span>
+                    {lastMessage.content || "Sin mensajes"}
+                  </span>
+                </div>
+
+                {/* Parte derecha (fecha) */}
+                <span className="text-xs text-gray-500 dark:text-gray-400 ml-3 whitespace-nowrap">
+                  {lastMessage.created_at
+                    ? new Date(lastMessage.created_at).toLocaleString("es-MX", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        day: "2-digit",
+                        month: "short",
+                      })
+                    : ""}
+                </span>
+              </Link>
+            );
+          })
+        )}
       </div>
     </div>
-
   );
 }

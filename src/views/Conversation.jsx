@@ -65,7 +65,7 @@ export default function Conversation() {
 
 
   useEffect(() => {
-    ws.current = new WebSocket(`ws://back-properties.arwax.pro/ws/chat/${id}`);
+    ws.current = new WebSocket(`wss://back-properties.arwax.pro/ws/chat/${id}`);
 
     ws.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
@@ -104,7 +104,7 @@ export default function Conversation() {
       try {
         setLoading(true);
 
-        await axiosClient.get(`/messages/conversation`)
+        await axiosClient.get(`/messages/conversations/${id}/messages`)
           .then(({ data }) => {
             setMessages(data);
             console.log(data);
