@@ -58,53 +58,20 @@ export default function Conversation() {
   const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/`;
   const [content, setContent] = useState("Quiero mas detalles sobre ...");
   const [messages, setMessages] = useState([]);
+  const [conversationId, setConversationId] = useState(id || null);
 
 
   const ws = useRef(null);
   const messagesEndRef = useRef(null);
 
-
-  useEffect(() => {
-    ws.current = new WebSocket(`wss://back-properties.arwax.pro/ws/chat/${id}`);
-
-    ws.current.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      setMessages((prev) => [...prev, message]);
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
-
-    return () => ws.current.close();
-  }, [id]);
-
-  const handleSend = async () => {
-    if (!content.trim()) return;
-
-    try {
-      setLoading(true);
-
-      const { data } = await axiosClient.post(`/messages/`, {
-        content,
-        // conversation_id: null, // dejar null para que cree nueva si no existe
-      });
-
-      console.log("Mensaje enviado:", data);
-      setContent("");
-    } catch (err) {
-      console.error("Error enviando mensaje:", err);
-      // setErrors(err.response?.data);
-    } finally {
-      // setLoading(false);
-    }
-  };
-
-
+  
   useEffect(() => {
 
     const fetchData = async () => {
       try {
         setLoading(true);
 
-        await axiosClient.get(`/messages/conversations/${id}/messages`)
+        await axiosClient.get(`/messages/conversations/${conversationId}/messages`)
           .then(({ data }) => {
             setMessages(data);
             console.log(data);
@@ -126,12 +93,47 @@ export default function Conversation() {
   }, []);
 
 
+  useEffect(() => {
+    ws.current = new WebSocket(`wss://back-properties.arwax.pro/ws/chat/${conversationId}`);
+
+    ws.current.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      setMessages((prev) => [...prev, message]);
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    return () => ws.current.close();
+  }, [id]);
+
+  const handleSend = async () => {
+    if (!content.trim()) return;
+
+    try {
+      setLoading(true);
+
+      const { data } = await axiosClient.post(`/messages/`, {
+        content,
+        conversation_id: conversationId || null,
+      });
+
+      console.log("Mensaje enviado:", data);
+      setContent("");
+    } catch (err) {
+      console.error("Error enviando mensaje:", err);
+      // setErrors(err.response?.data);
+    } finally {
+      // setLoading(false);
+    }
+  };
+
+
+
   return (
     <div className="relative h-full flex flex-col">
       {/* Contenedor de mensajes */}
       <div className="flex-1 overflow-y-auto px-4 pb-16">
         {messages.map((msg) => (
-          <div className="mb-2 bg-gray-500 rounded-md pl-2 py-1">
+          <div key={msg.id} className="mb-2 bg-gray-500 rounded-md pl-2 py-1">
             {/* <div key={msg.id} className="mb-2"> */}
 
             <span>{msg.content}</span>
