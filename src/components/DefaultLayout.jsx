@@ -1,6 +1,6 @@
 // src/components/ToolpadLayout.jsx
 import * as React from "react";
-import { Outlet, useLocation, Navigate } from "react-router-dom";
+import { Outlet, useLocation, Navigate, useNavigate } from "react-router-dom";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -10,7 +10,9 @@ import Box from "@mui/material/Box";
 import { useStateContext } from "../contexts/ContextProvider";
 import { RiHomeHeartFill } from "react-icons/ri";
 import { BiMessageAltDetail } from "react-icons/bi";
-
+import { Button } from "@mui/material";
+import { Account } from '@toolpad/core/Account';
+import axiosClient from "../axios-client";
 const NAVIGATION = [
   { kind: "header", title: "Main" },
   { segment: "users", title: "Usuarios", icon: <DashboardIcon /> },
@@ -73,15 +75,58 @@ const theme = createTheme({
     },
   },
 });
-
+const demoSession = {
+  user: {
+    name: 'Bharat Kashyap',
+    email: 'bharatkashyap@outlook.com',
+    image: 'https://avatars.githubusercontent.com/u/19550456',
+  },
+};
 export default function ToolpadLayout() {
   const location = useLocation();
   const { user, token, notification, setUser, setToken } = useStateContext();
+  const navigate = useNavigate();
+  const [session, setSession] = React.useState(demoSession);
+
+
+  const authentication = React.useMemo(() => {
+    return {
+      signIn: () => {
+        setSession({
+          user: {
+            name: 'Bharat Kashyap',
+            email: 'bharatkashyap@outlook.com',
+            image: 'https://avatars.githubusercontent.com/u/19550456',
+          },
+        });
+      },
+      signOut: () => {
+        signOut();
+      },
+    };
+  }, []);
+
+  const signOut = async () => {
+
+    try {
+      // Llamada al endpoint de logout para borrar cookie
+      await axiosClient.post("/auth/logout", {}, { withCredentials: true });
+
+      // Limpia el contexto
+      setUser(null);
+      setToken(null);
+      setSession(null);
+
+      // Redirige al login
+      navigate("/login");
+    } catch (err) {
+      console.error("Error en logout:", err);
+    }
+  };
 
   if (!user) {
     return <Navigate to="/login" />;
   }
-
   return (
     <AppProvider
       navigation={NAVIGATION}
@@ -92,7 +137,9 @@ export default function ToolpadLayout() {
         homeUrl: "/",
       }}
       theme={theme}
+      authentication={authentication} session={session}
     >
+     
       <DashboardLayout>
         <Box
           sx={{
