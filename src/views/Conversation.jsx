@@ -60,27 +60,21 @@ export default function Conversation() {
   const [messages, setMessages] = useState([]);
   const [conversationId, setConversationId] = useState(id || null);
 
-
   const ws = useRef(null);
   const messagesEndRef = useRef(null);
 
-  
   useEffect(() => {
-
     const fetchData = async () => {
       try {
         setLoading(true);
 
-        await axiosClient.get(`/messages/conversations/${conversationId}/messages`)
+        await axiosClient
+          .get(`/messages/conversations/${conversationId}/messages`)
           .then(({ data }) => {
             setMessages(data);
             console.log(data);
           })
-          .catch(({ }) => {
-
-          })
-
-
+          .catch(({}) => {});
       } catch (err) {
         console.error(err);
         // setErrors(err.response?.data);
@@ -92,18 +86,26 @@ export default function Conversation() {
     fetchData();
   }, []);
 
-
   useEffect(() => {
-    ws.current = new WebSocket(`wss://back-properties.arwax.pro/ws/chat/${conversationId}`);
+    if (!conversationId) return;
+
+    ws.current = new WebSocket(
+      `wss://back-properties.arwax.pro/ws/chat/${conversationId}`
+    );
 
     ws.current.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      setMessages((prev) => [...prev, message]);
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      const data = JSON.parse(event.data);
+
+      if (data.type === "new_message") {
+        setMessages((prev) => [...prev, data.message]);
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }
     };
 
-    return () => ws.current.close();
-  }, [id]);
+    return () => {
+      ws.current?.close();
+    };
+  }, [conversationId]);
 
   const handleSend = async () => {
     if (!content.trim()) return;
@@ -117,6 +119,17 @@ export default function Conversation() {
       });
 
       console.log("Mensaje enviado:", data);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: data.id,
+          content: data.content,
+          sender_id: data.sender_id,
+          created_at: data.created_at,
+          type: data.type,
+        },
+      ]);
+
       setContent("");
     } catch (err) {
       console.error("Error enviando mensaje:", err);
@@ -125,8 +138,6 @@ export default function Conversation() {
       // setLoading(false);
     }
   };
-
-
 
   return (
     <div className="relative h-full flex flex-col">
@@ -160,6 +171,5 @@ export default function Conversation() {
         </button>
       </div>
     </div>
-
   );
 }

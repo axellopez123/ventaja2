@@ -60,6 +60,38 @@ export default function Conversations(props) {
   const baseUrl = `${import.meta.env.VITE_API_BASE_URL}/`;
   const [content, setContent] = useState("Quiero mas detalles sobre ...");
   const [conversations, setConversations] = useState([]);
+
+  useEffect(() => {
+    const wsNotif = new WebSocket(
+      `wss://back-properties.arwax.pro/ws/notifications`
+    );
+
+    wsNotif.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      if (data.type === "new_conversation") {
+        // Agrega la nueva conversación
+        setConversations((prev) => [data.conversation, ...prev]);
+      }
+
+      if (data.type === "new_message") {
+        // Actualizar la conversación existente con el último mensaje
+        setConversations((prev) => {
+          return prev.map((conv) => {
+            if (conv.id === data.conversation_id) {
+              return {
+                ...conv,
+                last_message: data.message,
+              };
+            }
+            return conv;
+          });
+        });
+      }
+    };
+
+    return () => wsNotif.close();
+  }, []);
   useEffect(() => {
     if (user?.conversations) {
       setConversations(user.conversations);
