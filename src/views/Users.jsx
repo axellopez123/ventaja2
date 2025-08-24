@@ -1,86 +1,186 @@
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react";
+import {
+  DataGrid,
+  GridActionsCellItem
+} from "@mui/x-data-grid";
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Switch,
+  FormControlLabel
+} from "@mui/material";
 import axiosClient from "../axios-client";
-import { Link } from "react-router-dom";
-import { useStateContext } from "../contexts/ContextProvider";
 
-export default function Users(){
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const {setNotification} = useStateContext()
+export default function UsersGrid() {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
-    useEffect(() => {
-        getUsers();
-    },[])
-
-    const onDelete = (u) =>{
-        if(!window.confirm("Are you sure you want to delete this user?")){
-            return
-        }
-
-        axiosClient.delete(`/users/${u.id}`)
-        .then(() => {
-            setNotification("User was successfully deleted")
-            getUsers()
-        })
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const { data } = await axiosClient.get("/auth/users");
+      setUsers(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const getUsers = () =>{
-        setLoading(false)
-        axiosClient.get('/users')
-        .then(({data})=>{
-            setLoading(false)
-            setUsers(data.data)
-        })
-        .catch(() => {
-            setLoading(false);
-        })
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleViewDetails = (user) => {
+    setSelectedUser(user);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedUser(null);
+  };
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedUser(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSwitchChange = (e) => {
+    setSelectedUser(prev => ({ ...prev, disabled: e.target.checked }));
+  };
+
+  const handleSave = async () => {
+    try {
+      const { data } = await axiosClient.put(`/auth/users/${selectedUser.id}`, {
+        username: selectedUser.username,
+        email: selectedUser.email,
+        role: selectedUser.role,
+        disabled: selectedUser.disabled
+      });
+      // Actualizar la lista de usuarios localmente
+      setUsers(prev => prev.map(u => u.id === data.id ? data : u));
+      handleCloseModal();
+    } catch (err) {
+      console.error(err);
     }
+  };
 
-    return(
-        <div>
-            <div style={{display:'flex', justifyContent: 'space-between', alignItems:'center'}}>
-                <h1>Users</h1>
-                <Link to="/users/new" className="btn-add">Add new</Link>
-            </div>
-            <div className="card animated fadeInDown">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Create Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    {loading && 
-                    <tbody>
-                        <tr>
-                            <td colSpan="5" className="text-center">
-                                Loading...
-                            </td>
-                        </tr>
-                    </tbody>
-                    }
-                    {!loading &&
-                    <tbody>
-                        {users.map( u =>(
-                            <tr>
-                                <td>{u.id}</td>
-                                <td>{u.name}</td>
-                                <td>{u.email}</td>
-                                <td>{u.created_at}</td>
-                                <td>
-                                    <Link className="btn-edit" to={'/users/'+u.id}>Edit</Link>
-                                    &nbsp;
-                                    <button onClick={ev => onDelete(u)} className="btn-delete">Delete</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                    }
-                </table>
-            </div>
-        </div>
-    )
+  const columns = [
+    { field: "id", headerName: "ID", width: 70 },
+    { field: "username", headerName: "Usuario", width: 150 },
+    { field: "email", headerName: "Email", width: 200 },
+    { field: "role", headerName: "Rol", width: 120 },
+    {
+      field: "disabled",
+      headerName: "Deshabilitado",
+      width: 130,
+      renderCell: (params) => (params?.value ? "Sí" : "No"),
+    },
+    {
+      field: "favorites_count",
+      headerName: "Favoritos",
+      width: 100,
+      valueGetter: (params) => (params?.row?.favorites?.length || 0),
+    },
+    {
+      field: "conversations_count",
+      headerName: "Conversaciones",
+      width: 130,
+      valueGetter: (params) =>
+        (params?.row?.conversations?.length || 0) +
+        (params?.row?.conversations_participating?.length || 0),
+    },
+    {
+      field: "actions",
+      type: "actions",
+      headerName: "Acciones",
+      width: 150,
+      getActions: (params) => [
+        <GridActionsCellItem
+          key="view"
+          label="Ver / Editar"
+          onClick={() => handleViewDetails(params?.row)}
+          showInMenu
+        />,
+      ],
+    },
+  ];
+
+  return (
+    <div style={{ height: 600, width: "100%" }}>
+      <h2>Administración de Usuarios</h2>
+      <DataGrid
+        rows={users}
+        columns={columns}
+        loading={loading}
+        pageSize={10}
+        rowsPerPageOptions={[10, 20, 50]}
+        disableSelectionOnClick
+        getRowId={(row) => row.id}
+      />
+
+      {/* Modal de edición */}
+      <Dialog
+        open={!!selectedUser}
+        onClose={handleCloseModal}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Editar Usuario: {selectedUser?.username}</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="normal"
+            label="Usuario"
+            name="username"
+            value={selectedUser?.username || ""}
+            onChange={handleFormChange}
+            fullWidth
+          />
+          <TextField
+            margin="normal"
+            label="Email"
+            name="email"
+            value={selectedUser?.email || ""}
+            onChange={handleFormChange}
+            fullWidth
+          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="role-label">Rol</InputLabel>
+            <Select
+              labelId="role-label"
+              name="role"
+              value={selectedUser?.role || "cliente"}
+              onChange={handleFormChange}
+            >
+              <MenuItem value="cliente">Cliente</MenuItem>
+              <MenuItem value="vendedor">Vendedor</MenuItem>
+              <MenuItem value="admin">Admin</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={selectedUser?.disabled || false}
+                onChange={handleSwitchChange}
+                color="primary"
+              />
+            }
+            label="Deshabilitado"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseModal}>Cancelar</Button>
+          <Button onClick={handleSave} variant="contained">Guardar</Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
 }
