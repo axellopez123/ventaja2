@@ -75,17 +75,27 @@ export default function Conversations(props) {
       }
 
       if (data.type === "new_message") {
-        // Actualizar la conversación existente con el último mensaje
         setConversations((prev) => {
-          return prev.map((conv) => {
-            if (conv.id === data.conversation_id) {
-              return {
-                ...conv,
+          const exists = prev.some((conv) => conv.id === data.conversation_id);
+
+          if (exists) {
+            // actualizar la última info
+            return prev.map((conv) =>
+              conv.id === data.conversation_id
+                ? { ...conv, last_message: data.message }
+                : conv
+            );
+          } else {
+            // agregar la conversación nueva con el mensaje como último
+            return [
+              {
+                id: data.conversation_id,
                 last_message: data.message,
-              };
-            }
-            return conv;
-          });
+                product_info: data.message.product_info || null, // opcional según payload
+              },
+              ...prev,
+            ];
+          }
         });
       }
     };

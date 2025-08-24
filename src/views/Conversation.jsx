@@ -97,7 +97,13 @@ export default function Conversation() {
       const data = JSON.parse(event.data);
 
       if (data.type === "new_message") {
-        setMessages((prev) => [...prev, data.message]);
+        // setMessages((prev) => [...prev, data.message]);
+
+            setMessages((prev) => {
+      // Solo agregar si no existe
+      if (prev.some((msg) => msg.id === data.message.id)) return prev;
+      return [...prev, data.message];
+    });
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
       }
     };
@@ -119,16 +125,16 @@ export default function Conversation() {
       });
 
       console.log("Mensaje enviado:", data);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: data.id,
-          content: data.content,
-          sender_id: data.sender_id,
-          created_at: data.created_at,
-          type: data.type,
-        },
-      ]);
+      // setMessages((prev) => [
+      //   ...prev,
+      //   {
+      //     id: data.id,
+      //     content: data.content,
+      //     sender_id: data.sender_id,
+      //     created_at: data.created_at,
+      //     type: data.type,
+      //   },
+      // ]);
 
       setContent("");
     } catch (err) {

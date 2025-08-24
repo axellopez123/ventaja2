@@ -86,9 +86,9 @@ export default function ToolpadLayout() {
     <AppProvider
       navigation={NAVIGATION}
       branding={{
-        // logo: <img src="https://mui.com/static/logo.png" alt="MUI logo" />,
         logo: <RiHomeHeartFill />,
-        title: <span className="text-orange-500">INMOBILIARIA</span>,
+        // title: <span className="text-orange-500">INMOBILIARIA</span>,
+        title: "INMOBILIARIA",
         homeUrl: "/",
       }}
       theme={theme}
