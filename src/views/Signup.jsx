@@ -18,10 +18,12 @@ export default function Signup() {
     const payload = {
       username: nameRef.current.value,
       password: passwordRef.current.value,
+      email: 'axel3@mail.com',
+      birthdate: '1998-10-06'
     };
 
     try {
-      const { data } = await axiosClient.post("/auth/register", payload);
+      const { data } = await axiosClient.post("/auth/register/", payload);
       // const token = data.access_token;
 
       // setToken(token);

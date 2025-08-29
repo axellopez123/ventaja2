@@ -19,7 +19,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "/",
-                element: <Navigate to="/users" />
+                element: <Dashboard />
             },
             {
                 path: '/users',
@@ -33,35 +33,7 @@ const router = createBrowserRouter([
                 path: '/users/:id',
                 element: <UserForm key="userUpdate" />
             },
-            {
-                path: '/properties',
-                element: <Dashboard />
 
-            },
-            {
-                path: '/property/:id',
-                element: <Property key="propertyShow" />
-            },
-            {
-                path: '/properties/new',
-                element: <PropertyForm key="propertyCreate" />
-            },
-            {
-                path: '/properties/:id',
-                element: <PropertyForm key="propertyUpdate" />
-            },
-            {
-                path: '/conversation/:id',
-                element: <Conversation />
-            },
-                        {
-                path: '/conversations',
-                element: <Conversations />
-            },
-            {
-                path: '/dashboard',
-                element: <Dashboard />
-            },
         ]
 
     },
