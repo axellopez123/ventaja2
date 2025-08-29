@@ -29,15 +29,35 @@ const router = createBrowserRouter([
                 path: '/users/:id',
                 element: <UserForm key="userUpdate" />
             },
-<<<<<<< HEAD
             {
-                path: '/play',
+                path: '/properties',
                 element: <Dashboard />
 
             },
-=======
-
->>>>>>> 003ec379536402b6f6e9638eca3488843f0908a0
+            {
+                path: '/property/:id',
+                element: <Property key="propertyShow" />
+            },
+            {
+                path: '/properties/new',
+                element: <PropertyForm key="propertyCreate" />
+            },
+            {
+                path: '/properties/:id',
+                element: <PropertyForm key="propertyUpdate" />
+            },
+            {
+                path: '/conversation/:id',
+                element: <Conversation />
+            },
+                        {
+                path: '/conversations',
+                element: <Conversations />
+            },
+            {
+                path: '/dashboard',
+                element: <Dashboard />
+            },
         ]
 
     },
