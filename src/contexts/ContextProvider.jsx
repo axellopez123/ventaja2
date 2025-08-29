@@ -24,7 +24,7 @@ export const ContextProvider = ({ children }) => {
 
     useEffect(() => {
         axiosClient
-            .get('/auth/me')
+            .get('/auth/me/')
             .then(({ data }) => setUser(data))
             .catch(() => setUser(null))
             .finally(() => setLoading(false));
