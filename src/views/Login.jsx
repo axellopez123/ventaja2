@@ -20,9 +20,11 @@ export default function Login() {
     };
     setErrors(null);
     try {
-      await axiosClient.post("/auth/login", payload, {
-        withCredentials: true,
-      });
+      await axiosClient.post("/auth/api/token/", payload
+      //   , {
+      //   withCredentials: true,
+      // }
+    );
 
       const { data } = await axiosClient.get("/auth/me", {
         withCredentials: true,
@@ -41,7 +43,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#252831] grid grid-cols-1 lg:grid-cols-2 bg-amber-500">
+    <div className="min-h-screen bg-[#252831] grid grid-cols-1 lg:grid-cols-2 bg-amber-300">
       <div className="text-white flex flex-col items-center justify-center gap-8 p-8 max-w-lg mx-auto">
         <div className="flex flex-col gap-1 w-full">
           <h1 className="text-4xl font-medium">Iniciar sesión</h1>

@@ -15,7 +15,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "/",
-                element: <Navigate to="/users" />
+                element: <Dashboard />
             },
             {
                 path: '/users',
@@ -29,11 +29,15 @@ const router = createBrowserRouter([
                 path: '/users/:id',
                 element: <UserForm key="userUpdate" />
             },
+<<<<<<< HEAD
             {
                 path: '/play',
                 element: <Dashboard />
 
             },
+=======
+
+>>>>>>> 003ec379536402b6f6e9638eca3488843f0908a0
         ]
 
     },
