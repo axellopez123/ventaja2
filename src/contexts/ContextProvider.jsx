@@ -22,13 +22,13 @@ export const ContextProvider = ({ children }) => {
         }, 5000)
     }
 
-    useEffect(() => {
-        axiosClient
-            .get('/auth/me')
-            .then(({ data }) => setUser(data))
-            .catch(() => setUser(null))
-            .finally(() => setLoading(false));
-    }, []);
+    // useEffect(() => {
+    //     axiosClient
+    //         .get('/auth/me')
+    //         .then(({ data }) => setUser(data))
+    //         .catch(() => setUser(null))
+    //         .finally(() => setLoading(false));
+    // }, []);
 
 
     const setToken = (token) => {

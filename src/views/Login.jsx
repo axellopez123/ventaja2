@@ -8,7 +8,7 @@ export default function Login() {
   const emailRef = useRef();
   const passwordRef = useRef();
   const [errors, setErrors] = useState(null);
-  const { setUser, setToken } = useStateContext();
+  const { setUser, token, setToken } = useStateContext();
   const navigate = useNavigate();
 
   const onSubmit = async (ev) => {
@@ -20,18 +20,32 @@ export default function Login() {
     };
     setErrors(null);
     try {
-      await axiosClient.post("/auth/api/token/", payload
-      //   , {
+      // await axiosClient.post(
+      //   "/auth/api/token/",
+      //   payload
+      //   //   , {
+      //   //   withCredentials: true,
+      //   // }
+      // );
+      const { data } = await axiosClient.post("/auth/api/token/", payload);
+      // const token = loginData.access; // JWT de Django
+console.log(data);
+
+      // const { data } = await axiosClient.get("/auth/me/", {
       //   withCredentials: true,
-      // }
-    );
+      // });
+  const token = data.access; // <-- aquí obtienes el token JWT
+      setToken(token);
+      // Guardarlo en tu contexto o estado
+      // const { data2 } = await axiosClient.get("/auth/me/", {
+      //   headers: {
+      //     Authorization: `Bearer ${token}`,
+      //   },
+      // });
+    
 
-      const { data } = await axiosClient.get("/auth/me", {
-        withCredentials: true,
-      });
-
-      setUser(data);
-      navigate("/dashboard");
+      setUser(data2);
+      navigate("/game");
     } catch (error) {
       const res = error.response;
       if (res && res.status === 401) {

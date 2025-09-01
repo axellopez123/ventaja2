@@ -11,7 +11,7 @@ import Dashboard from "./views/Dashboard.jsx";
 import Property from "./views/Property.jsx";
 import Conversation from "./views/Conversation.jsx";
 import Conversations from "./views/Conversations.jsx";
-
+import Game from "./views/Game.jsx";
 const router = createBrowserRouter([
     {
         path: '/',
@@ -19,7 +19,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "/",
-                element: <Dashboard />
+                element: <Game />
             },
             {
                 path: '/users',
@@ -33,7 +33,10 @@ const router = createBrowserRouter([
                 path: '/users/:id',
                 element: <UserForm key="userUpdate" />
             },
-
+            {
+                path: '/game',
+                element: <Game />
+            },
         ]
 
     },

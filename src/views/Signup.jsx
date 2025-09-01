@@ -18,23 +18,23 @@ export default function Signup() {
     const payload = {
       username: nameRef.current.value,
       password: passwordRef.current.value,
-      email: 'axel3@mail.com',
+      email: 'axel@mail.com',
       birthdate: '1998-10-06'
     };
 
     try {
       const { data } = await axiosClient.post("/auth/register/", payload);
       // const token = data.access_token;
-
+      console.log(data);
       // setToken(token);
 
       // ⚠️ Usa el token directamente, no el del estado
       // axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      const meRes = await axiosClient.get("/auth/me");
-      setUser(meRes.data);
+      // const meRes = await axiosClient.get("/auth/me");
+      // setUser(meRes.data);
 
-      navigate("/dashboard");
+      navigate("/game");
     } catch (err) {
       const response = err.response;
       if (response && response.status === 422) {
