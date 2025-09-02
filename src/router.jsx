@@ -7,15 +7,15 @@ import DefaultLayout from "./components/DefaultLayout.jsx";
 import GuestLayout from "./components/GuestLayout.jsx";
 import Dashboard from "./views/Dashboard.jsx";
 import UserForm from "./views/UserForm.jsx";
-
+import Game from "./views/Game.jsx";
 const router = createBrowserRouter([
     {
         path: '/',
         element: <DefaultLayout />,
         children: [
             {
-                path: "/",
-                element: <Dashboard />
+                path: "/game",
+                element: <Game />
             },
             {
                 path: '/users',
@@ -28,35 +28,6 @@ const router = createBrowserRouter([
             {
                 path: '/users/:id',
                 element: <UserForm key="userUpdate" />
-            },
-            {
-                path: '/properties',
-                element: <Dashboard />
-
-            },
-            {
-                path: '/property/:id',
-                element: <Property key="propertyShow" />
-            },
-            {
-                path: '/properties/new',
-                element: <PropertyForm key="propertyCreate" />
-            },
-            {
-                path: '/properties/:id',
-                element: <PropertyForm key="propertyUpdate" />
-            },
-            {
-                path: '/conversation/:id',
-                element: <Conversation />
-            },
-                        {
-                path: '/conversations',
-                element: <Conversations />
-            },
-            {
-                path: '/dashboard',
-                element: <Dashboard />
             },
         ]
 

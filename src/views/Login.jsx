@@ -18,20 +18,28 @@ export default function Login() {
       username: emailRef.current.value,
       password: passwordRef.current.value,
     };
+
     setErrors(null);
+
     try {
-      await axiosClient.post("/auth/api/token/", payload
-      //   , {
-      //   withCredentials: true,
-      // }
-    );
+      // Hacemos la petición al backend
+      const { data } = await axiosClient.post("/auth/api/token/", payload);
 
-      const { data } = await axiosClient.get("/auth/me", {
-        withCredentials: true,
-      });
+      // Guardamos tokens (access y refresh)
+      const token = data.access;
+      const refreshToken = data.refresh;
 
-      setUser(data);
-      navigate("/dashboard");
+      setToken(token);
+      localStorage.setItem("ACCESS_TOKEN", token);
+      localStorage.setItem("REFRESH_TOKEN", refreshToken);
+
+      // Opcional: pedir datos del usuario si tienes un endpoint tipo /auth/me
+      // const { data: userData } = await axiosClient.get("/auth/me", {
+      //   headers: { Authorization: `Bearer ${token}` },
+      // });
+      // setUser(userData);
+
+      navigate("/game");
     } catch (error) {
       const res = error.response;
       if (res && res.status === 401) {
@@ -41,7 +49,6 @@ export default function Login() {
       }
     }
   };
-
   return (
     <div className="min-h-screen bg-[#252831] grid grid-cols-1 lg:grid-cols-2 bg-amber-300">
       <div className="text-white flex flex-col items-center justify-center gap-8 p-8 max-w-lg mx-auto">
