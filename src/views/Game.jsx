@@ -16,7 +16,7 @@ const Game = () => {
       pcRef.current = pc;
 
       // 2. Capturar audio
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
       stream.getTracks().forEach((track) => pc.addTrack(track, stream));
 
       // 3. Manejar ICE candidates
