@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-
+import ThreeScene from "../components/shared/ThreeScene";
 const Game = () => {
   const wsRef = useRef(null);
   const pcRef = useRef(null);
@@ -16,20 +16,28 @@ const Game = () => {
       pcRef.current = pc;
 
       // 2. Capturar audio
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        // video: true,
+      });
       stream.getTracks().forEach((track) => pc.addTrack(track, stream));
 
       // 3. Manejar ICE candidates
       pc.onicecandidate = (event) => {
         if (event.candidate) {
           wsRef.current.send(
-            JSON.stringify({ type: "ice-candidate", candidate: event.candidate })
+            JSON.stringify({
+              type: "ice-candidate",
+              candidate: event.candidate,
+            })
           );
         }
       };
 
       // 4. Abrir WebSocket
-      const ws = new WebSocket("wss://ventaja-backend.arwax.pro/api/webrtc/ws/webrtc/123");
+      const ws = new WebSocket(
+        "wss://ventaja-backend.arwax.pro/api/webrtc/ws/webrtc/123"
+      );
       wsRef.current = ws;
 
       ws.onopen = async () => {
@@ -49,6 +57,9 @@ const Game = () => {
         if (msg.type === "answer") {
           await pc.setRemoteDescription(msg.answer);
           console.log("📥 Answer aplicada");
+        } else if (msg.type === "audio_analysis") {
+          console.log("Análisis de audio:", msg.data);
+          // Actualiza UI
         } else if (msg.type === "ice-candidate") {
           try {
             await pc.addIceCandidate(msg.candidate);
@@ -74,6 +85,7 @@ const Game = () => {
     <div className="p-4 max-w-lg mx-auto bg-gray-100 rounded-lg shadow">
       <h2 className="text-xl font-bold mb-2">Transmisión de audio WebRTC</h2>
       <p>Abre la consola para ver la negociación y los logs de audio 👀</p>
+      <ThreeScene />
     </div>
   );
 };
