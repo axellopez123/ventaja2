@@ -57,7 +57,7 @@ const Game = () => {
         if (msg.type === "answer") {
           await pc.setRemoteDescription(msg.answer);
           console.log("📥 Answer aplicada");
-        } else if (msg.type === "audio_analysis") {
+        } else if (msg.type === "vad") {
           console.log("Análisis de audio:", msg.data);
           // Actualiza UI
         } else if (msg.type === "ice-candidate") {
@@ -85,7 +85,7 @@ const Game = () => {
     <div className="p-4 max-w-lg mx-auto bg-gray-100 rounded-lg shadow">
       <h2 className="text-xl font-bold mb-2">Transmisión de audio WebRTC</h2>
       <p>Abre la consola para ver la negociación y los logs de audio 👀</p>
-      <ThreeScene />
+      {/* <ThreeScene /> */}
     </div>
   );
 };

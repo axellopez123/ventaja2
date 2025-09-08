@@ -9,47 +9,50 @@ import Dashboard from "./views/Dashboard.jsx";
 import UserForm from "./views/UserForm.jsx";
 import Game from "./views/Game.jsx";
 const router = createBrowserRouter([
-    {
-        path: '/',
-        element: <DefaultLayout />,
-        children: [
-            {
-                path: "/game",
-                element: <Game />
-            },
-            {
-                path: '/users',
-                element: <Users />
-            },
-            {
-                path: '/users/new',
-                element: <UserForm key="userCreate" />
-            },
-            {
-                path: '/users/:id',
-                element: <UserForm key="userUpdate" />
-            },
-        ]
-
-    },
-    {
-        path: '/',
-        element: <GuestLayout />,
-        children: [
-            {
-                path: '/signup',
-                element: <Signup />
-            },
-            {
-                path: '/login',
-                element: <Login />
-            },
-        ]
-    },
-    {
-        path: '*',
-        element: <NotFound />
-    },
-])
+  {
+    path: "/",
+    element: <DefaultLayout />,
+    children: [
+      {
+        path: "/",
+        element: <Game />,
+      },
+      {
+        path: "/game",
+        element: <Game />,
+      },
+      {
+        path: "/users",
+        element: <Users />,
+      },
+      {
+        path: "/users/new",
+        element: <UserForm key="userCreate" />,
+      },
+      {
+        path: "/users/:id",
+        element: <UserForm key="userUpdate" />,
+      },
+    ],
+  },
+  {
+    path: "/",
+    element: <GuestLayout />,
+    children: [
+      {
+        path: "/signup",
+        element: <Signup />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+    ],
+  },
+  {
+    path: "*",
+    element: <NotFound />,
+  },
+]);
 
 export default router;
