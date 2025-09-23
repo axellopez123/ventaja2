@@ -55,6 +55,11 @@ const Game = () => {
         if (msg.type === "answer") {
           await pcRef.current.setRemoteDescription(msg.answer);
           console.log("📥 Answer aplicada");
+        } else if (msg.type === "vosk_word") {
+          // Aquí recibes la palabra detectada
+          console.log("🔤 Palabra detectada por Vosk:", msg.word);
+          // Si quieres mostrar en UI:
+          // setDetectedWord(msg.word);
         }
       };
 
