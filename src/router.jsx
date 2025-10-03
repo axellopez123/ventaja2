@@ -8,6 +8,8 @@ import GuestLayout from "./components/GuestLayout.jsx";
 import Dashboard from "./views/Dashboard.jsx";
 import UserForm from "./views/UserForm.jsx";
 import Game from "./views/Game.jsx";
+import GameAdminForm from "./views/GameAdminForm.jsx";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -20,6 +22,10 @@ const router = createBrowserRouter([
       {
         path: "/game",
         element: <Game />,
+      },
+      {
+        path: "/admin",
+        element: <GameAdminForm />,
       },
       {
         path: "/users",
