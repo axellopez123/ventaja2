@@ -1,12 +1,15 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axiosFastApi from "../axiosFastApi";
 import imagen from "../assets/lata.png";
 import Completar from "../components/shared/Completar";
 const Game = () => {
   const wsRef = useRef(null);
   const pcRef = useRef(null);
-
+  const [partida, setPartida] = useState(null);  // 👉 guarda la partida creada
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
+    if (!partida) return; // solo abre WS cuando hay partida
+
     const startWebRTC = async () => {
       const ws = new WebSocket(
         "wss://ventaja-backend.arwax.pro/api/webrtc/ws/webrtc/123"
@@ -75,94 +78,40 @@ const Game = () => {
       wsRef.current?.close();
       pcRef.current?.close();
     };
-  }, []);
+  }, [partida]);
 
-  const iniciarPartida = async (idJugador, idNivel) => {
+  // ---- INICIAR PARTIDA ----
+  const iniciarPartida = async () => {
+    setLoading(true);
     try {
-      const payload = {
-        id_jugador: idJugador,
-        id_nivel: idNivel,
-      };
-
-      const { data } = await axiosFastApi.post("/play/iniciar", payload);
-
+      const { data } = await axiosFastApi.post("/play/iniciar", {
+        id_jugador: 1,  // jugador actual
+        id_nivel: 1,    // nivel elegido
+      });
+      setPartida(data); // 👉 Guardamos la partida para mostrar el juego
       console.log("✅ Partida creada:", data);
-      // data.id_partida → usar al abrir el WebSocket
-      // data.palabra → mostrar en el UI
-      // data.imagen → renderizar la imagen
-      return data;
-    } catch (error) {
-      console.error(
-        "❌ Error al iniciar partida:",
-        error.response?.data || error.message
-      );
-      throw error;
-    }
-  };
-
-  const handleStart = async () => {
-    try {
-      // ejemplo: jugador logueado id=7 y nivel=2 (Colores)
-      const partida = await iniciarPartida(1, 1);
-
-      // // renderiza la palabra e imagen en pantalla
-      // setPalabraActual(partida.palabra);
-      // setImagen(partida.imagen);
-
-      // // abrir el WebSocket y comenzar el juego
-      // openWebSocket(partida.id_partida);
-    } catch (e) {
+    } catch (err) {
+      console.error("❌ Error al iniciar partida:", err);
       alert("No se pudo iniciar la partida");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const handleStartGame = () => {
-    wsRef.current?.send(
-      JSON.stringify({
-        type: "start",
-        id_partida: 1, // usa el ID real de la partida
-      })
-    );
   };
 
   return (
-    <div>
-      <div>
-        <Completar 
-        imagen={imagen}
-        palabra="_TO"
-        silabasOpciones={["GA", "TA", "CA", "PA"]}
-        silabaCorrecta="GA"
-        onResultado={(correcto) => {
-          console.log(correcto ? "¡Ganaste!" : "Fallaste 😢");
-        }}/>
-      </div>
-          <button className="bg-green-500" onClick={handleStart}>▶Partida</button>
-
+    <div className="p-4">
+      {!partida ? (
+        <button
+          onClick={iniciarPartida}
+          className="bg-green-500 text-white px-4 py-2 rounded"
+          disabled={loading}
+        >
+          {loading ? "Iniciando..." : "▶ Iniciar Partida"}
+        </button>
+      ) : (
+        <Completar wsRef={wsRef} idPartida={partida.id} />
+      )}
     </div>
-    // <div className="p-4 max-w-lg mx-auto bg-gray-100 rounded-lg shadow">
-    //   <h2 className="text-xl font-bold mb-2">Transmisión de audio WebRTC</h2>
-    //   <p>Abre la consola para ver la negociación y los logs de audio 👀</p>
-    //         <button className="bg-green-500" onClick={handleStart}>▶Partida</button>
-
-    //   <button className="bg-red-500" onClick={handleStartGame}>▶️ Comenzar</button>
-
-    //   <button
-    //     onClick={async () => {
-    //       try {
-    //         const stream = await navigator.mediaDevices.getUserMedia({
-    //           audio: true,
-    //         });
-    //         console.log("🎙️ Micrófono activado:", stream);
-    //       } catch (err) {
-    //         console.error("Error accediendo al micrófono:", err);
-    //         alert("Permiso denegado o no disponible");
-    //       }
-    //     }}
-    //   >
-    //     Activar micrófono
-    //   </button>
-    // </div>
   );
 };
 
