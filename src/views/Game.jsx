@@ -1,13 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
 import axiosFastApi from "../axiosFastApi";
-import imagen from "../assets/lata.png";
+import lata from "../assets/lata.png";
+import hand from "../assets/hand.png";
+import pato from "../assets/pato.png";
+import { useNavigate, useParams } from "react-router-dom";
+
 import Completar from "../components/shared/Completar";
 const Game = () => {
+  const { level } = useParams();
+  const navigate = useNavigate();
+
   const wsRef = useRef(null);
   const pcRef = useRef(null);
-  const [partida, setPartida] = useState(null);  // 👉 guarda la partida creada
+  const [partida, setPartida] = useState(null); // 👉 guarda la partida creada
   const [loading, setLoading] = useState(false);
   useEffect(() => {
+    console.log(level);
+    
     if (!partida) return; // solo abre WS cuando hay partida
 
     const startWebRTC = async () => {
@@ -85,8 +94,8 @@ const Game = () => {
     setLoading(true);
     try {
       const { data } = await axiosFastApi.post("/play/iniciar", {
-        id_jugador: 1,  // jugador actual
-        id_nivel: 1,    // nivel elegido
+        id_jugador: 1, // jugador actual
+        id_nivel: 1, // nivel elegido
       });
       setPartida(data); // 👉 Guardamos la partida para mostrar el juego
       console.log("✅ Partida creada:", data);
@@ -99,7 +108,7 @@ const Game = () => {
   };
 
   return (
-    <div className="p-4">
+    <div>
       {!partida ? (
         <button
           onClick={iniciarPartida}

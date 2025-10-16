@@ -9,7 +9,7 @@ import Dashboard from "./views/Dashboard.jsx";
 import UserForm from "./views/UserForm.jsx";
 import Game from "./views/Game.jsx";
 import GameAdminForm from "./views/GameAdminForm.jsx";
-
+import Levels from "./views/Levels.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -17,11 +17,15 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Game />,
+        element: <Levels />,
       },
       {
-        path: "/game",
+        path: "/game/:level",
         element: <Game />,
+      },
+            {
+        path: "/levels",
+        element: <Levels />,
       },
       {
         path: "/admin",
