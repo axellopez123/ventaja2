@@ -4,7 +4,8 @@ import lata from "../assets/lata.png";
 import hand from "../assets/hand.png";
 import pato from "../assets/pato.png";
 import { useNavigate, useParams } from "react-router-dom";
-
+import { FaPlay, FaPause, FaRedoAlt, FaVolumeUp, FaArrowRight } from "react-icons/fa";
+import m_ins from "../assets/m_ins.mp4";
 import Completar from "../components/shared/Completar";
 const Game = () => {
   const { level } = useParams();
@@ -93,12 +94,13 @@ const Game = () => {
   const iniciarPartida = async () => {
     setLoading(true);
     try {
-      const { data } = await axiosFastApi.post("/play/iniciar", {
-        id_jugador: 1, // jugador actual
-        id_nivel: 1, // nivel elegido
-      });
-      setPartida(data); // 👉 Guardamos la partida para mostrar el juego
-      console.log("✅ Partida creada:", data);
+      // const { data } = await axiosFastApi.post("/play/iniciar", {
+      //   id_jugador: 1, // jugador actual
+      //   id_nivel: 1, // nivel elegido
+      // });
+      // setPartida(data); // 👉 Guardamos la partida para mostrar el juego
+      // console.log("✅ Partida creada:", data);
+      setPartida(1);
     } catch (err) {
       console.error("❌ Error al iniciar partida:", err);
       alert("No se pudo iniciar la partida");
@@ -107,19 +109,138 @@ const Game = () => {
     }
   };
 
+    const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(1.0);
+
+  const handlePlayPause = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (isPlaying) {
+      video.pause();
+    } else {
+      video.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleReplay = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.currentTime = 0;
+    video.play();
+    setIsPlaying(true);
+  };
+
+  const handleVolume = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    const newVolume = volume === 1 ? 0 : 1;
+    video.volume = newVolume;
+    setVolume(newVolume);
+  };
   return (
     <div>
+     <div className="flex flex-col md:flex-row items-center justify-center min-h-screen bg-gradient-to-b from-orange-100 to-white p-4">
+      {/* 📹 Sección de video + controles (en columna en móvil, fila en desktop) */}
+      <div className="flex flex-col md:flex-row items-center md:items-start bg-amber-200/40 rounded-2xl shadow-xl overflow-hidden max-w-4xl w-full">
+        {/* 🎬 Video */}
+        <div className="relative w-full md:w-3/4 aspect-square bg-amber-200/10">
+          <video
+            ref={videoRef}
+            className="w-full h-full object-contain rounded-l-2xl"
+            src={m_ins}
+            poster="/images/cover_m.png"
+            controls={false}
+          />
+        </div>
+
+        {/* 🎛️ Controles a la derecha (desktop) */}
+        <div className="flex md:flex-col justify-center items-center gap-6 p-4 md:w-1/4 hidden lg:block">
+          <button
+            onClick={handlePlayPause}
+            className="bg-orange-500 hover:bg-orange-600 text-white p-3 rounded-full shadow-md transition"
+          >
+            {isPlaying ? <FaPause /> : <FaPlay />}
+          </button>
+
+          <button
+            // onClick={handleRestart}
+            className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-md transition"
+          >
+            <FaRedoAlt />
+          </button>
+
+          <button
+            // onClick={toggleVolume}
+            className={`p-3 rounded-full shadow-md transition ${
+              volume === 1
+                ? "bg-green-500 hover:bg-green-600 text-white"
+                : "bg-gray-400"
+            }`}
+          >
+            <FaVolumeUp />
+          </button>
+        </div>
+      </div>
+
+      {/* 🚀 Botón Comenzar (y en móvil, los controles debajo) */}
+      <div className="mt-6 md:mt-0 text-center md:hidden w-full flex flex-col items-center block md:hidden">
+        <button className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white text-lg font-semibold rounded-xl shadow-lg transition mb-4">
+          Comenzar Juego <FaArrowRight className="inline ml-2" />
+        </button>
+
+        {/* Controles en móvil (debajo) */}
+        <div className="flex justify-center gap-6">
+          <button
+            onClick={handlePlayPause}
+            className="bg-orange-500 hover:bg-orange-600 text-white p-3 rounded-full shadow-md transition"
+          >
+            {isPlaying ? <FaPause /> : <FaPlay />}
+          </button>
+
+          <button
+            // onClick={handleRestart}
+            className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-md transition"
+          >
+            <FaRedoAlt />
+          </button>
+
+          <button
+            // onClick={toggleVolume}
+            className={`p-3 rounded-full shadow-md transition ${
+              volume === 1
+                ? "bg-green-500 hover:bg-green-600 text-white"
+                : "bg-gray-400"
+            }`}
+          >
+            <FaVolumeUp />
+          </button>
+        </div>
+      </div>
+    </div>
       {!partida ? (
+      
         <button
-          onClick={iniciarPartida}
           className="bg-green-500 text-white px-4 py-2 rounded"
           disabled={loading}
+          onClick={iniciarPartida}
         >
           {loading ? "Iniciando..." : "▶ Iniciar Partida"}
         </button>
       ) : (
         <Completar wsRef={wsRef} idPartida={partida.id} />
       )}
+
+          {/* 🚀 Botón continuar */}
+    {/* <div className="mt-8 text-center">
+      <button
+        // onClick={goToNext}
+        className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white text-lg font-semibold rounded-xl shadow-lg transition"
+      >
+        Comenzar Juego <FaArrowRight className="inline ml-2" />
+      </button>
+    </div> */}
     </div>
   );
 };
