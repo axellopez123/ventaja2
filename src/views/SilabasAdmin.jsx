@@ -8,7 +8,6 @@ import {
   InputLabel,
   FormControl,
   Typography,
-  Grid,
   Paper,
   Chip,
   OutlinedInput,
@@ -89,39 +88,53 @@ export default function SilabasAdmin() {
   });
 
   return (
-    <Box
-      sx={{
-        backgroundColor: "rgba(0, 128, 0, 0.05)",
-        p: 4,
-        borderRadius: 3,
-        maxWidth: 800,
-        margin: "0 auto",
+    <Box>
 
-        height: "100%"
-      }}
-    >
-      <Paper elevation={4} sx={{ p: 3, borderRadius: 3 }}>
-        <Typography variant="h5" gutterBottom fontWeight="bold">
-          Administrar Sílabas
-        </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          mt: 5,
+          px: 2,
+        }}
+      >
+        <Paper
+          elevation={4}
+          sx={{
+            p: 4,
+            borderRadius: 3,
+            width: "100%",
+            maxWidth: 600, // <-- Controla el ancho máximo
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="h5" gutterBottom fontWeight="bold">
+            Administrar Sílabas
+          </Typography>
 
-        {errorMsg && <Alert severity="error">{errorMsg}</Alert>}
-        {successMsg && <Alert severity="success">{successMsg}</Alert>}
+          {errorMsg && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {errorMsg}
+            </Alert>
+          )}
+          {successMsg && (
+            <Alert severity="success" sx={{ mb: 2 }}>
+              {successMsg}
+            </Alert>
+          )}
 
-        <Grid container spacing={3} sx={{ mt: 1 }}>
-          {/* Campo de sílaba */}
-          <Grid item xs={12} sm={6}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            {/* Campo de sílaba */}
             <TextField
-              fullWidth
               label="Sí­laba"
               value={silaba}
               onChange={(e) => setSilaba(e.target.value)}
+              fullWidth
+              sx={{ maxWidth: 100, mx: "auto" }} // <-- centrado y ancho máximo
             />
-          </Grid>
 
-          {/* Selector de sílabas parecidas */}
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
+            {/* Selector de sílabas parecidas */}
+            <FormControl fullWidth sx={{ maxWidth: 300, mx: "auto" }}>
               <InputLabel id="silabas-parecidas-label">
                 Sílabas parecidas
               </InputLabel>
@@ -151,40 +164,53 @@ export default function SilabasAdmin() {
                 ))}
               </Select>
             </FormControl>
-          </Grid>
 
-          {/* Botón */}
-          <Grid item xs={12}>
+            {/* Botón */}
             <Button
               variant="contained"
-              fullWidth
               sx={{
                 mt: 2,
                 py: 1.2,
                 fontWeight: "bold",
                 backgroundColor: "#2e7d32",
                 "&:hover": { backgroundColor: "#1b5e20" },
+                maxWidth: 500,
+                mx: "auto",
               }}
               onClick={handleAddSilaba}
               disabled={!silaba.trim() || loading}
             >
-              {loading ? <CircularProgress size={24} color="inherit" /> : "Guardar Sí­laba"}
+              {loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Guardar Sí­laba"
+              )}
             </Button>
-          </Grid>
-        </Grid>
-      </Paper>
+          </Box>
+        </Paper>
+      </Box>
+      <Box>
+        <Paper>
+          {/* Lista rápida de sílabas cargadas */}
+          <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+            Sílabas registradas
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 1,
+              justifyContent: "center",
+              mt: 1,
+            }}
+          >
+            {silabasList.map((s) => (
+              <Chip key={s.id} label={s.silaba} variant="outlined" />
+            ))}
+          </Box>
+        </Paper>
+      </Box>
 
-      {/* Lista rápida de sílabas cargadas */}
-      <Paper elevation={1} sx={{ p: 2, mt: 3, borderRadius: 2 }}>
-        <Typography variant="subtitle1" fontWeight="bold">
-          Sílabas registradas
-        </Typography>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
-          {silabasList.map((s) => (
-            <Chip key={s.id} label={s.silaba} variant="outlined" />
-          ))}
-        </Box>
-      </Paper>
     </Box>
   );
 }

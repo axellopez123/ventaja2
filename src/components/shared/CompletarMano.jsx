@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Box, Typography, Paper, Button } from "@mui/material";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-const syllables = ["ma", "me", "na"];
+const syllables = ["na", "ma", "la"];
 const correctSyllable = "ma";
 
 export default function Completar({ wsRef, idPartida }) {
@@ -99,7 +99,7 @@ export default function Completar({ wsRef, idPartida }) {
               >
                 {placed ? placed : "___"}
               </Paper>
-              <span>má</span>
+              <span>no</span>
               {provided.placeholder}
             </Box>
           )}
