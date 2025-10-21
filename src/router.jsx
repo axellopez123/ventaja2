@@ -10,6 +10,7 @@ import UserForm from "./views/UserForm.jsx";
 import Game from "./views/Game.jsx";
 import GameAdminForm from "./views/GameAdminForm.jsx";
 import Levels from "./views/Levels.jsx";
+import SilabasAdmin from "./views/SilabasAdmin.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: "/admin",
         element: <GameAdminForm />,
+      },
+            {
+        path: "/silabas",
+        element: <SilabasAdmin />,
       },
       {
         path: "/users",
