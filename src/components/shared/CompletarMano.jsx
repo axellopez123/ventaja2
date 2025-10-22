@@ -5,7 +5,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 const syllables = ["na", "ma", "la"];
 const correctSyllable = "ma";
 
-export default function Completar({ wsRef, idPartida }) {
+export default function CompletarMano({ wsRef, idPartida, setJuego }) {
   const [placed, setPlaced] = useState(null);
   const [attempts, setAttempts] = useState(3);
   const [message, setMessage] = useState("");
@@ -51,14 +51,14 @@ export default function Completar({ wsRef, idPartida }) {
   return (
     <DragDropContext onDragEnd={handleDrop}>
       <Box sx={{ p: 4, textAlign: "center" }}>
-        <Button
+        {/* <Button
           variant="contained"
           color="success"
           onClick={handleStartGame}
           sx={{ mb: 3 }}
         >
           ▶️ Comenzar Juego
-        </Button>
+        </Button> */}
 
         <Typography variant="h5" gutterBottom>
           Arrastra la sílaba correcta para completar la palabra
