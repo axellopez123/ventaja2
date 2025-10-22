@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Box, Typography, Paper, Button } from "@mui/material";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import mama from "../../assets/mama.jpg"
+import mano from "../../assets/hand.png"
 
-const syllables = ["ma", "me", "na"];
-const correctSyllable = "ma";
+const syllables = ["du", "mu", "nu"];
+const correctSyllable = "mu";
 
-export default function Completar({ wsRef, idPartida, setJuego }) {
+export default function CompletarMuro({ wsRef, idPartida, setJuego }) {
   const [placed, setPlaced] = useState(null);
   const [attempts, setAttempts] = useState(3);
   const [message, setMessage] = useState("");
@@ -31,13 +31,10 @@ export default function Completar({ wsRef, idPartida, setJuego }) {
       if (draggedSyllable === correctSyllable) {
         setPlaced(draggedSyllable);
         setMessage("✅ ¡Correcto!");
-        // EJECUTAR AUDIO QUE DIGA REPETIR SILABA "PRONUNCIASTE NA PROBEMOS OTRA PALABRA"
-        speak("Pronunciaste la silaba na, intentemos con otra palabra")
-        setJuego(2)
+                setJuego(7)
+
       } else {
-        // EJECUTAR AUDIO QUE DIGA REPETIR SILABA "PRONUNCIASTE NA PROBEMOS OTRA PALABRA"
-        speak("Pronunciaste la silaba naa, intentemos con otra palabra")
-        setJuego(2)
+                setJuego(7)
         // setAttempts((prev) => {
         //   const newAttempts = prev - 1;
         //   if (newAttempts <= 0) setMessage("💔 Se acabaron los intentos");
@@ -47,22 +44,7 @@ export default function Completar({ wsRef, idPartida, setJuego }) {
       }
     }
   };
-  const speak = (text, onEnd) => {
-    // Detiene cualquier audio anterior
-    speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "es-MX";
-    utterance.rate = 1;
-    utterance.pitch = 1;
-
-    // Ejecutar callback al terminar el audio
-    utterance.onend = () => {
-      if (onEnd) onEnd();
-    };
-
-    speechSynthesis.speak(utterance);
-  };
   const resetGame = () => {
     setPlaced(null);
     setAttempts(3);
@@ -85,19 +67,19 @@ export default function Completar({ wsRef, idPartida, setJuego }) {
         {/* <Typography variant="h5" gutterBottom>
           Arrastra la sílaba correcta para completar la palabra
         </Typography> */}
-        <Box
-          component="img"
-          src={mama}
-          alt="Ilustración de mamá"
-          sx={{
-            width: { xs: "70%", md: "300px" },
-            height: "auto",
-            // my: 3,
-            borderRadius: 3,
-            boxShadow: 3,
-            mx: "auto"
-          }}
-        />
+<Box
+        component="img"
+        src={mano}
+        alt="Ilustración de mamá"
+        sx={{
+          width: { xs: "70%", md: "300px" },
+          height: "auto",
+          // my: 3,
+          borderRadius: 3,
+          boxShadow: 3,
+          mx: "auto"
+        }}
+      />
         {/* ZONA OBJETIVO */}
         <Droppable droppableId="target" direction="horizontal">
           {(provided, snapshot) => (
@@ -126,14 +108,14 @@ export default function Completar({ wsRef, idPartida, setJuego }) {
                   border: placed
                     ? "3px solid green"
                     : snapshot.isDraggingOver
-                      ? "3px dashed orange"
-                      : "3px dashed gray",
+                    ? "3px dashed orange"
+                    : "3px dashed gray",
                   backgroundColor: placed ? "#c8f7c5" : "transparent",
                 }}
               >
                 {placed ? placed : "___"}
               </Paper>
-              <span>má</span>
+              <span>ro</span>
               {provided.placeholder}
             </Box>
           )}

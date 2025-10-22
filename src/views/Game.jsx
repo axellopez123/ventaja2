@@ -14,6 +14,11 @@ import {
 import m_ins from "../assets/m_ins.mp4";
 import Completar from "../components/shared/Completar";
 import CompletarMano from "../components/shared/CompletarMano";
+import CompletarMesa from "../components/shared/CompletarMesa";
+import CompletarMiel from "../components/shared/CompletarMiel";
+import CompletarMono from "../components/shared/CompletarMono";
+import CompletarMuro from "../components/shared/CompletarMuro";
+import Puntaje from "../components/shared/Puntaje";
 const Game = () => {
   const { level } = useParams();
   const navigate = useNavigate();
@@ -22,8 +27,8 @@ const Game = () => {
   const pcRef = useRef(null);
   const [partida, setPartida] = useState(null); // 👉 guarda la partida creada
   const [loading, setLoading] = useState(false);
-    const [mostrar, setMostrar] = useState(true);
-    const [juego, setJuego] = useState(1);
+  const [mostrar, setMostrar] = useState(true);
+  const [juego, setJuego] = useState(1);
 
   useEffect(() => {
     console.log(level);
@@ -153,11 +158,10 @@ const Game = () => {
   return (
     <div>
 
-<div
-  className={`flex flex-col md:flex-row items-center justify-center min-h-screen bg-gradient-to-b from-orange-100 to-white p-4 ${
-    mostrar ? "" : "hidden"
-  }`}
->        {/* 📹 Sección de video + controles (en columna en móvil, fila en desktop) */}
+      <div
+        className={`flex flex-col md:flex-row items-center justify-center min-h-screen bg-gradient-to-b from-orange-100 to-white p-4 ${mostrar ? "" : "hidden"
+          }`}
+      >        {/* 📹 Sección de video + controles (en columna en móvil, fila en desktop) */}
         <div className="flex flex-col md:flex-row items-center md:items-start bg-amber-200/40 rounded-2xl shadow-xl overflow-hidden max-w-4xl w-full">
           {/* 🎬 Video */}
           <div className="relative w-full md:w-3/4 aspect-square bg-amber-200/10">
@@ -188,11 +192,10 @@ const Game = () => {
 
             <button
               // onClick={toggleVolume}
-              className={`p-3 rounded-full shadow-md transition ${
-                volume === 1
-                  ? "bg-green-500 hover:bg-green-600 text-white"
-                  : "bg-gray-400"
-              }`}
+              className={`p-3 rounded-full shadow-md transition ${volume === 1
+                ? "bg-green-500 hover:bg-green-600 text-white"
+                : "bg-gray-400"
+                }`}
             >
               <FaVolumeUp />
             </button>
@@ -232,11 +235,10 @@ const Game = () => {
 
             <button
               // onClick={toggleVolume}
-              className={`p-3 rounded-full shadow-md transition ${
-                volume === 1
-                  ? "bg-green-500 hover:bg-green-600 text-white"
-                  : "bg-gray-400"
-              }`}
+              className={`p-3 rounded-full shadow-md transition ${volume === 1
+                ? "bg-green-500 hover:bg-green-600 text-white"
+                : "bg-gray-400"
+                }`}
             >
               <FaVolumeUp />
             </button>
@@ -272,6 +274,30 @@ const Game = () => {
       {partida && juego === 2 ? (
         <CompletarMano wsRef={wsRef} idPartida={partida.id} setJuego={setJuego} />
       ) : (
+        <div></div>
+      )}
+      {partida && juego === 3 ? (
+        <CompletarMesa wsRef={wsRef} idPartida={partida.id} setJuego={setJuego} />
+      ) : (
+        <div></div>
+      )}
+      {partida && juego === 4 ? (
+        <CompletarMiel wsRef={wsRef} idPartida={partida.id} setJuego={setJuego} />
+      ) : (
+        <div></div>
+      )}
+      {partida && juego === 5 ? (
+        <CompletarMono wsRef={wsRef} idPartida={partida.id} setJuego={setJuego} />
+      ) : (
+        <div></div>
+      )}
+      {partida && juego === 6 ? (
+        <CompletarMuro wsRef={wsRef} idPartida={partida.id} setJuego={setJuego} />
+      ) : (
+        <div></div>
+      )}
+      {partida && juego === 7 ? (
+        <Puntaje puntaje={8} total={10}></Puntaje>) : (
         <div></div>
       )}
       {/* 🚀 Botón continuar */}

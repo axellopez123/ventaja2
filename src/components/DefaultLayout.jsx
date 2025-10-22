@@ -16,8 +16,8 @@ import axiosClient from "../axios-client";
 const NAVIGATION = [
   { kind: "header", title: "Main" },
   { segment: "users", title: "Usuarios", icon: <DashboardIcon /> },
-  { segment: "properties", title: "Propiedades", icon: <TimelineIcon /> },
-  { segment: "conversations", title: "Conversaciones", icon: <BiMessageAltDetail /> },
+  { segment: "properties", title: "Palabras", icon: <TimelineIcon /> },
+  { segment: "conversations", title: "Silabas", icon: <BiMessageAltDetail /> },
 
 ];
 
@@ -133,7 +133,7 @@ export default function ToolpadLayout() {
       branding={{
         logo: <RiHomeHeartFill />,
         // title: <span className="text-orange-500">INMOBILIARIA</span>,
-        title: "INMOBILIARIA",
+        title: "VENTAJA",
         homeUrl: "/",
       }}
       theme={theme}

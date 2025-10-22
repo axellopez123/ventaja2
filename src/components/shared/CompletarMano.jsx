@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Box, Typography, Paper, Button } from "@mui/material";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import mano from "../../assets/hand.png"
 
 const syllables = ["na", "ma", "la"];
 const correctSyllable = "ma";
@@ -30,13 +31,16 @@ export default function CompletarMano({ wsRef, idPartida, setJuego }) {
       if (draggedSyllable === correctSyllable) {
         setPlaced(draggedSyllable);
         setMessage("✅ ¡Correcto!");
+                setJuego(3)
+
       } else {
-        setAttempts((prev) => {
-          const newAttempts = prev - 1;
-          if (newAttempts <= 0) setMessage("💔 Se acabaron los intentos");
-          else setMessage("❌ Incorrecto, intenta otra vez");
-          return newAttempts;
-        });
+                setJuego(3)
+        // setAttempts((prev) => {
+        //   const newAttempts = prev - 1;
+        //   if (newAttempts <= 0) setMessage("💔 Se acabaron los intentos");
+        //   else setMessage("❌ Incorrecto, intenta otra vez");
+        //   return newAttempts;
+        // });
       }
     }
   };
@@ -60,10 +64,22 @@ export default function CompletarMano({ wsRef, idPartida, setJuego }) {
           ▶️ Comenzar Juego
         </Button> */}
 
-        <Typography variant="h5" gutterBottom>
+        {/* <Typography variant="h5" gutterBottom>
           Arrastra la sílaba correcta para completar la palabra
-        </Typography>
-
+        </Typography> */}
+<Box
+        component="img"
+        src={mano}
+        alt="Ilustración de mamá"
+        sx={{
+          width: { xs: "70%", md: "300px" },
+          height: "auto",
+          // my: 3,
+          borderRadius: 3,
+          boxShadow: 3,
+          mx: "auto"
+        }}
+      />
         {/* ZONA OBJETIVO */}
         <Droppable droppableId="target" direction="horizontal">
           {(provided, snapshot) => (
@@ -160,7 +176,7 @@ export default function CompletarMano({ wsRef, idPartida, setJuego }) {
           )}
         </Droppable>
 
-        <Typography
+        {/* <Typography
           variant="h6"
           sx={{ mt: 3, color: attempts > 0 ? "black" : "red" }}
         >
@@ -175,7 +191,7 @@ export default function CompletarMano({ wsRef, idPartida, setJuego }) {
           <Button variant="contained" sx={{ mt: 2 }} onClick={resetGame}>
             Reiniciar
           </Button>
-        )}
+        )} */}
       </Box>
     </DragDropContext>
   );
