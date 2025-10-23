@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Typography, Paper, Button } from "@mui/material";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import mano from "../../assets/hand.png"
+import muro from "../../assets/muro.png";
 
 const syllables = ["du", "mu", "nu"];
 const correctSyllable = "mu";
@@ -21,7 +21,17 @@ export default function CompletarMuro({ wsRef, idPartida, setJuego }) {
     );
     console.log("▶️ Juego iniciado para partida:", idPartida);
   };
+  const speak = (text) => {
+    // Detiene cualquier audio anterior
+    speechSynthesis.cancel();
 
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "es-MX";
+    utterance.rate = 1;
+    utterance.pitch = 1;
+
+    speechSynthesis.speak(utterance);
+  };
   const handleDrop = (result) => {
     if (!result.destination) return;
 
@@ -31,10 +41,13 @@ export default function CompletarMuro({ wsRef, idPartida, setJuego }) {
       if (draggedSyllable === correctSyllable) {
         setPlaced(draggedSyllable);
         setMessage("✅ ¡Correcto!");
-                setJuego(7)
+        speak("¡Lo lograste! Esa fue una pronunciación excelente.");
 
+        setJuego(7);
       } else {
-                setJuego(7)
+        speak("¡Lo lograste! Esa fue una pronunciación excelente.");
+
+        setJuego(7);
         // setAttempts((prev) => {
         //   const newAttempts = prev - 1;
         //   if (newAttempts <= 0) setMessage("💔 Se acabaron los intentos");
@@ -67,19 +80,19 @@ export default function CompletarMuro({ wsRef, idPartida, setJuego }) {
         {/* <Typography variant="h5" gutterBottom>
           Arrastra la sílaba correcta para completar la palabra
         </Typography> */}
-<Box
-        component="img"
-        src={mano}
-        alt="Ilustración de mamá"
-        sx={{
-          width: { xs: "70%", md: "300px" },
-          height: "auto",
-          // my: 3,
-          borderRadius: 3,
-          boxShadow: 3,
-          mx: "auto"
-        }}
-      />
+        <Box
+          component="img"
+          src={muro}
+          alt="Ilustración de mamá"
+          sx={{
+            width: { xs: "70%", md: "300px" },
+            height: "auto",
+            // my: 3,
+            borderRadius: 3,
+            boxShadow: 3,
+            mx: "auto",
+          }}
+        />
         {/* ZONA OBJETIVO */}
         <Droppable droppableId="target" direction="horizontal">
           {(provided, snapshot) => (
@@ -108,8 +121,8 @@ export default function CompletarMuro({ wsRef, idPartida, setJuego }) {
                   border: placed
                     ? "3px solid green"
                     : snapshot.isDraggingOver
-                    ? "3px dashed orange"
-                    : "3px dashed gray",
+                      ? "3px dashed orange"
+                      : "3px dashed gray",
                   backgroundColor: placed ? "#c8f7c5" : "transparent",
                 }}
               >

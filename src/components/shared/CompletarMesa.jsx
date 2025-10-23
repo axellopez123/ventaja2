@@ -21,7 +21,18 @@ export default function CompletarMesa({ wsRef, idPartida, setJuego }) {
     );
     console.log("▶️ Juego iniciado para partida:", idPartida);
   };
+  const speak = (text) => {
+    // Detiene cualquier audio anterior
+    speechSynthesis.cancel();
 
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "es-MX";
+    utterance.rate = 1;
+    utterance.pitch = 1;
+
+
+    speechSynthesis.speak(utterance);
+  };
   const handleDrop = (result) => {
     if (!result.destination) return;
 
@@ -32,10 +43,14 @@ export default function CompletarMesa({ wsRef, idPartida, setJuego }) {
         setPlaced(draggedSyllable);
         setMessage("✅ ¡Correcto!");
         // EJECUTAR AUDIO QUE DIGA REPETIR SILABA "PRONUNCIASTE NA PROBEMOS OTRA PALABRA"
+        speak("¡Esa sílaba te salió perfecta, sigue así!");
+
         setJuego(4)
       } else {
                 // EJECUTAR AUDIO QUE DIGA REPETIR SILABA "PRONUNCIASTE NA PROBEMOS OTRA PALABRA"
-        setJuego(4)
+                speak("¡Esa sílaba te salió perfecta, sigue así!");
+
+                setJuego(4)
 
         // setAttempts((prev) => {
         //   const newAttempts = prev - 1;

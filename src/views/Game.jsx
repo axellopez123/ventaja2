@@ -29,12 +29,22 @@ const Game = () => {
   const [loading, setLoading] = useState(false);
   const [mostrar, setMostrar] = useState(true);
   const [juego, setJuego] = useState(1);
+  const speak = (text) => {
+    // Detiene cualquier audio anterior
+    speechSynthesis.cancel();
 
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "es-MX";
+    utterance.rate = 1;
+    utterance.pitch = 1;
+
+
+    speechSynthesis.speak(utterance);
+  };
   useEffect(() => {
     console.log(level);
-
+    speak("Arrastra la sílaba al lugar correcto y pronúnciala en voz alta.")
     if (!partida) return; // solo abre WS cuando hay partida
-
     const startWebRTC = async () => {
       const ws = new WebSocket(
         "wss://ventaja-backend.arwax.pro/api/webrtc/ws/webrtc/123"
@@ -107,7 +117,7 @@ const Game = () => {
 
   // ---- INICIAR PARTIDA ----
   const iniciarPartida = async () => {
-    setMostrar(false)
+    setMostrar(false);
     setLoading(true);
     try {
       // const { data } = await axiosFastApi.post("/play/iniciar", {
@@ -157,11 +167,13 @@ const Game = () => {
   };
   return (
     <div>
-
       <div
-        className={`flex flex-col md:flex-row items-center justify-center min-h-screen bg-gradient-to-b from-orange-100 to-white p-4 ${mostrar ? "" : "hidden"
-          }`}
-      >        {/* 📹 Sección de video + controles (en columna en móvil, fila en desktop) */}
+        className={`flex flex-col md:flex-row items-center justify-center min-h-screen bg-gradient-to-b from-orange-100 to-white p-4 ${
+          mostrar ? "" : "hidden"
+        }`}
+      >
+        {" "}
+        {/* 📹 Sección de video + controles (en columna en móvil, fila en desktop) */}
         <div className="flex flex-col md:flex-row items-center md:items-start bg-amber-200/40 rounded-2xl shadow-xl overflow-hidden max-w-4xl w-full">
           {/* 🎬 Video */}
           <div className="relative w-full md:w-3/4 aspect-square bg-amber-200/10">
@@ -192,10 +204,11 @@ const Game = () => {
 
             <button
               // onClick={toggleVolume}
-              className={`p-3 rounded-full shadow-md transition ${volume === 1
-                ? "bg-green-500 hover:bg-green-600 text-white"
-                : "bg-gray-400"
-                }`}
+              className={`p-3 rounded-full shadow-md transition ${
+                volume === 1
+                  ? "bg-green-500 hover:bg-green-600 text-white"
+                  : "bg-gray-400"
+              }`}
             >
               <FaVolumeUp />
             </button>
@@ -210,10 +223,12 @@ const Game = () => {
             </div>
           </div>
         </div>
-
         {/* 🚀 Botón Comenzar (y en móvil, los controles debajo) */}
         <div className="mt-6 md:mt-0 text-center md:hidden w-full flex flex-col items-center block md:hidden">
-          <button className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white text-lg font-semibold rounded-xl shadow-lg transition mb-4">
+          <button
+            className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white text-lg font-semibold rounded-xl shadow-lg transition mb-4"
+            onClick={iniciarPartida}
+          >
             Comenzar Juego <FaArrowRight className="inline ml-2" />
           </button>
 
@@ -235,15 +250,16 @@ const Game = () => {
 
             <button
               // onClick={toggleVolume}
-              className={`p-3 rounded-full shadow-md transition ${volume === 1
-                ? "bg-green-500 hover:bg-green-600 text-white"
-                : "bg-gray-400"
-                }`}
+              className={`p-3 rounded-full shadow-md transition ${
+                volume === 1
+                  ? "bg-green-500 hover:bg-green-600 text-white"
+                  : "bg-gray-400"
+              }`}
             >
               <FaVolumeUp />
             </button>
           </div>
-          <div className="mt-5">
+          {/* <div className="mt-5">
             <button
               className="bg-green-500 text-white px-4 py-2 rounded"
               disabled={loading}
@@ -251,7 +267,7 @@ const Game = () => {
             >
               {loading ? "Iniciando..." : "▶ Iniciar Partida"}
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
       {/* {!partida ? (
@@ -272,32 +288,55 @@ const Game = () => {
         <div></div>
       )}
       {partida && juego === 2 ? (
-        <CompletarMano wsRef={wsRef} idPartida={partida.id} setJuego={setJuego} />
+        <CompletarMano
+          wsRef={wsRef}
+          idPartida={partida.id}
+          setJuego={setJuego}
+        />
       ) : (
         <div></div>
       )}
       {partida && juego === 3 ? (
-        <CompletarMesa wsRef={wsRef} idPartida={partida.id} setJuego={setJuego} />
+        <CompletarMesa
+          wsRef={wsRef}
+          idPartida={partida.id}
+          setJuego={setJuego}
+        />
       ) : (
         <div></div>
       )}
       {partida && juego === 4 ? (
-        <CompletarMiel wsRef={wsRef} idPartida={partida.id} setJuego={setJuego} />
+        <CompletarMiel
+          wsRef={wsRef}
+          idPartida={partida.id}
+          setJuego={setJuego}
+        />
       ) : (
         <div></div>
       )}
       {partida && juego === 5 ? (
-        <CompletarMono wsRef={wsRef} idPartida={partida.id} setJuego={setJuego} />
+        <CompletarMono
+          wsRef={wsRef}
+          idPartida={partida.id}
+          setJuego={setJuego}
+        />
       ) : (
         <div></div>
       )}
       {partida && juego === 6 ? (
-        <CompletarMuro wsRef={wsRef} idPartida={partida.id} setJuego={setJuego} />
+        <CompletarMuro
+          wsRef={wsRef}
+          idPartida={partida.id}
+          setJuego={setJuego}
+        />
       ) : (
         <div></div>
       )}
       {partida && juego === 7 ? (
-        <Puntaje puntaje={8} total={10}></Puntaje>) : (
+        <Puntaje puntaje={8} total={10} 
+        // setPartida={setPartida} setMostrar={setMostrar}
+        ></Puntaje>
+      ) : (
         <div></div>
       )}
       {/* 🚀 Botón continuar */}

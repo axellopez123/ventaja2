@@ -36,7 +36,7 @@ export default function Completar({ wsRef, idPartida, setJuego }) {
         setJuego(2)
       } else {
         // EJECUTAR AUDIO QUE DIGA REPETIR SILABA "PRONUNCIASTE NA PROBEMOS OTRA PALABRA"
-        speak("Pronunciaste la silaba naa, intentemos con otra palabra")
+        speak("Pronunciaste la silaba na, intentemos con otra palabra")
         setJuego(2)
         // setAttempts((prev) => {
         //   const newAttempts = prev - 1;
@@ -47,7 +47,7 @@ export default function Completar({ wsRef, idPartida, setJuego }) {
       }
     }
   };
-  const speak = (text, onEnd) => {
+  const speak = (text) => {
     // Detiene cualquier audio anterior
     speechSynthesis.cancel();
 
@@ -56,10 +56,6 @@ export default function Completar({ wsRef, idPartida, setJuego }) {
     utterance.rate = 1;
     utterance.pitch = 1;
 
-    // Ejecutar callback al terminar el audio
-    utterance.onend = () => {
-      if (onEnd) onEnd();
-    };
 
     speechSynthesis.speak(utterance);
   };
