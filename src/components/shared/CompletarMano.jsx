@@ -30,10 +30,9 @@ export default function CompletarMano({ wsRef, idPartida, setJuego }) {
     utterance.rate = 1;
     utterance.pitch = 1;
 
-
     speechSynthesis.speak(utterance);
   };
-  const handleDrop = (result) => {
+  const handleDrop = async (result) => {
     if (!result.destination) return;
 
     const draggedSyllable = items[result.source.index];
@@ -42,7 +41,10 @@ export default function CompletarMano({ wsRef, idPartida, setJuego }) {
       if (draggedSyllable === correctSyllable) {
         setPlaced(draggedSyllable);
         setMessage("✅ ¡Correcto!");
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+
         speak("¡Muy bien! Estás mejorando mucho.");
+        await new Promise((resolve) => setTimeout(resolve, 5000));
 
         setJuego(3);
       } else {

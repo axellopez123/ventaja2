@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Typography, Paper, Button } from "@mui/material";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import mama from "../../assets/mama.jpg"
+import mama from "../../assets/mama.jpg";
 
 const syllables = ["ma", "me", "na"];
 const correctSyllable = "ma";
@@ -22,7 +22,7 @@ export default function Completar({ wsRef, idPartida, setJuego }) {
     console.log("▶️ Juego iniciado para partida:", idPartida);
   };
 
-  const handleDrop = (result) => {
+  const handleDrop = async (result) => {
     if (!result.destination) return;
 
     const draggedSyllable = items[result.source.index];
@@ -32,12 +32,16 @@ export default function Completar({ wsRef, idPartida, setJuego }) {
         setPlaced(draggedSyllable);
         setMessage("✅ ¡Correcto!");
         // EJECUTAR AUDIO QUE DIGA REPETIR SILABA "PRONUNCIASTE NA PROBEMOS OTRA PALABRA"
-        speak("Pronunciaste la silaba na, intentemos con otra palabra")
-        setJuego(2)
+        speak("Pronunciaste la silaba na, intentemos con otra palabra");
+        setJuego(2);
       } else {
         // EJECUTAR AUDIO QUE DIGA REPETIR SILABA "PRONUNCIASTE NA PROBEMOS OTRA PALABRA"
-        speak("Pronunciaste la silaba na, intentemos con otra palabra")
-        setJuego(2)
+        await new Promise((resolve) => setTimeout(resolve, 2500));
+
+        speak("Pronunciaste la silaba na, intentemos con otra palabra");
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+
+        setJuego(2);
         // setAttempts((prev) => {
         //   const newAttempts = prev - 1;
         //   if (newAttempts <= 0) setMessage("💔 Se acabaron los intentos");
@@ -55,7 +59,6 @@ export default function Completar({ wsRef, idPartida, setJuego }) {
     utterance.lang = "es-MX";
     utterance.rate = 1;
     utterance.pitch = 1;
-
 
     speechSynthesis.speak(utterance);
   };
@@ -91,7 +94,7 @@ export default function Completar({ wsRef, idPartida, setJuego }) {
             // my: 3,
             borderRadius: 3,
             boxShadow: 3,
-            mx: "auto"
+            mx: "auto",
           }}
         />
         {/* ZONA OBJETIVO */}

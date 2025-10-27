@@ -38,12 +38,11 @@ const Game = () => {
     utterance.rate = 1;
     utterance.pitch = 1;
 
-
     speechSynthesis.speak(utterance);
   };
   useEffect(() => {
     console.log(level);
-    speak("Arrastra la sílaba al lugar correcto y pronúnciala en voz alta.")
+    speak("Arrastra la sílaba al lugar correcto y pronúnciala en voz alta.");
     if (!partida) return; // solo abre WS cuando hay partida
     const startWebRTC = async () => {
       const ws = new WebSocket(
@@ -126,6 +125,7 @@ const Game = () => {
       // });
       // setPartida(data); // 👉 Guardamos la partida para mostrar el juego
       // console.log("✅ Partida creada:", data);
+
       setPartida(1);
     } catch (err) {
       console.error("❌ Error al iniciar partida:", err);
@@ -187,15 +187,15 @@ const Game = () => {
           </div>
 
           {/* 🎛️ Controles a la derecha (desktop) */}
-          <div className="flex md:flex-col justify-center items-center gap-6 p-4 md:w-1/4 hidden lg:block">
+          <div className="flex  justify-center items-center gap-6 p-4 md:w-1/4 hidden lg:block">
             <button
               onClick={handlePlayPause}
-              className="bg-orange-500 hover:bg-orange-600 text-white p-3 rounded-full shadow-md transition"
+              className="bg-orange-500 hover:bg-orange-600 text-white p-7 rounded-full shadow-md transition"
             >
               {isPlaying ? <FaPause /> : <FaPlay />}
             </button>
 
-            <button
+            {/* <button
               // onClick={handleRestart}
               className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-md transition"
             >
@@ -211,7 +211,7 @@ const Game = () => {
               }`}
             >
               <FaVolumeUp />
-            </button>
+            </button> */}
             <div className="mt-5 flex justify-center">
               <button
                 className="bg-green-500 text-white px-4 py-2 rounded"
@@ -333,8 +333,10 @@ const Game = () => {
         <div></div>
       )}
       {partida && juego === 7 ? (
-        <Puntaje puntaje={8} total={10} 
-        // setPartida={setPartida} setMostrar={setMostrar}
+        <Puntaje
+          puntaje={8}
+          total={10}
+          // setPartida={setPartida} setMostrar={setMostrar}
         ></Puntaje>
       ) : (
         <div></div>

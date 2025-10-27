@@ -32,7 +32,7 @@ export default function CompletarMuro({ wsRef, idPartida, setJuego }) {
 
     speechSynthesis.speak(utterance);
   };
-  const handleDrop = (result) => {
+  const handleDrop = async (result) => {
     if (!result.destination) return;
 
     const draggedSyllable = items[result.source.index];
@@ -41,7 +41,10 @@ export default function CompletarMuro({ wsRef, idPartida, setJuego }) {
       if (draggedSyllable === correctSyllable) {
         setPlaced(draggedSyllable);
         setMessage("✅ ¡Correcto!");
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+
         speak("¡Lo lograste! Esa fue una pronunciación excelente.");
+        await new Promise((resolve) => setTimeout(resolve, 5000));
 
         setJuego(7);
       } else {
