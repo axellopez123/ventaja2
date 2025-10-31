@@ -28,6 +28,14 @@ export default function Completar({ wsRef, idPartida, setJuego }) {
     const draggedSyllable = items[result.source.index];
 
     if (result.destination.droppableId === "target") {
+      const soundDetected = await detectSound();
+
+      if (!soundDetected) {
+        speak(
+          "No detecté ningún sonido. Intenta pronunciar la sílaba en voz alta."
+        );
+        return;
+      }
       if (draggedSyllable === correctSyllable) {
         setPlaced(draggedSyllable);
         setMessage("✅ ¡Correcto!");
@@ -49,6 +57,42 @@ export default function Completar({ wsRef, idPartida, setJuego }) {
         //   return newAttempts;
         // });
       }
+    }
+  };
+
+  const detectSound = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const audioContext = new AudioContext();
+      const source = audioContext.createMediaStreamSource(stream);
+      const analyser = audioContext.createAnalyser();
+      const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+      source.connect(analyser);
+
+      let hasSound = false;
+
+      return await new Promise((resolve) => {
+        const checkVolume = () => {
+          analyser.getByteFrequencyData(dataArray);
+          const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+          console.log(avg);
+          
+          // si hay energía promedio mayor a un umbral, hay sonido
+          if (avg > 15) hasSound = true;
+        };
+
+        const interval = setInterval(checkVolume, 100);
+
+        setTimeout(() => {
+          clearInterval(interval);
+          stream.getTracks().forEach((track) => track.stop());
+          resolve(hasSound);
+        }, 1500); // analiza durante 1.5 segundos
+      });
+    } catch (error) {
+      console.error("Error detectando sonido:", error);
+      return false;
     }
   };
   const speak = (text) => {
