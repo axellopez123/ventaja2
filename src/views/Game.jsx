@@ -43,10 +43,10 @@ const Game = () => {
   useEffect(() => {
     console.log(level);
     speak("Arrastra la sílaba al lugar correcto y pronúnciala en voz alta.");
-    if (!partida) return; // solo abre WS cuando hay partida
+    // if (!partida) return; // solo abre WS cuando hay partida
     const startWebRTC = async () => {
       const ws = new WebSocket(
-        "wss://ventaja-backend.arwax.pro/api/webrtc/ws/webrtc/123"
+        "wss://ventaja-backend.arwax.pro/api/webrtc/ws/webrtc/1"
       );
       wsRef.current = ws;
 
@@ -119,12 +119,12 @@ const Game = () => {
     setMostrar(false);
     setLoading(true);
     try {
-      // const { data } = await axiosFastApi.post("/play/iniciar", {
-      //   id_jugador: 1, // jugador actual
-      //   id_nivel: 1, // nivel elegido
-      // });
-      // setPartida(data); // 👉 Guardamos la partida para mostrar el juego
-      // console.log("✅ Partida creada:", data);
+      const { data } = await axiosFastApi.post("/play/iniciar", {
+        id_jugador: 1, // jugador actual
+        id_nivel: level, // nivel elegido
+      });
+      setPartida(data); // 👉 Guardamos la partida para mostrar el juego
+      console.log("✅ Partida creada:", data);
 
       setPartida(1);
     } catch (err) {
