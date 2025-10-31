@@ -6,21 +6,26 @@ import mama from "../../assets/mama.jpg";
 const syllables = ["ma", "me", "na"];
 const correctSyllable = "ma";
 
-export default function Completar({ wsRef, idPartida, setJuego }) {
+export default function Completar({ wsRef, idPartida, Partida }) {
   const [placed, setPlaced] = useState(null);
   const [attempts, setAttempts] = useState(3);
   const [message, setMessage] = useState("");
-  const [items, setItems] = useState(syllables);
+  const [items, setItems] = useState(Partida.silabas_parecidas);
 
   const handleStartGame = () => {
     wsRef.current?.send(
       JSON.stringify({
         type: "start",
         id_partida: idPartida,
+        id_ronda: idRonda,
       })
     );
     console.log("▶️ Juego iniciado para partida:", idPartida);
   };
+
+  useEffect(() => {
+    handleStartGame();
+  }, []); // <- [] asegura que solo se ejecute una vez
 
   const handleDrop = async (result) => {
     if (!result.destination) return;
@@ -36,12 +41,11 @@ export default function Completar({ wsRef, idPartida, setJuego }) {
         );
         return;
       }
-      if (draggedSyllable === correctSyllable) {
+      if (draggedSyllable === Partida.silaba_objetivo) {
         setPlaced(draggedSyllable);
         setMessage("✅ ¡Correcto!");
         // EJECUTAR AUDIO QUE DIGA REPETIR SILABA "PRONUNCIASTE NA PROBEMOS OTRA PALABRA"
         speak("Pronunciaste la silaba na, intentemos con otra palabra");
-        setJuego(2);
       } else {
         // EJECUTAR AUDIO QUE DIGA REPETIR SILABA "PRONUNCIASTE NA PROBEMOS OTRA PALABRA"
         await new Promise((resolve) => setTimeout(resolve, 2500));
@@ -49,7 +53,6 @@ export default function Completar({ wsRef, idPartida, setJuego }) {
         speak("Pronunciaste la silaba na, intentemos con otra palabra");
         await new Promise((resolve) => setTimeout(resolve, 5000));
 
-        setJuego(2);
         // setAttempts((prev) => {
         //   const newAttempts = prev - 1;
         //   if (newAttempts <= 0) setMessage("💔 Se acabaron los intentos");
@@ -77,7 +80,7 @@ export default function Completar({ wsRef, idPartida, setJuego }) {
           analyser.getByteFrequencyData(dataArray);
           const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
           console.log(avg);
-          
+
           // si hay energía promedio mayor a un umbral, hay sonido
           if (avg > 15) hasSound = true;
         };

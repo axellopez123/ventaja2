@@ -28,7 +28,7 @@ const Game = () => {
   const [partida, setPartida] = useState(null); // 👉 guarda la partida creada
   const [loading, setLoading] = useState(false);
   const [mostrar, setMostrar] = useState(true);
-  const [juego, setJuego] = useState(1);
+  const [juego, setJuego] = useState(0);
   const speak = (text) => {
     // Detiene cualquier audio anterior
     speechSynthesis.cancel();
@@ -126,7 +126,6 @@ const Game = () => {
       setPartida(data); // 👉 Guardamos la partida para mostrar el juego
       console.log("✅ Partida creada:", data);
 
-      setPartida(1);
     } catch (err) {
       console.error("❌ Error al iniciar partida:", err);
       alert("No se pudo iniciar la partida");
@@ -168,9 +167,8 @@ const Game = () => {
   return (
     <div>
       <div
-        className={`flex flex-col md:flex-row items-center justify-center min-h-screen bg-gradient-to-b from-orange-100 to-white p-4 ${
-          mostrar ? "" : "hidden"
-        }`}
+        className={`flex flex-col md:flex-row items-center justify-center min-h-screen bg-gradient-to-b from-orange-100 to-white p-4 ${mostrar ? "" : "hidden"
+          }`}
       >
         {" "}
         {/* 📹 Sección de video + controles (en columna en móvil, fila en desktop) */}
@@ -250,11 +248,10 @@ const Game = () => {
 
             <button
               // onClick={toggleVolume}
-              className={`p-3 rounded-full shadow-md transition ${
-                volume === 1
-                  ? "bg-green-500 hover:bg-green-600 text-white"
-                  : "bg-gray-400"
-              }`}
+              className={`p-3 rounded-full shadow-md transition ${volume === 1
+                ? "bg-green-500 hover:bg-green-600 text-white"
+                : "bg-gray-400"
+                }`}
             >
               <FaVolumeUp />
             </button>
@@ -270,6 +267,15 @@ const Game = () => {
           </div> */}
         </div>
       </div>
+      {partida ? (
+        <div>
+          <Completar wsRef={wsRef} Partida={partida}/>
+
+        </div>
+      ) : (
+        <div></div>
+      )}
+
       {/* {!partida ? (
       
         <button
@@ -282,8 +288,8 @@ const Game = () => {
       ) : (
         <Completar wsRef={wsRef} idPartida={partida.id} />
       )} */}
-      {partida && juego === 1 ? (
-        <Completar wsRef={wsRef} idPartida={partida.id} setJuego={setJuego} />
+      {/* {partida && juego === 1 ? (
+        <Completar wsRef={wsRef} idPartida={partida.id} silabasParecidas={silabas} />
       ) : (
         <div></div>
       )}
@@ -336,11 +342,11 @@ const Game = () => {
         <Puntaje
           puntaje={8}
           total={10}
-          // setPartida={setPartida} setMostrar={setMostrar}
+        // setPartida={setPartida} setMostrar={setMostrar}
         ></Puntaje>
       ) : (
         <div></div>
-      )}
+      )} */}
       {/* 🚀 Botón continuar */}
       {/* <div className="mt-8 text-center">
       <button
