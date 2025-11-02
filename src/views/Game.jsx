@@ -43,7 +43,7 @@ const Game = () => {
   useEffect(() => {
     console.log(level);
     speak("Arrastra la sílaba al lugar correcto y pronúnciala en voz alta.");
-    // if (!partida) return; // solo abre WS cuando hay partida
+    if (!partida) return; // solo abre WS cuando hay partida
     const startWebRTC = async () => {
       const ws = new WebSocket(
         "wss://ventaja-backend.arwax.pro/api/webrtc/ws/webrtc/1"
@@ -87,7 +87,16 @@ const Game = () => {
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);
         ws.send(JSON.stringify({ type: "offer", offer }));
+        ws.send(
+          JSON.stringify({
+            type: "start",
+            id_partida: partida.id_partida,
+            id_ronda: partida.id_ronda,
+          })
+        );
+        console.log("▶️ Juego iniciado para partida:", partida.id);
       };
+
 
       ws.onmessage = async (event) => {
         const msg = JSON.parse(event.data);
@@ -97,6 +106,12 @@ const Game = () => {
         } else if (msg.type === "vosk_word") {
           // Aquí recibes la palabra detectada
           console.log("🔤 Palabra detectada por Vosk:", msg.word);
+          // Si quieres mostrar en UI:
+          // setDetectedWord(msg.word);
+        }
+        else if (msg.type === "analysis_feedback") {
+          // Aquí recibes la palabra detectada
+          console.log("🔤 RETRO:", msg);
           // Si quieres mostrar en UI:
           // setDetectedWord(msg.word);
         }
@@ -125,7 +140,6 @@ const Game = () => {
       });
       setPartida(data); // 👉 Guardamos la partida para mostrar el juego
       console.log("✅ Partida creada:", data);
-
     } catch (err) {
       console.error("❌ Error al iniciar partida:", err);
       alert("No se pudo iniciar la partida");
@@ -167,8 +181,9 @@ const Game = () => {
   return (
     <div>
       <div
-        className={`flex flex-col md:flex-row items-center justify-center min-h-screen bg-gradient-to-b from-orange-100 to-white p-4 ${mostrar ? "" : "hidden"
-          }`}
+        className={`flex flex-col md:flex-row items-center justify-center min-h-screen bg-gradient-to-b from-orange-100 to-white p-4 ${
+          mostrar ? "" : "hidden"
+        }`}
       >
         {" "}
         {/* 📹 Sección de video + controles (en columna en móvil, fila en desktop) */}
@@ -248,10 +263,11 @@ const Game = () => {
 
             <button
               // onClick={toggleVolume}
-              className={`p-3 rounded-full shadow-md transition ${volume === 1
-                ? "bg-green-500 hover:bg-green-600 text-white"
-                : "bg-gray-400"
-                }`}
+              className={`p-3 rounded-full shadow-md transition ${
+                volume === 1
+                  ? "bg-green-500 hover:bg-green-600 text-white"
+                  : "bg-gray-400"
+              }`}
             >
               <FaVolumeUp />
             </button>
@@ -269,8 +285,7 @@ const Game = () => {
       </div>
       {partida ? (
         <div>
-          <Completar wsRef={wsRef} Partida={partida}/>
-
+          <Completar wsRef={wsRef} Partida={partida} />
         </div>
       ) : (
         <div></div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, Paper, Button } from "@mui/material";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import mama from "../../assets/mama.jpg";
@@ -12,20 +12,6 @@ export default function Completar({ wsRef, idPartida, Partida }) {
   const [message, setMessage] = useState("");
   const [items, setItems] = useState(Partida.silabas_parecidas);
 
-  const handleStartGame = () => {
-    wsRef.current?.send(
-      JSON.stringify({
-        type: "start",
-        id_partida: idPartida,
-        id_ronda: idRonda,
-      })
-    );
-    console.log("▶️ Juego iniciado para partida:", idPartida);
-  };
-
-  useEffect(() => {
-    handleStartGame();
-  }, []); // <- [] asegura que solo se ejecute una vez
 
   const handleDrop = async (result) => {
     if (!result.destination) return;
