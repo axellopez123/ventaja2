@@ -12,13 +12,22 @@ export default function Completar({ wsRef, idPartida, Partida }) {
   const [message, setMessage] = useState("");
   const [items, setItems] = useState(Partida.silabas_parecidas);
 
-
   const handleDrop = async (result) => {
     if (!result.destination) return;
 
     const draggedSyllable = items[result.source.index];
 
     if (result.destination.droppableId === "target") {
+      // avisar al backend cuál sílaba fue seleccionada
+      if (wsRef.current?.readyState === WebSocket.OPEN) {
+        wsRef.current.send(
+          JSON.stringify({
+            type: "set_syllable",
+            silaba_detectada: draggedSyllable,
+          })
+        );
+      }
+
       const soundDetected = await detectSound();
 
       if (!soundDetected) {
