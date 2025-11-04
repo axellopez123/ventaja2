@@ -36,25 +36,28 @@ export default function Completar({ wsRef, idPartida, Partida }) {
         );
         return;
       }
-      if (draggedSyllable === Partida.silaba_objetivo) {
-        setPlaced(draggedSyllable);
-        setMessage("✅ ¡Correcto!");
-        // EJECUTAR AUDIO QUE DIGA REPETIR SILABA "PRONUNCIASTE NA PROBEMOS OTRA PALABRA"
-        speak("Pronunciaste la silaba na, intentemos con otra palabra");
-      } else {
-        // EJECUTAR AUDIO QUE DIGA REPETIR SILABA "PRONUNCIASTE NA PROBEMOS OTRA PALABRA"
-        await new Promise((resolve) => setTimeout(resolve, 2500));
+      
+      setPlaced(draggedSyllable);
 
-        speak("Pronunciaste la silaba na, intentemos con otra palabra");
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+      // if (draggedSyllable === Partida.silaba_objetivo) {
+      //   setPlaced(draggedSyllable);
+      //   setMessage("✅ ¡Correcto!");
+      //   // EJECUTAR AUDIO QUE DIGA REPETIR SILABA "PRONUNCIASTE NA PROBEMOS OTRA PALABRA"
+      //   speak("Pronunciaste la silaba na, intentemos con otra palabra");
+      // } else {
+      //   // EJECUTAR AUDIO QUE DIGA REPETIR SILABA "PRONUNCIASTE NA PROBEMOS OTRA PALABRA"
+      //   await new Promise((resolve) => setTimeout(resolve, 2500));
 
-        // setAttempts((prev) => {
-        //   const newAttempts = prev - 1;
-        //   if (newAttempts <= 0) setMessage("💔 Se acabaron los intentos");
-        //   else setMessage("❌ Incorrecto, intenta otra vez");
-        //   return newAttempts;
-        // });
-      }
+      //   speak("Pronunciaste la silaba na, intentemos con otra palabra");
+      //   await new Promise((resolve) => setTimeout(resolve, 5000));
+
+      //   // setAttempts((prev) => {
+      //   //   const newAttempts = prev - 1;
+      //   //   if (newAttempts <= 0) setMessage("💔 Se acabaron los intentos");
+      //   //   else setMessage("❌ Incorrecto, intenta otra vez");
+      //   //   return newAttempts;
+      //   // });
+      // }
     }
   };
 
