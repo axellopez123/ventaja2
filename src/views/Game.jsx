@@ -97,23 +97,38 @@ const Game = () => {
         console.log("▶️ Juego iniciado para partida:", partida.id);
       };
 
-
       ws.onmessage = async (event) => {
         const msg = JSON.parse(event.data);
-        if (msg.type === "answer") {
-          await pcRef.current.setRemoteDescription(msg.answer);
-          console.log("📥 Answer aplicada");
-        } else if (msg.type === "vosk_word") {
-          // Aquí recibes la palabra detectada
-          console.log("🔤 Palabra detectada por Vosk:", msg.word);
-          // Si quieres mostrar en UI:
-          // setDetectedWord(msg.word);
-        }
-        else if (msg.type === "analysis_feedback") {
-          // Aquí recibes la palabra detectada
-          console.log("🔤 RETRO:", msg);
-          // Si quieres mostrar en UI:
-          // setDetectedWord(msg.word);
+        switch (msg.type) {
+          case "answer":
+            await pcRef.current.setRemoteDescription(msg.answer);
+            console.log("📥 Answer aplicada");
+            break;
+          case "vosk_word":
+            // Aquí recibes la palabra detectada
+            console.log("🔤 Palabra detectada por Vosk:", msg.word);
+            // Si quieres mostrar en UI:
+            // setDetectedWord(msg.word);
+            break;
+          case "analysis_feedback":
+            // Aquí recibes la palabra detectada
+            console.log("🔤 RETRO:", msg);
+            // Si quieres mostrar en UI:
+            // setDetectedWord(msg.word);
+
+            break;
+          case "next_play":
+            // Aquí recibes la palabra detectada
+            console.log("🔤 Siguiente:", msg);
+            // Si quieres mostrar en UI:
+            // setDetectedWord(msg.word);
+            break;
+          case "error":
+            console.error("⚠️ Error recibido:", msg.message);
+            break;
+
+          default:
+            console.warn("📦 Tipo de mensaje desconocido:", msg);
         }
       };
 
