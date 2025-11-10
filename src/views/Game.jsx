@@ -28,6 +28,7 @@ const Game = () => {
   const [partida, setPartida] = useState(null); // 👉 guarda la partida creada
   const [loading, setLoading] = useState(false);
   const [mostrar, setMostrar] = useState(true);
+
   const [juego, setJuego] = useState(0);
   const speak = (text) => {
     // Detiene cualquier audio anterior
@@ -40,10 +41,14 @@ const Game = () => {
 
     speechSynthesis.speak(utterance);
   };
+
+  useEffect(() => {
+    setPartida(partida);
+  }, [partida]);
   useEffect(() => {
     console.log(level);
-    speak("Arrastra la sílaba al lugar correcto y pronúnciala en voz alta.");
     if (!partida) return; // solo abre WS cuando hay partida
+    // speak(partida.feedback);
     const startWebRTC = async () => {
       const ws = new WebSocket(
         "wss://ventaja-backend.arwax.pro/api/webrtc/ws/webrtc/1"
@@ -90,8 +95,8 @@ const Game = () => {
         ws.send(
           JSON.stringify({
             type: "start",
-            id_partida: partida.id_partida,
-            id_ronda: partida.id_ronda,
+            id_partida: partida.partida.id,
+            id_ronda: partida.ronda.id,
           })
         );
         console.log("▶️ Juego iniciado para partida:", partida.id);
@@ -111,11 +116,13 @@ const Game = () => {
             // setDetectedWord(msg.word);
             break;
           case "analysis_feedback":
-            // Aquí recibes la palabra detectada
             console.log("🔤 RETRO:", msg);
-            // Si quieres mostrar en UI:
-            // setDetectedWord(msg.word);
-
+            if (msg.evaluacion) {
+              speak(msg.feedback.feedback_text + msg.evaluacion.feedback);
+              speak(msg.evaluacion.feedback);
+              setPartida(msg.evaluacion);
+              console.log(partida);
+            }
             break;
           case "next_play":
             // Aquí recibes la palabra detectada

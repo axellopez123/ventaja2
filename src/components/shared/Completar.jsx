@@ -6,11 +6,20 @@ import mama from "../../assets/mama.jpg";
 const syllables = ["ma", "me", "na"];
 const correctSyllable = "ma";
 
-export default function Completar({ wsRef, idPartida, Partida }) {
+export default function Completar({ wsRef, Partida }) {
   const [placed, setPlaced] = useState(null);
   const [attempts, setAttempts] = useState(3);
   const [message, setMessage] = useState("");
-  const [items, setItems] = useState(Partida.silabas_parecidas);
+  const [items, setItems] = useState(Partida.silabas);
+  useEffect(() => {
+    if (Partida?.silabas) {
+      setItems(Partida.silabas);
+      setPlaced(null);
+      setMessage("");
+      setAttempts(3);
+      console.log("🧩 Nuevas sílabas recibidas:", Partida.silabas);
+    }
+  }, [Partida]);
 
   const handleDrop = async (result) => {
     if (!result.destination) return;
@@ -18,6 +27,16 @@ export default function Completar({ wsRef, idPartida, Partida }) {
     const draggedSyllable = items[result.source.index];
 
     if (result.destination.droppableId === "target") {
+      const soundDetected = await detectSound();
+
+      if (!soundDetected) {
+        speak(
+          "No detecté ningún sonido. Intenta pronunciar la sílaba en voz alta."
+        );
+        return;
+      }
+
+      setPlaced(draggedSyllable);
       // avisar al backend cuál sílaba fue seleccionada
       if (wsRef.current?.readyState === WebSocket.OPEN) {
         wsRef.current.send(
@@ -27,17 +46,7 @@ export default function Completar({ wsRef, idPartida, Partida }) {
           })
         );
       }
-
-      const soundDetected = await detectSound();
-
-      if (!soundDetected) {
-        speak(
-          "No detecté ningún sonido. Intenta pronunciar la sílaba en voz alta."
-        );
-        return;
-      }
-      
-      setPlaced(draggedSyllable);
+      setPlaced(null);
 
       // if (draggedSyllable === Partida.silaba_objetivo) {
       //   setPlaced(draggedSyllable);
@@ -80,7 +89,7 @@ export default function Completar({ wsRef, idPartida, Partida }) {
           console.log(avg);
 
           // si hay energía promedio mayor a un umbral, hay sonido
-          if (avg > 15) hasSound = true;
+          if (avg > 0) hasSound = true;
         };
 
         const interval = setInterval(checkVolume, 100);
@@ -131,7 +140,7 @@ export default function Completar({ wsRef, idPartida, Partida }) {
         </Typography> */}
         <Box
           component="img"
-          src={mama}
+          src={`https://ventaja-backend.arwax.pro/${Partida.palabra.imagen_url}`}
           alt="Ilustración de mamá"
           sx={{
             width: { xs: "70%", md: "300px" },
@@ -177,7 +186,7 @@ export default function Completar({ wsRef, idPartida, Partida }) {
               >
                 {placed ? placed : "___"}
               </Paper>
-              <span>má</span>
+              <span>{Partida.palabra.resto}</span>
               {provided.placeholder}
             </Box>
           )}
