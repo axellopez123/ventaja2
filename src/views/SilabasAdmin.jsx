@@ -22,6 +22,9 @@ const API = "https://ventaja-backend.arwax.pro/api/play";
 export default function SilabasAdmin() {
   const theme = useTheme();
   const [silaba, setSilaba] = useState("");
+  const [grupo, setGrupo] = useState(null);
+  const [orden, setOrden] = useState(null);
+
   const [silabasList, setSilabasList] = useState([]);
   const [silabasParecidas, setSilabasParecidas] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -62,10 +65,14 @@ export default function SilabasAdmin() {
 
     try {
       await axios.post(`${API}/silabas`, {
-        silaba,
+        silaba: silaba,
+        grupo:grupo,
+        orden: orden,
         parecidas: silabasParecidas,
       });
       setSilaba("");
+      setGrupo(null);
+      setOrden(null);
       setSilabasParecidas([]);
       setSuccessMsg("Sí­laba agregada correctamente.");
       fetchData();
@@ -133,6 +140,22 @@ export default function SilabasAdmin() {
               sx={{ maxWidth: 100, mx: "auto" }} // <-- centrado y ancho máximo
             />
 
+            <TextField
+              label="Grupo"
+              value={grupo}
+              onChange={(e) => setGrupo(e.target.value)}
+              fullWidth
+              sx={{ maxWidth: 100, mx: "auto" }} // <-- centrado y ancho máximo
+            />
+
+            <TextField
+              label="Orden"
+              value={orden}
+              onChange={(e) => setOrden(e.target.value)}
+              fullWidth
+              sx={{ maxWidth: 100, mx: "auto" }} // <-- centrado y ancho máximo
+            />
+
             {/* Selector de sílabas parecidas */}
             <FormControl fullWidth sx={{ maxWidth: 300, mx: "auto" }}>
               <InputLabel id="silabas-parecidas-label">
@@ -159,8 +182,9 @@ export default function SilabasAdmin() {
                     value={s.silaba}
                     style={getStyles(s.silaba, silabasParecidas)}
                   >
-                    {s.silaba}
+                    {s.silaba} + 1
                   </MenuItem>
+                  
                 ))}
               </Select>
             </FormControl>
