@@ -12,7 +12,8 @@ import GameAdminForm from "./views/GameAdminForm.jsx";
 import Levels from "./views/Levels.jsx";
 import SilabasAdmin from "./views/SilabasAdmin.jsx";
 import Ventaja from "./views/Ventaja.jsx";
-
+import NivelesAdmin from "./views/NivelesAdmin.jsx";
+import PalabrasAdmin from "./views/PalabrasAdmin.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -41,6 +42,14 @@ const router = createBrowserRouter([
       {
         path: "/silabas",
         element: <SilabasAdmin />,
+      },
+            {
+        path: "/palabras",
+        element: <PalabrasAdmin />,
+      },
+            {
+        path: "/niveles",
+        element: <NivelesAdmin />,
       },
       {
         path: "/users",
