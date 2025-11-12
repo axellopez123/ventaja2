@@ -94,6 +94,7 @@ export default function ToolpadLayout() {
   const [session, setSession] = React.useState(demoSession);
 
 
+
   const authentication = React.useMemo(() => {
     return {
       signIn: () => {
@@ -115,7 +116,7 @@ export default function ToolpadLayout() {
 
     try {
       // Llamada al endpoint de logout para borrar cookie
-      await axiosClient.post("/auth/logout", {}, { withCredentials: true });
+      // await axiosClient.post("/auth/logout", {}, { withCredentials: true });
 
       // Limpia el contexto
       setUser(null);
@@ -128,10 +129,14 @@ export default function ToolpadLayout() {
       console.error("Error en logout:", err);
     }
   };
+    if (!token) {
+            // navigate("/login");
 
-  if (!user) {
     return <Navigate to="/login" />;
   }
+  console.log(token);
+  
+
   return (
     <AppProvider
       navigation={NAVIGATION}

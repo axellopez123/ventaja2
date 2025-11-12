@@ -33,10 +33,10 @@ export default function DefaultLayout(){
       theme: "light",
       });
 
-    if(!token)
-    {
-        return <Navigate to="/login"/>
-    }
+    // if(!token)
+    // {
+    //     return <Navigate to="/login"/>
+    // }
     const toggleMenu = () => {
         setShowMenu(!showMenu);
         setShowOrder(false);

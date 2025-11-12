@@ -5,7 +5,7 @@ import axiosClient from "../axios-client";
 import loginImage from "../assets/home.png"; // ruta según dónde la guardes
 
 export default function Login() {
-  const emailRef = useRef();
+  const usuarioRef = useRef();
   const passwordRef = useRef();
   const [errors, setErrors] = useState(null);
   const { setUser, setToken } = useStateContext();
@@ -15,7 +15,7 @@ export default function Login() {
     ev.preventDefault();
 
     const payload = {
-      username: emailRef.current.value,
+      username: usuarioRef.current.value,
       password: passwordRef.current.value,
     };
 
@@ -39,7 +39,7 @@ export default function Login() {
       // });
       // setUser(userData);
 
-      navigate("/game");
+      navigate("/");
     } catch (error) {
       const res = error.response;
       if (res && res.status === 401) {
@@ -60,7 +60,7 @@ export default function Login() {
         </div>
 
         {/* GOOGLE */}
-        <div className="w-full">
+        {/* <div className="w-full">
           <button
             type="button"
             className="w-full flex items-center justify-center gap-2 border p-2 px-4 rounded-full"
@@ -72,7 +72,7 @@ export default function Login() {
             />
             <span className="ml-2">Ingresar con Google</span>
           </button>
-        </div>
+        </div> */}
 
         <form className="flex flex-col gap-4" onSubmit={onSubmit}>
           {errors && (
@@ -105,16 +105,16 @@ export default function Login() {
           )}
 
           <div>
-            <label htmlFor="email" className="text-gray-200">
-              Correo electrónico *
+            <label htmlFor="usuario" className="text-gray-200">
+              Usuario *
             </label>
             <input
-              ref={emailRef}
-              type="email"
-              id="email"
+              ref={usuarioRef}
+              type="text"
+              id="usuario"
               autoComplete="off"
               className="w-full py-2 px-4 bg-transparent border rounded-full mt-2 outline-none focus:border-indigo-400"
-              placeholder="Ingresa tu correo electrónico"
+              placeholder="Ingresa tu usuario electrónico"
             />
           </div>
 
@@ -142,12 +142,12 @@ export default function Login() {
                 Registrate
               </Link>
             </span>
-            <a
+            {/* <a
               href="#"
               className="text-gray-400 hover:text-gray-200 transition-colors"
             >
               ¿Olvidaste tu contraseña?
-            </a>
+            </a> */}
           </div>
           <div className="mt-4 order-1 md:order-2">
             <button
@@ -158,10 +158,10 @@ export default function Login() {
             </button>
           </div>
 
-          <p className="">
+          {/* <p className="">
             Not registered?
             <Link to={"/signup"}>Create an account</Link>
-          </p>
+          </p> */}
         </form>
       </div>
       <div className="relative hidden lg:block">

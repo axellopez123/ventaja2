@@ -18,13 +18,14 @@ export default function Signup() {
     const payload = {
       username: nameRef.current.value,
       password: passwordRef.current.value,
-      email: 'axel3@mail.com',
+      email: emailRef.current.value,
       birthdate: '1998-10-06'
     };
 
     try {
       const { data } = await axiosClient.post("/auth/register/", payload);
-      const token = data.access_token;
+      const token = data.token;
+console.log(token);
 
       setToken(token);
 
@@ -34,7 +35,7 @@ export default function Signup() {
       // const meRes = await axiosClient.get("/auth/me");
       // setUser(meRes.data);
 
-      navigate("/game");
+      navigate("/");
     } catch (err) {
       const response = err.response;
       if (response && response.status === 422) {
@@ -98,7 +99,7 @@ export default function Signup() {
 
           <div>
             <label htmlFor="name" className="text-gray-200">
-              Nombre completo *
+              Usuario *
             </label>
             <input
               ref={nameRef}
@@ -110,18 +111,18 @@ export default function Signup() {
             />
           </div>
 
-          {/* <div>
-                    <label htmlFor="email" className="text-gray-200">
-                        Correo electrónico *
-                    </label>
-                    <input ref={emailRef}
-                        type="email"
-                        id="email"
-                        autoComplete="off"
-                        className="w-full py-2 px-4 bg-transparent border rounded-full mt-2 outline-none focus:border-indigo-400"
-                        placeholder="Ingresa tu correo electrónico"
-                    />
-                </div> */}
+          <div>
+            <label htmlFor="email" className="text-gray-200">
+              Correo electrónico *
+            </label>
+            <input ref={emailRef}
+              type="email"
+              id="email"
+              autoComplete="off"
+              className="w-full py-2 px-4 bg-transparent border rounded-full mt-2 outline-none focus:border-indigo-400"
+              placeholder="Ingresa tu correo electrónico"
+            />
+          </div>
           <div>
             <label htmlFor="password" className="text-gray-200">
               Contraseña *
