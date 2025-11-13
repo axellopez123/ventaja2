@@ -15,6 +15,8 @@ import { Account } from '@toolpad/core/Account';
 import axiosClient from "../axios-client";
 const NAVIGATION = [
   { kind: "header", title: "Main" },
+    { segment: "levels", title: "Jugar", icon: <DashboardIcon /> },
+
   { segment: "users", title: "Usuarios", icon: <DashboardIcon /> },
   { segment: "properties", title: "Palabras", icon: <TimelineIcon /> },
   { segment: "silabas", title: "Silabas", icon: <BiMessageAltDetail /> },

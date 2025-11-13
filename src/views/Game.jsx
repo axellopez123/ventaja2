@@ -28,6 +28,8 @@ const Game = () => {
   const [partida, setPartida] = useState(null); // 👉 guarda la partida creada
   const [loading, setLoading] = useState(false);
   const [mostrar, setMostrar] = useState(true);
+  const [letra, setLetra] = useState(null);
+  const [puntos, setPuntos] = useState(false);
 
   const [juego, setJuego] = useState(0);
   const speak = (text) => {
@@ -118,9 +120,13 @@ const Game = () => {
           case "analysis_feedback":
             console.log("🔤 RETRO:", msg);
             if (msg.evaluacion) {
-              speak(msg.feedback.feedback_text + msg.evaluacion.feedback);
-              speak(msg.evaluacion.feedback);
+              // speak(msg.feedback.feedback_text + msg.evaluacion.feedback);
+              console.log(msg.feedback.feedback_text);
+              speak(msg.feedback.feedback_text);
               setPartida(msg.evaluacion);
+              if (letra != msg.evaluacion.nivel.letra_objetivo) {
+                setPuntos(true);
+              }
               console.log(partida);
             }
             break;
@@ -161,6 +167,7 @@ const Game = () => {
         id_nivel: level, // nivel elegido
       });
       setPartida(data); // 👉 Guardamos la partida para mostrar el juego
+      setLetra(data.nivel.letra_objetivo);
       console.log("✅ Partida creada:", data);
     } catch (err) {
       console.error("❌ Error al iniciar partida:", err);
@@ -305,7 +312,14 @@ const Game = () => {
           </div> */}
         </div>
       </div>
-      {partida ? (
+            {puntos ? (
+        <div>
+          <Puntaje wsRef={wsRef} Partida={partida} setPuntos={setPuntos} setLetra={setLetra} />
+        </div>
+      ) : (
+        <div></div>
+      )}
+      {partida && !puntos ? (
         <div>
           <Completar wsRef={wsRef} Partida={partida} />
         </div>
