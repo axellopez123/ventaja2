@@ -23,14 +23,13 @@ export default function Login() {
 
     try {
       // Hacemos la petición al backend
-      // const { data } = await axiosClient.post("/auth/api/token/", payload);
+      const { data } = await axiosClient.post("/auth/api/token/", payload);
 
-      // // Guardamos tokens (access y refresh)
-      // const token = data.access;
-      // const refreshToken = data.refresh;
+      // Guardamos tokens (access y refresh)
+      const token = data.access;
+      const refreshToken = data.refresh;
 
-      // setToken(token);
-      setToken(1)
+      setToken(token);
       localStorage.setItem("ACCESS_TOKEN", token);
       localStorage.setItem("REFRESH_TOKEN", refreshToken);
 
