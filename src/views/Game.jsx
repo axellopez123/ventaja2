@@ -33,8 +33,7 @@ const Game = () => {
 
   const [juego, setJuego] = useState(0);
   const speak = (text) => {
-    // Detiene cualquier audio anterior
-    speechSynthesis.cancel();
+
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = "es-MX";
@@ -120,9 +119,8 @@ const Game = () => {
           case "analysis_feedback":
             console.log("🔤 RETRO:", msg);
             if (msg.evaluacion) {
-              // speak(msg.feedback.feedback_text + msg.evaluacion.feedback);
-              console.log(msg.feedback.feedback_text);
               speak(msg.feedback.feedback_text);
+              speak(msg.evaluacion.feedback);
               setPartida(msg.evaluacion);
               if (letra != msg.evaluacion.nivel.letra_objetivo) {
                 setPuntos(true);
@@ -283,7 +281,7 @@ const Game = () => {
               {isPlaying ? <FaPause /> : <FaPlay />}
             </button>
 
-            <button
+            {/* <button
               // onClick={handleRestart}
               className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-md transition"
             >
@@ -299,7 +297,7 @@ const Game = () => {
               }`}
             >
               <FaVolumeUp />
-            </button>
+            </button> */}
           </div>
           {/* <div className="mt-5">
             <button

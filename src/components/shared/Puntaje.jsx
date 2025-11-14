@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import StarIcon from "@mui/icons-material/Star";
 
 const Puntaje = ({ wsRef, Partida, setPuntos, setLetra })  => {
-  const porcentaje = Math.round((Partida.partida.puntuacion_total / 100) * 100);
+  const porcentaje = Math.round((Partida.partida.puntuacion_total / 10));
   const color =
     porcentaje >= 80 ? "#4CAF50" : porcentaje >= 50 ? "#FFC107" : "#F44336";
 
@@ -72,7 +72,7 @@ const Puntaje = ({ wsRef, Partida, setPuntos, setLetra })  => {
         </Typography>
         <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 4 }}>
           <Button variant="contained" color="success"
-           onClick={toNext()} 
+           onClick={toNext} 
            >
             🚀 Continuar
           </Button>
