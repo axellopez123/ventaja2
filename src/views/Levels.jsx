@@ -39,11 +39,9 @@ const Levels = () => {
                   {`${level.descripcion}`}
                 </p>
               </div>
-              <img
-                src={hand}
-                alt="mano"
-                className="w-28 h-28 object-contain animate-pulse"
-              />
+              <div className="text-4xl font-extrabold text-amber-600 uppercase">
+                {`${level.letra_objetivo}`}
+              </div>
             </div>
           </Link>
         ))}
